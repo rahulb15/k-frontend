@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "text": "Discover",
+        "path": "/"
+    },
+    {
+        "id": 2,
+        "text": "Mint",
+        "path": "#!"
+    }
+]
