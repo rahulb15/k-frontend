@@ -52,6 +52,45 @@ const getUser = async (walletAddress) => {
     }
 };
 
+const getUserById = async (id) => {
+    try {
+        console.log("🚀 ~ getUserById ~ id:", id);
+        // token
+        const token = localStorage.getItem("token");
+
+        console.log("🚀 ~ getUserById ~ token:", token);
+        const response = await axios.get(API_URL + `user/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const getUserDetail = async (id) => {
+    try {
+        // token
+        const token = localStorage.getItem("token");
+
+        console.log("🚀 ~ getUserById ~ token:", token);
+        const response = await axios.get(API_URL + `user`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 // const getUserInit = () => {
 //     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}auth/login/success`, {
 //       method: "GET",
@@ -140,6 +179,42 @@ const checkEmailExist = async (email) => {
     }
 };
 
+//uploadImage
+const uploadImage = async (formData) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + "user/upload-image",
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// updateUser
+const updateUser = async (body) => {
+    try {
+        console.log("🚀 ~ updateUser ~ body", body);
+        const token = localStorage.getItem("token");
+        const response = await axios.put(API_URL + "user", body, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 export default {
     register,
     login,
@@ -151,4 +226,8 @@ export default {
     checkEmailExist,
     registerWithEmail,
     getUserInit,
+    getUserById,
+    uploadImage,
+    getUserDetail,
+    updateUser,
 };

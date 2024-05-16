@@ -20,7 +20,20 @@ import headerData from "../../../data/general/header-01.json";
 import menuData from "../../../data/general/menu-01.json";
 import menuleftData from "../../../data/general/menu-left.json";
 import userService from "src/services/user.service";
-
+import { NotificationProvider } from "src/contexts/NotificationContext";
+import { ProfileBar } from "src/mat-components/ProfileBar";
+import Search from "@components/search";
+import {
+    Box,
+    styled,
+    Avatar,
+    Hidden,
+    useTheme,
+    MenuItem,
+    IconButton,
+    useMediaQuery,
+} from "@mui/material";
+import WalletButton from "@containers/wallet-button";
 const Header = ({ className }) => {
     const sticky = useSticky();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
@@ -75,7 +88,8 @@ const Header = ({ className }) => {
                                 </nav>
                             </div>
                             <div className="setting-option d-none d-lg-block">
-                                <SearchForm />
+                                {/* <SearchForm /> */}
+                                <Search />
                             </div>
                         </div>
                         <div className="header-right">
@@ -91,82 +105,94 @@ const Header = ({ className }) => {
                                 </div>
                                 <FlyoutSearchForm isOpen={search} />
                             </div>
+                            <div className="setting-option rn-icon-list notification-badge">
+                                <div className="icon-box">
+                                    <Anchor path={headerData.activity_link}>
+                                        <i className="feather-bell" />
+                                        <span className="badge">6</span>
+                                    </Anchor>
+                                </div>
+                            </div>
 
                             <div className="setting-option header-btn">
                                 <div className="icon-box">
                                     {account.walletAddressContect.length > 0 ? (
-                                        <div
-                                            className={clsx(
-                                                "nice-select",
-                                                isDropDownEnabled && "open"
-                                            )}
-                                            role="button"
-                                            tabIndex={0}
-                                            onClick={() =>
-                                                setIsDropDownEnabled(
-                                                    (prev) => !prev
-                                                )
-                                            }
-                                        >
-                                            <span className="current">
-                                                {account.walletAddressContect.slice(
-                                                    0,
-                                                    6
-                                                )}
-                                                ...
-                                                {account.walletAddressContect.slice(
-                                                    -4
-                                                )}
-                                            </span>
-                                            <ul
-                                                className="list"
-                                                role="menubar"
-                                                onClick={(e) =>
-                                                    e.stopPropagation()
-                                                }
-                                                style={{
-                                                    width: "100%",
-                                                    minWidth: "auto",
-                                                    marginTop: "3px",
-                                                    height: "auto",
-                                                }}
-                                            >
-                                                <li
-                                                    className={clsx(
-                                                        "option",
-                                                        "selected focus"
-                                                    )}
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        router.push("/author")
-                                                    }
-                                                >
-                                                    <ImProfile />
-                                                    Profile
-                                                </li>
+                                        // <div
+                                        //     className={clsx(
+                                        //         "nice-select",
+                                        //         isDropDownEnabled && "open"
+                                        //     )}
+                                        //     role="button"
+                                        //     tabIndex={0}
+                                        //     onClick={() =>
+                                        //         setIsDropDownEnabled(
+                                        //             (prev) => !prev
+                                        //         )
+                                        //     }
+                                        // >
+                                        //     <span className="current">
+                                        //         {account.walletAddressContect.slice(
+                                        //             0,
+                                        //             6
+                                        //         )}
+                                        //         ...
+                                        //         {account.walletAddressContect.slice(
+                                        //             -4
+                                        //         )}
+                                        //     </span>
+                                        //     <ul
+                                        //         className="list"
+                                        //         role="menubar"
+                                        //         onClick={(e) =>
+                                        //             e.stopPropagation()
+                                        //         }
+                                        //         style={{
+                                        //             width: "100%",
+                                        //             minWidth: "auto",
+                                        //             marginTop: "3px",
+                                        //             height: "auto",
+                                        //         }}
+                                        //     >
+                                        //         <li
+                                        //             className={clsx(
+                                        //                 "option",
+                                        //                 "selected focus"
+                                        //             )}
+                                        //             role="menuitem"
+                                        //             onClick={() =>
+                                        //                 router.push("/author")
+                                        //             }
+                                        //         >
+                                        //             <ImProfile />
+                                        //             Profile
+                                        //         </li>
 
-                                                <li
-                                                    className={clsx(
-                                                        "option",
-                                                        "selected focus"
-                                                    )}
-                                                    role="menuitem"
-                                                    onClick={() => {
-                                                        logout();
-                                                    }}
-                                                >
-                                                    <IoLogOut />
-                                                    Logout
-                                                </li>
-                                            </ul>
-                                        </div>
+                                        //         <li
+                                        //             className={clsx(
+                                        //                 "option",
+                                        //                 "selected focus"
+                                        //             )}
+                                        //             role="menuitem"
+                                        //             onClick={() => {
+                                        //                 logout();
+                                        //             }}
+                                        //         >
+                                        //             <IoLogOut />
+                                        //             Logout
+                                        //         </li>
+                                        //     </ul>
+                                        // </div>
+                                        <>
+                                            <ProfileBar />
+                                        </>
                                     ) : (
-                                        <Link
-                                            href="/connect"
-                                            className="cn-btn"
-                                        >
-                                            <span>Connect Wallet</span>
-                                        </Link>
+                                        // <Link
+                                        //     href="/connect"
+                                        //     className="cn-btn"
+                                        // >
+                                        //     <span>Connect Wallet</span>
+                                        // </Link>
+                                        <WalletButton />
                                     )}
                                 </div>
                             </div>
@@ -179,14 +205,7 @@ const Header = ({ className }) => {
                                     />
                                 </div>
                             )} */}
-                            <div className="setting-option rn-icon-list notification-badge">
-                                <div className="icon-box">
-                                    <Anchor path={headerData.activity_link}>
-                                        <i className="feather-bell" />
-                                        <span className="badge">6</span>
-                                    </Anchor>
-                                </div>
-                            </div>
+
                             <div className="setting-option mobile-menu-bar d-block d-xl-none">
                                 <div className="hamberger">
                                     <BurgerButton onClick={offcanvasHandler} />

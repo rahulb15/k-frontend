@@ -33,7 +33,7 @@ const SliderOptions = {
 
 const HeroArea = ({ data }) => (
     <div className="rn-banner-area rn-section-gapTop">
-        <div className="container" style={{ width: "90%" }}>
+        <div className="container" style={{ width: "90%", marginTop: "-70px" }}>
             {data?.banners && (
                 <Slider
                     options={SliderOptions}

@@ -10,6 +10,9 @@ import "../assets/css/bootstrap.min.css";
 import "../assets/css/feather.css";
 import "../assets/css/modal-video.css";
 import "../assets/scss/style.scss";
+import "react-country-state-city/dist/react-country-state-city.css";
+import "../containers/wallet-button/styles.css";
+import "../components/search/styles.css";
 
 const MyApp = ({ Component, pageProps }) => {
     const router = useRouter();

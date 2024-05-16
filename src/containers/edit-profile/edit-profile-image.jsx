@@ -1,20 +1,68 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import userService from "src/services/user.service";
+import { toast } from "react-toastify";
 
-const EditProfileImage = () => {
+const EditProfileImage = (props) => {
     const [selectedImage, setSelectedImage] = useState({
-        profile: "",
-        cover: "",
+        profileImage: "",
+        coverImage: "",
     });
     const imageChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setSelectedImage((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.files[0],
-            }));
+        const name = e.target.name;
+        const file = e.target.files[0];
+        console.log("🚀 ~ EditProfileImage ~ file", file);
+        console.log("🚀 ~ imageChange ~ name:", name);
+        uploadImage(name, file);
+    };
+
+    console.log("🚀 ~ EditProfileImage ~ selectedImage:", selectedImage);
+    const uploadImage = async (name, file) => {
+        console.log("🚀 ~ uploadImage ~ name:", name);
+        console.log("🚀 ~ uploadImage ~ file:", file);
+        try {
+            const formData = new FormData();
+            formData.append(name, file);
+            const response = await userService.uploadImage(formData);
+            console.log("🚀 ~ uploadImage ~ response", response);
+            if (response.data.status === "success") {
+                toast.success("Image Uploaded Successfully");
+                if (name === "profileImage") {
+                    setSelectedImage((prev) => ({
+                        ...prev,
+                        profileImage: response.data.data.profileImage,
+                    }));
+                }
+                if (name === "coverImage") {
+                    setSelectedImage((prev) => ({
+                        ...prev,
+                        coverImage: response.data.data.coverImage,
+                    }));
+                }
+            }
+        } catch (error) {
+            console.log("🚀 ~ uploadImage ~ error", error);
         }
     };
+
+    useEffect(() => {
+        console.log("🚀 ~ EditProfileImage ~ props", props?.user?.coverImage);
+        if (props?.user?.coverImage) {
+            setSelectedImage((prev) => ({
+                ...prev,
+                coverImage: props.user?.coverImage,
+            }));
+        }
+        if (props?.user?.profileImage) {
+            setSelectedImage((prev) => ({
+                ...prev,
+                profileImage: props.user?.profileImage,
+            }));
+        }
+    }, [props?.user]);
+
+    console.log("🚀 ~ EditProfileImage ~ selectedImage", selectedImage);
 
     return (
         <div className="nuron-information">
@@ -23,11 +71,9 @@ const EditProfileImage = () => {
                     <div className="profile-image mb--30">
                         <h6 className="title">Change Your Profile Picture</h6>
                         <div className="img-wrap">
-                            {selectedImage?.profile ? (
+                            {selectedImage.profileImage ? (
                                 <img
-                                    src={URL.createObjectURL(
-                                        selectedImage.profile
-                                    )}
+                                    src={selectedImage.profileImage}
                                     alt=""
                                     data-black-overlay="6"
                                 />
@@ -49,7 +95,7 @@ const EditProfileImage = () => {
                     <div className="button-area">
                         <div className="brows-file-wrapper">
                             <input
-                                name="profile"
+                                name="profileImage"
                                 id="fatima"
                                 type="file"
                                 onChange={imageChange}
@@ -67,11 +113,9 @@ const EditProfileImage = () => {
                     <div className="profile-image mb--30">
                         <h6 className="title">Change Your Cover Photo</h6>
                         <div className="img-wrap">
-                            {selectedImage?.cover ? (
+                            {selectedImage.coverImage ? (
                                 <img
-                                    src={URL.createObjectURL(
-                                        selectedImage.cover
-                                    )}
+                                    src={selectedImage.coverImage}
                                     alt=""
                                     data-black-overlay="6"
                                 />
@@ -93,7 +137,7 @@ const EditProfileImage = () => {
                     <div className="button-area">
                         <div className="brows-file-wrapper">
                             <input
-                                name="cover"
+                                name="coverImage"
                                 id="nipa"
                                 type="file"
                                 onChange={imageChange}

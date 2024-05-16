@@ -14,7 +14,7 @@ const EditProfile = () => (
         <SEO pageTitle="Edit Profile" />
         <Header />
         <main id="main-content">
-            <Breadcrumb pageTitle="Edit Profile" currentPage="Edit Profile" />
+            {/* <Breadcrumb pageTitle="Edit Profile" currentPage="Edit Profile" /> */}
             <EditProfileArea />
         </main>
         <Footer />
