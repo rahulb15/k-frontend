@@ -20,7 +20,6 @@ const EditProfile = () => {
     const getUser = async () => {
         try {
             setReload(true);
-            toast.info("Loading...");
             const userById = await userService.getUserDetail();
             console.log("🚀 ~ getUser ~ userById:", userById);
             setUser(userById.data.data);
@@ -115,7 +114,7 @@ const EditProfile = () => {
                                     <ChangePassword setRefresh={setRefresh} />
                                 </TabPane>
                                 <TabPane eventKey="nav-verification">
-                                    <Verification />
+                                    <Verification user={user} setRefresh={setRefresh} />
                                 </TabPane>
 
                                 <TabPane eventKey="nav-contact">

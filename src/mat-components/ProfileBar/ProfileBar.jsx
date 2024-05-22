@@ -66,7 +66,7 @@ export default function ProfileBar({ container }) {
                 ModalProps={{ keepMounted: true }}
                 sx={{
                     "& .MuiDrawer-paper": {
-                        background: "#151521",
+                        background: "#21210b",
                     },
                 }}
             >

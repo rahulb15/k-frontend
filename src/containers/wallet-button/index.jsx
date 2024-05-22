@@ -59,8 +59,14 @@ export default function WalletButton() {
                     variants={{ hover: { scale: 0.85 }, press: { scale: 1.1 } }}
                     className="label"
                 >
-                    <Link href="/connect" passHref style={{ textDecoration: "none", color: "inherit" }}>
-                        <span>Connect</span>
+                    <Link
+                        href="/connect"
+                        passHref
+                        style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                        <span style={{ color: "rgb(216 216 216)" }}>
+                            Connect
+                        </span>
                     </Link>
                 </motion.div>
             </motion.button>

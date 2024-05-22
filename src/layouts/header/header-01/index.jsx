@@ -34,6 +34,7 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import WalletButton from "@containers/wallet-button";
+import TickerHeader from "@layout/ticker-header";
 const Header = ({ className }) => {
     const sticky = useSticky();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
@@ -68,6 +69,7 @@ const Header = ({ className }) => {
 
     return (
         <>
+            <TickerHeader />
             <header
                 className={clsx(
                     "rn-header haeder-default black-logo-version header--fixed header--sticky",
@@ -87,7 +89,10 @@ const Header = ({ className }) => {
                                     <MainMenu menu={menuleftData} />
                                 </nav>
                             </div>
-                            <div className="setting-option d-none d-lg-block">
+                            <div
+                                className="setting-option d-none d-lg-block"
+                                style={{ marginLeft: "auto" }}
+                            >
                                 {/* <SearchForm /> */}
                                 <Search />
                             </div>
@@ -110,6 +115,15 @@ const Header = ({ className }) => {
                                     <Anchor path={headerData.activity_link}>
                                         <i className="feather-bell" />
                                         <span className="badge">6</span>
+                                    </Anchor>
+                                </div>
+                            </div>
+
+                            {/* //cart icon */}
+                            <div className="setting-option rn-icon-list">
+                                <div className="icon-box">
+                                    <Anchor path={"/cart"} className="cart-link">
+                                        <i className="feather-shopping-cart" />
                                     </Anchor>
                                 </div>
                             </div>

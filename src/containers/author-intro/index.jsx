@@ -19,7 +19,6 @@ const AuthorIntroArea = ({ className, space, data }) => {
     const getUser = async () => {
         try {
             setReload(true);
-            toast.info("Loading...");
             const userById = await userService.getUserDetail();
             console.log("🚀 ~ getUser ~ userById:", userById);
             setUser(userById.data.data);

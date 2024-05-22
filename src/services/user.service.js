@@ -215,6 +215,27 @@ const updateUser = async (body) => {
     }
 };
 
+const getTicker = async () => {
+    try {
+        const response = await axios.get(`${API_URL}config/key/ticker`);
+        return response.data;
+    } catch (error) {
+        return error?.response?.data;
+    }
+};
+
+const getAccessToken = async () => {
+    try {
+        const response = await axios.get(
+            `${API_URL}user/get-access-token`
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 export default {
     register,
     login,
@@ -230,4 +251,6 @@ export default {
     uploadImage,
     getUserDetail,
     updateUser,
+    getTicker,
+    getAccessToken,
 };

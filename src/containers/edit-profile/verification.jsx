@@ -2,11 +2,29 @@ import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
 import SumsubWebSdk from "@sumsub/websdk-react";
+import { useEffect, useState } from "react";
+import userService from "src/services/user.service";
 
-export default function Verification() {
+export default function Verification(props) {
+    useEffect(() => {
+        //fetchAccessToken
+        const fetchAccessToken = async () => {
+            try {
+                const response = await userService.getAccessToken();
+                console.log("🚀 ~ fetchAccessToken ~ response", response);
+            } catch (error) {
+                console.log("🚀 ~ fetchAccessToken ~ error", error);
+                toast.error("Something went wrong");
+            }
+        };
+
+        fetchAccessToken();
+    }, []);
+
     const applicantEmail = "rahul.baghel1508@gmail.com";
     const applicantPhone = "9999999999";
-    const accessToken = "_act-sbx-jwt-eyJhbGciOiJub25lIn0.eyJqdGkiOiJfYWN0LXNieC1jNTVlMmExZC0yYjM5LTQ1OGYtYTM0Zi0wYWQ5M2MzN2E4MjMtdjIiLCJ1cmwiOiJodHRwczovL2FwaS5zdW1zdWIuY29tIn0.-v2";
+    const accessToken =
+        "_act-sbx-jwt-eyJhbGciOiJub25lIn0.eyJqdGkiOiJfYWN0LXNieC1jNTVlMmExZC0yYjM5LTQ1OGYtYTM0Zi0wYWQ5M2MzN2E4MjMtdjIiLCJ1cmwiOiJodHRwczovL2FwaS5zdW1zdWIuY29tIn0.-v2";
 
     return (
         <div className="flex flex-col items-center justify-center h-full">

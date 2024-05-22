@@ -2,11 +2,45 @@
     {
         "id": 1,
         "text": "Discover",
-        "path": "/"
+        "path": "/",
+        "submenu" : [
+            {
+                "id": 1,
+                "text": "Collections",
+                "path": "/collections"
+            },
+            {
+                "id": 2,
+                "text": "Blogs",
+                "path": "/blogs"
+            },
+            {
+                "id": 3,
+                "text": "Create",
+                "path": "/create"
+            }
+        ]
     },
     {
         "id": 2,
         "text": "Mint",
-        "path": "#!"
+        "path": "#!",
+        "submenu" : [
+            {
+                "id": 1,
+                "text": "Launchpad",
+                "path": "/launchpad"
+            },
+            {
+                "id": 2,
+                "text": "Apply for Launchpad",
+                "path": "/apply"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "text": "Rewards",
+        "path": "/rewards"
     }
 ]
