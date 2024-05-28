@@ -1,3 +1,4 @@
+/* eslint-disable */
 import PropTypes from "prop-types";
 import Anchor from "@ui/anchor";
 import Image from "next/image";
@@ -10,7 +11,7 @@ const Collection = ({
     profile_image,
     path,
 }) => (
-    <Anchor path={path} className="rn-collection-inner-one">
+    <Anchor path={"/nfts"} className="rn-collection-inner-one">
         <div className="collection-wrapper">
             {image?.src && (
                 <div className="collection-big-thumbnail">

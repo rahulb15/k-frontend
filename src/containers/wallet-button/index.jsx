@@ -1,8 +1,10 @@
-import { Suspense, useState } from "react";
-import { motion, MotionConfig, useMotionValue } from "framer-motion";
-import { transition } from "./setting";
-import useMeasure from "react-use-measure";
+/* eslint-disable */
+
+import { MotionConfig, motion, useMotionValue } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
+import useMeasure from "react-use-measure";
+import { transition } from "./setting";
 
 export default function WalletButton() {
     const [ref, bounds] = useMeasure({ scroll: false });

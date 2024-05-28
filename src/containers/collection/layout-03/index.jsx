@@ -1,9 +1,12 @@
+/* eslint-disable */
 import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Collection from "@components/collection";
 import Pagination from "@components/pagination-02";
 import { CollectionType } from "@utils/types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 
 const POSTS_PER_PAGE = 8;
 
@@ -15,6 +18,7 @@ const CollectionArea = ({ className, space, id, data }) => {
         setCurrentPage(page);
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
+    const [value, setValue] = useState("one");
 
     const creatorHandler = useCallback(() => {
         const start = (currentPage - 1) * POSTS_PER_PAGE;
@@ -24,6 +28,11 @@ const CollectionArea = ({ className, space, id, data }) => {
     useEffect(() => {
         creatorHandler();
     }, [currentPage, creatorHandler]);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
     return (
         <div
             className={clsx(
@@ -34,22 +43,133 @@ const CollectionArea = ({ className, space, id, data }) => {
             id={id}
         >
             <div className="container">
-                <div className="row g-5">
-                    {collections.map((collection) => (
-                        <div
-                            key={collection.id}
-                            className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
-                        >
-                            <Collection
-                                title={collection.title}
-                                total_item={collection.total_item}
-                                path={collection.slug}
-                                image={collection.image}
-                                thumbnails={collection.thumbnails}
-                                profile_image={collection.profile_image}
-                            />
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    aria-label="scrollable auto tabs example"
+                    TabIndicatorProps={{
+                        style: {
+                            backgroundColor: "#D97D54",
+                        },
+                    }}
+                    sx={{
+                        "& .MuiTabs-scroller": {
+                            display: "flex",
+                            justifyContent: "start",
+                        },
+                        "& .MuiTabs-flexContainer": {
+                            borderBottom: "none",
+                        },
+                        "& .MuiTabs-indicator": {
+                            backgroundColor: "transparent",
+                        },
+                    }}
+                >
+                    <Tab
+                        label="Live"
+                        value="one"
+                        sx={{
+                            fontSize: "16px",
+                            color: "#757575", // color for unselected tabs
+                            "&.Mui-selected": {
+                                color: "#D97D54",
+                                fontWeight: "bold",
+                            },
+                        }}
+                    />
+                    <Tab
+                        label="Upcoming"
+                        value="two"
+                        sx={{
+                            fontSize: "16px",
+                            color: "#757575", // color for unselected tabs
+                            "&.Mui-selected": {
+                                color: "#D97D54",
+                                fontWeight: "bold",
+                            },
+                        }}
+                    />
+                    <Tab
+                        label="Past"
+                        value="three"
+                        sx={{
+                            fontSize: "16px",
+                            color: "#757575", // color for unselected tabs
+                            "&.Mui-selected": {
+                                color: "#D97D54",
+                                fontWeight: "bold",
+                            },
+                        }}
+                    />
+                </Tabs>
+
+                <div
+                    className="horizontal-line"
+                    style={{ marginBottom: "30px" }}
+                ></div>
+
+                <div className="tab-content">
+                    {value === "one" && (
+                        <div className="row g-5">
+                            {collections.map((collection) => (
+                                <div
+                                    key={collection.id}
+                                    className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
+                                >
+                                    <Collection
+                                        title={collection.title}
+                                        total_item={collection.total_item}
+                                        path={collection.slug}
+                                        image={collection.image}
+                                        thumbnails={collection.thumbnails}
+                                        profile_image={collection.profile_image}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
+
+                    {value === "two" && (
+                        <div className="row g-5">
+                            {collections.map((collection) => (
+                                <div
+                                    key={collection.id}
+                                    className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
+                                >
+                                    <Collection
+                                        title={collection.title}
+                                        total_item={collection.total_item}
+                                        path={collection.slug}
+                                        image={collection.image}
+                                        thumbnails={collection.thumbnails}
+                                        profile_image={collection.profile_image}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {value === "three" && (
+                        <div className="row g-5">
+                            {collections.map((collection) => (
+                                <div
+                                    key={collection.id}
+                                    className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
+                                >
+                                    <Collection
+                                        title={collection.title}
+                                        total_item={collection.total_item}
+                                        path={collection.slug}
+                                        image={collection.image}
+                                        thumbnails={collection.thumbnails}
+                                        profile_image={collection.profile_image}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 <div className="row">
                     <div

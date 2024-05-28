@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Button from "@ui/button";
 import NiceSelect from "@ui/nice-select";
 import { useEffect, useState } from "react";

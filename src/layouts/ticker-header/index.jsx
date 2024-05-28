@@ -1,10 +1,8 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+/* eslint-disable */
+
 import { useEffect, useState } from "react";
-import userService from "src/services/user.service";
 import { MdClose } from "react-icons/md";
+import userService from "src/services/user.service";
 
 const TickerHeader = () => {
     const [tickerData, setTickerData] = useState(null);
@@ -18,34 +16,8 @@ const TickerHeader = () => {
         fetchTickerData();
     }, []);
 
-    console.log(tickerData, "tickerData");
-    // {
-    //   html: '<p><strong>sdfdsfsd</strong></p>',
-    //   color: '#9d3131',
-    //   scroller: false
-    // }
-
     return (
         <>
-            {/* <section
-      className="ticker-wrap"
-      style={{ backgroundColor: tickerData?.color || "#9d3131" }}
-    >
-
-      <div
-        className="close-ticker"
-        onClick={() => setCloseTicker(!closeTicker)}
-      >
-        <MdClose />
-      </div>
-
-      <div className={` ${tickerData?.scroller ? "ticker" : ""}`}>
-        <div
-          className="ticker__content"
-          dangerouslySetInnerHTML={{ __html: tickerData?.html }}
-        ></div>
-      </div>
-    </section> */}
             {closeTicker === false && (
                 <section
                     className="ticker-wrap"

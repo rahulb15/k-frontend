@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable */
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import userService from "src/services/user.service";

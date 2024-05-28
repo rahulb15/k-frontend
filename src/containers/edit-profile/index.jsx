@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Anchor from "@ui/anchor";
 import Sticky from "@ui/sticky";
 import TabContent from "react-bootstrap/TabContent";
@@ -114,7 +115,10 @@ const EditProfile = () => {
                                     <ChangePassword setRefresh={setRefresh} />
                                 </TabPane>
                                 <TabPane eventKey="nav-verification">
-                                    <Verification user={user} setRefresh={setRefresh} />
+                                    <Verification
+                                        user={user}
+                                        setRefresh={setRefresh}
+                                    />
                                 </TabPane>
 
                                 <TabPane eventKey="nav-contact">

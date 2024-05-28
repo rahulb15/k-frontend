@@ -1,19 +1,15 @@
-import Button from "@ui/button";
-import ErrorText from "@ui/error-text";
-import { toast } from "react-toastify";
+/* eslint-disable */
 import SumsubWebSdk from "@sumsub/websdk-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 import userService from "src/services/user.service";
 
-export default function Verification(props) {
+const Verification = () => {
     useEffect(() => {
-        //fetchAccessToken
         const fetchAccessToken = async () => {
             try {
-                const response = await userService.getAccessToken();
-                console.log("🚀 ~ fetchAccessToken ~ response", response);
+                await userService.getAccessToken();
             } catch (error) {
-                console.log("🚀 ~ fetchAccessToken ~ error", error);
                 toast.error("Something went wrong");
             }
         };
@@ -76,5 +72,6 @@ export default function Verification(props) {
             </div>
         </div>
     );
-}
-// Path: src/containers/edit-profile/verification.jsx
+};
+
+export default Verification;

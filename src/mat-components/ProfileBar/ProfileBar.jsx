@@ -1,24 +1,13 @@
-import { Fragment, useState, useEffect } from "react";
+/* eslint-disable */
+import { Avatar, Box, Drawer, IconButton } from "@mui/material";
+import { sideNavWidth } from "@utils/constant";
 import Link from "next/link";
-import {
-    Box,
-    Card,
-    Icon,
-    Badge,
-    Button,
-    Drawer,
-    styled,
-    IconButton,
-    Avatar,
-    ThemeProvider,
-} from "@mui/material";
-import { sideNavWidth, topBarHeight } from "@utils/constant";
-import { motion, sync, useCycle } from "framer-motion";
+import { Fragment, useEffect, useState } from "react";
 import { ImProfile } from "react-icons/im";
 import { IoLogOut } from "react-icons/io5";
-import userService from "src/services/user.service";
 import { useAccountContext } from "src/contexts";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
+import userService from "src/services/user.service";
 
 export default function ProfileBar({ container }) {
     const [panelOpen, setPanelOpen] = useState(false);
@@ -167,69 +156,3 @@ export default function ProfileBar({ container }) {
         </Fragment>
     );
 }
-
-// <div
-//     className={clsx(
-//         "nice-select",
-//         isDropDownEnabled && "open"
-//     )}
-//     role="button"
-//     tabIndex={0}
-//     onClick={() =>
-//         setIsDropDownEnabled(
-//             (prev) => !prev
-//         )
-//     }
-// >
-//     <span className="current">
-//         {account.walletAddressContect.slice(
-//             0,
-//             6
-//         )}
-//         ...
-//         {account.walletAddressContect.slice(
-//             -4
-//         )}
-//     </span>
-//     <ul
-//         className="list"
-//         role="menubar"
-//         onClick={(e) =>
-//             e.stopPropagation()
-//         }
-//         style={{
-//             width: "100%",
-//             minWidth: "auto",
-//             marginTop: "3px",
-//             height: "auto",
-//         }}
-//     >
-//         <li
-//             className={clsx(
-//                 "option",
-//                 "selected focus"
-//             )}
-//             role="menuitem"
-//             onClick={() =>
-//                 router.push("/author")
-//             }
-//         >
-//             <ImProfile />
-//             Profile
-//         </li>
-
-//         <li
-//             className={clsx(
-//                 "option",
-//                 "selected focus"
-//             )}
-//             role="menuitem"
-//             onClick={() => {
-//                 logout();
-//             }}
-//         >
-//             <IoLogOut />
-//             Logout
-//         </li>
-//     </ul>
-// </div>

@@ -1,20 +1,16 @@
 import SEO from "@components/seo";
-import CreatorArea from "@containers/creator/layout-01";
-import ExploreProductArea from "@containers/explore-product/layout-02";
 import HeroArea from "@containers/hero/layout-06";
-import ServiceArea from "@containers/services/layout-01";
-import TopCollection from "@containers/top-collection";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";
 
 // Demo data
-import TrendingArea from "@containers/trending";
+import CollectionArea from "@containers/collection/layout-03";
+
 import homepageData from "../data/homepages/home-06.json";
-import productData from "../data/products.json";
-import rankingData from "../data/ranking.json";
-import sellerData from "../data/sellers.json";
+
+import collectionsData from "../data/collections.json";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -28,6 +24,7 @@ const Home = () => {
             <Header />
             <main id="main-content">
                 <HeroArea data={content["hero-section"]} />
+                <CollectionArea data={{ collections: collectionsData }} />
             </main>
             <div style={{ marginTop: "100px" }} />
             <Footer />

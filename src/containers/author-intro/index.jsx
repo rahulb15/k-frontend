@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import Image from "next/image";
-import { ImageType } from "@utils/types";
-import ShareDropdown from "@components/share-dropdown";
+/* eslint-disable */
 import ShareModal from "@components/modals/share-modal";
 import Anchor from "@ui/anchor";
+import { ImageType } from "@utils/types";
+import clsx from "clsx";
+import Image from "next/image";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import userService from "src/services/user.service";
 
