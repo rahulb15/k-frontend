@@ -19,6 +19,7 @@
         "@mui/styled-engine-sc": "^6.0.0-alpha.18",
         "@react-three/drei": "^9.105.6",
         "@react-three/fiber": "^8.16.6",
+        "@stripe/stripe-js": "^3.5.0",
         "@sumsub/websdk-react": "^2.2.1",
         "@types/three": "^0.164.0",
         "@walletconnect/qrcode-modal": "^1.8.0",

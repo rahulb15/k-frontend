@@ -35,11 +35,13 @@ import {
 } from "@mui/material";
 import WalletButton from "@containers/wallet-button";
 import TickerHeader from "@layout/ticker-header";
+import { toast } from "react-toastify";
 const Header = ({ className }) => {
     const sticky = useSticky();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
     const { search, searchHandler } = useFlyoutSearch();
     const account = useAccountContext();
+    console.log(account, "account");
     // const [isAuthenticated, setIsAuthenticated] = useState(false);
     // const [ethBalance, setEthBalance] = useState("");
     const [isDropDownEnabled, setIsDropDownEnabled] = useState(false);
@@ -55,17 +57,18 @@ const Header = ({ className }) => {
         setIsDropDownEnabled(false);
     };
 
-    const getUser = async () => {
-        const response = await userService.getUserInit();
-        if (response?.data?.status === "success") {
-            localStorage.setItem("token", response?.data?.token);
-            await account.authWalletConnect(response?.data?.data.walletAddress);
-        }
-    };
+    // const getUser = async () => {
+    //     const response = await userService.getUserInit();
+    //     console.log(response, "response");
+    //     if (response?.data?.status === "success") {
+    //         localStorage.setItem("token", response?.data?.token);
+    //         await account.authWalletConnect(response?.data?.data.walletAddress);
+    //     }
+    // };
 
-    useEffect(() => {
-        getUser();
-    }, []);
+    // useEffect(() => {
+    //     getUser();
+    // }, []);
 
     return (
         <>

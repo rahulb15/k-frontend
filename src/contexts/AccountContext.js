@@ -8,16 +8,49 @@ import {
     NETWORK,
     creationTime,
 } from "../constants/contextConstants";
+import userService from "src/services/user.service";
 
 export const AccountContext = createContext();
 export const AccountProvider = (props) => {
     const [fetchAccountBalance, setFetchAccountBalance] = useState(false);
     const [localRes, setLocalRes] = useState(null);
     const [walletAddressContect, setWalletAddressContect] = useState("");
+    const [user, setUser] = useState({});
+
+    const checkUser = async (token) => {
+        try {
+            const response = await userService.checkUser(token);
+            return response;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const initializeUser = async () => {
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+
+        if (token?.length > 0) {
+            const response = await checkUser(token);
+            console.log("response", response);
+            if (response.data.status === "failed") {
+                console.log("failed");
+                logoutWalletConnect();
+            }
+            if (response.data.status === "success") {
+                console.log("success");
+                setWalletAddressContect(response.data.data.walletAddress);
+                setUser(response.data.data);
+            }
+        }
+    };
+
+
 
     const authWalletConnect = async (walletAddress) => {
         setWalletAddressContect(walletAddress);
         localStorage.setItem("walletAddress", walletAddress);
+        initializeUser();
     };
 
     const logoutWalletConnect = async () => {
@@ -26,13 +59,11 @@ export const AccountProvider = (props) => {
         localStorage.removeItem("token");
     };
 
-    //useEffect check if local storage has wallet address
-    useEffect(() => {
-        const walletAddress = localStorage.getItem("walletAddress");
-        if (walletAddress) {
-            setWalletAddressContect(walletAddress);
-        }
-    }, []);
+ // useEffect to check if local storage has wallet address
+ useEffect(() => {
+   
+    initializeUser();
+}, []);
 
     const setVerifiedAccount = async (accountName) => {
         try {
@@ -68,6 +99,7 @@ export const AccountProvider = (props) => {
         fetchAccountBalance,
         localRes,
         logoutWalletConnect,
+        user,
     };
 
     return (

@@ -131,6 +131,27 @@ export default function ProfileBar({ container }) {
                                     Profile
                                 </span>
                             </Link>
+                            &nbsp;
+
+                            <Link href="/launchpad-list">
+                                <span
+                                    style={{
+                                        fontSize: "22px",
+                                        color: "#f6f6f6",
+                                        marginTop: "10px",
+                                        borderBottom: "1px solid #f6f6f6",
+                                        padding: "10px",
+                                        width: "100%",
+                                        textAlign: "center",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    <ImProfile />
+                                    My Launchpad
+                                </span>
+                            </Link>
+                          
+
                             <span
                                 style={{
                                     fontSize: "22px",

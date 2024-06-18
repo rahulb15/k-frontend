@@ -227,13 +227,59 @@ const getTicker = async () => {
 const getAccessToken = async () => {
     try {
         const response = await axios.get(
-            `${API_URL}user/get-access-token`
+            `${API_URL}verification/get-access-token`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            }
         );
         return response;
     } catch (error) {
         console.error(error);
     }
 };
+
+// checkUser by token
+const checkUser = async (token) => {
+    try {
+        const response = await axios.post(
+            API_URL + "user/check-auth",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// create-verification
+const createVerification = async (body) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + "verification/create",
+            body,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
 
 
 export default {
@@ -253,4 +299,6 @@ export default {
     updateUser,
     getTicker,
     getAccessToken,
+    checkUser,
+    createVerification,
 };

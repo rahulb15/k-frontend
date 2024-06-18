@@ -155,6 +155,7 @@ const ConnectArea = ({ className, space }) => {
         const response = await eckoWalletConnect();
         if (response?.status === "success") {
             toast.success("Ecko Wallet Connected Successfully");
+            console.log("🚀 ~ onEckoWalletConnect ~ response:", response);
             checkUser(response.account.account);
             setLoading(false);
         } else if (response?.status === "error") {
