@@ -14,7 +14,7 @@ const Blog = ({ posts, pagiData }) => (
         <SEO pageTitle="Blog" />
         <Header />
         <main id="main-content">
-            {/* <Breadcrumb pageTitle="Our Blog" currentPage="Our Blog" /> */}
+            <Breadcrumb pageTitle="Our Blog" currentPage="Our Blog" />
             <BlogArea data={{ posts, pagiData }} />
         </main>
         <Footer />

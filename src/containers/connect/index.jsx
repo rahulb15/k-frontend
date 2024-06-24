@@ -63,6 +63,7 @@ const ConnectArea = ({ className, space }) => {
         const user = await userService.getUser(
             kaddress.length > 0 ? kaddress : "null"
         );
+        console.log("🚀 ~ checkUser ~ user:", user);
 
         if (user?.data?.status === "success") {
             setWalletAddress(kaddress);
@@ -252,9 +253,11 @@ const ConnectArea = ({ className, space }) => {
             };
 
             const response = await userService.register(data);
+            console.log("🚀 ~ onSubmit ~ response:", response?.data?.token);
             if (response?.data?.status === "success") {
                 toast.success("User registered successfully");
-                const response = await account.authWalletConnect(walletAddress);
+                localStorage.setItem("token", response?.data?.token);
+                await account.authWalletConnect(walletAddress);
                 router.push("/");
             } else {
                 toast.error("Something went wrong");

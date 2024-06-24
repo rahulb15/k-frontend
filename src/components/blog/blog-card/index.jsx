@@ -16,23 +16,25 @@ const BlogCard = ({
 }) => (
     <div className={clsx("rn-blog", className)} {...rest}>
         <div className="inner">
-            {image?.src && (
+            {console.log("category", category)}
+            {image && (
                 <div className="thumbnail">
                     <Anchor path={`${rootPage}/${slug}`}>
-                        <Image
-                            src={image.src}
-                            alt={image?.alt || "Personal Portfolio Images"}
-                            width={image?.width ? image.width : 489}
-                            height={image?.height ? image.height : 366}
+                        <img
+                            src={image}
+                            alt={title}
+                            width={489}
+                            height={366}
                         />
+
                     </Anchor>
                 </div>
             )}
             <div className="content">
                 <div className="category-info">
                     <div className="category-list">
-                        <Anchor path={`${rootPage}/category/${category.slug}`}>
-                            {category.title}
+                        <Anchor path={`${rootPage}/category/${category}`}>
+                            {category}
                         </Anchor>
                     </div>
                     <div className="meta">

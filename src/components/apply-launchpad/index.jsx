@@ -179,7 +179,9 @@ const ApplyLaunchpadWrapper = () => {
             response?.data?.data?.status
         );
 
-        if (response?.status === 200) {
+        console.log(response?.status, "vvvvvv");
+
+        if (response?.status === 200 || response?.status === 201) {
             const body = {
                 collectionName: formData.collectionName,
                 creatorName: formData.creatorName,
@@ -325,28 +327,28 @@ const ApplyLaunchpadWrapper = () => {
 
                 if (response?.data?.status === "success") {
                     toast.success("Collection updated successfully");
-                    setStep(3);
+                    // setStep(3);
 
-                    // const stripe = await loadStripe(
-                    //     "pk_test_51OeAJVHJ5f4oRHZQGywXAZpVMJsCpgmsIfYFf2XezhXn0Wtx5prHYJjDhTXYxdFv1pGY72uG8wgBcs5yV12708kL00G69kwITz"
-                    // );
-                    // const body = {
-                    //     collectionName: formData.collectionName,
-                    //     mintPrice: formData.mintPrice,
-                    //     mintPriceCurrency: formData.mintPriceCurrency,
-                    //     type: "apply-launchpad",
-                    // };
-                    // console.log("🚀 ~ handleSubmit ~ body:", body);
+                    const stripe = await loadStripe(
+                        "pk_test_51OeAJVHJ5f4oRHZQGywXAZpVMJsCpgmsIfYFf2XezhXn0Wtx5prHYJjDhTXYxdFv1pGY72uG8wgBcs5yV12708kL00G69kwITz"
+                    );
+                    const body = {
+                        collectionName: formData.collectionName,
+                        mintPrice: formData.mintPrice,
+                        mintPriceCurrency: formData.mintPriceCurrency,
+                        type: "apply-launchpad",
+                    };
+                    console.log("🚀 ~ handleSubmit ~ body:", body);
 
-                    // const response =
-                    //     await collectionService.createCheckoutSession(body);
-                    // console.log("🚀 ~ handleSubmit ~ response", response);
-                    // const session = response.data.data;
-                    // console.log("🚀 ~ handleSubmit ~ session", session);
-                    // const result = await stripe.redirectToCheckout({
-                    //     sessionId: session.id,
-                    // });
-                    // console.log("🚀 ~ handleSubmit ~ result", result);
+                    const response =
+                        await collectionService.createCheckoutSession(body);
+                    console.log("🚀 ~ handleSubmit ~ response", response);
+                    const session = response.data.data;
+                    console.log("🚀 ~ handleSubmit ~ session", session);
+                    const result = await stripe.redirectToCheckout({
+                        sessionId: session.id,
+                    });
+                    console.log("🚀 ~ handleSubmit ~ result", result);
                 }
             }
         } else if (step === 3) {

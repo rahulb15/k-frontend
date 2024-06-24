@@ -5,23 +5,34 @@ import Header from "@layout/header/header-01";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
 import BlogArea from "@containers/blog/layout-02";
-import { getAllPosts } from "../../lib/api";
+import { getPostsByCategory, getAllPosts } from "../../../lib/api";
 
-const POSTS_PER_PAGE = 8;
-
-const Blog = ({ posts, pagiData }) => (
+const Blog = ({ posts, title }) => (
     <Wrapper>
         <SEO pageTitle="Blog" />
         <Header />
         <main id="main-content">
-            {/* <Breadcrumb pageTitle="Our Blog" currentPage="Our Blog" /> */}
-            <BlogArea data={{ posts, pagiData }} />
+            <Breadcrumb pageTitle={title} currentPage="Our Blog" />
+            <BlogArea data={{ posts }} />
         </main>
         <Footer />
     </Wrapper>
 );
-export async function getStaticProps() {
-    const posts = getAllPosts([
+
+export async function getStaticPaths() {
+    const posts = getAllPosts(["category"]);
+    return {
+        paths: posts.map(({ category }) => ({
+            params: {
+                category: category.slug,
+            },
+        })),
+        fallback: false,
+    };
+}
+
+export async function getStaticProps({ params }) {
+    const posts = getPostsByCategory(params.category, [
         "title",
         "date",
         "slug",
@@ -32,19 +43,16 @@ export async function getStaticProps() {
 
     return {
         props: {
-            posts: posts.slice(0, POSTS_PER_PAGE),
+            posts,
+            title: params.category,
             className: "template-color-1",
-            pagiData: {
-                currentPage: 1,
-                numberOfPages: Math.ceil(posts.length / POSTS_PER_PAGE),
-            },
         },
     };
 }
 
 Blog.propTypes = {
     posts: PropTypes.arrayOf(PropTypes.shape({})),
-    pagiData: PropTypes.shape({}),
+    title: PropTypes.string,
 };
 
 export default Blog;

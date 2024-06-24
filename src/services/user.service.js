@@ -279,6 +279,18 @@ const createVerification = async (body) => {
     }
 };
 
+// verifyEmail
+const verifyEmail = async (token) => {
+    try {
+        const response = await axios.get(
+            API_URL + `user/verify/${token}`
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 
 
@@ -301,4 +313,5 @@ export default {
     getAccessToken,
     checkUser,
     createVerification,
+    verifyEmail,
 };
