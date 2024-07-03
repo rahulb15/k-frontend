@@ -35,6 +35,7 @@ import {
 } from "@mui/material";
 import WalletButton from "@containers/wallet-button";
 import TickerHeader from "@layout/ticker-header";
+import Canny from "@components/Canny";
 import { toast } from "react-toastify";
 const Header = ({ className }) => {
     const sticky = useSticky();
@@ -70,8 +71,11 @@ const Header = ({ className }) => {
     //     getUser();
     // }, []);
 
+    console.log(account, "account");
+
     return (
         <>
+        {account?.user?._id && <Canny user={account?.user} />}
             <TickerHeader />
             <header
                 className={clsx(
@@ -113,6 +117,23 @@ const Header = ({ className }) => {
                                 </div>
                                 <FlyoutSearchForm isOpen={search} />
                             </div>
+
+                            {/* <a data-canny-link href="https://testkryptomerch.canny.io">
+          Give feedback
+        </a> */}
+
+                            {/* i con for cannny */}
+                            <div className="setting-option rn-icon-list">
+                                <div className="icon-box">
+                                    <a
+                                        data-canny-link
+                                        href="https://testkryptomerch.canny.io"
+                                    >
+                                        <i className="feather-message-circle" />
+                                    </a>
+                                </div>
+                            </div>
+
                             <div className="setting-option rn-icon-list notification-badge">
                                 <div className="icon-box">
                                     <Anchor path={headerData.activity_link}>
@@ -125,7 +146,10 @@ const Header = ({ className }) => {
                             {/* //cart icon */}
                             <div className="setting-option rn-icon-list">
                                 <div className="icon-box">
-                                    <Anchor path={"/cart"} className="cart-link">
+                                    <Anchor
+                                        path={"/cart"}
+                                        className="cart-link"
+                                    >
                                         <i className="feather-shopping-cart" />
                                     </Anchor>
                                 </div>
