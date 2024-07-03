@@ -23,7 +23,7 @@ const VerifyPage = () => {
                 searchParams.get("token")
             );
             console.log("response", response);
-            if (response.data.status === "success") {
+            if (response?.data?.status === "success") {
                 //turn on counter to count 5 seconds to redirect the page
                 const interval = setInterval(() => {
                     setCount((prev) => prev + 1);

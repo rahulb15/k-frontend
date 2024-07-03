@@ -19,7 +19,7 @@ const BlogCard = ({
             {console.log("category", category)}
             {image && (
                 <div className="thumbnail">
-                    <Anchor path={`${rootPage}/${slug}`}>
+                    <Anchor path={`${slug}`}>
                         <img
                             src={image}
                             alt={title}
@@ -45,7 +45,7 @@ const BlogCard = ({
                     </div>
                 </div>
                 <h4 className="title">
-                    <Anchor path={`${rootPage}/${slug}`}>
+                    <Anchor path={`${slug}`}>
                         {title}
                         <i className="feather-arrow-up-right" />
                     </Anchor>

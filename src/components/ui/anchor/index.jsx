@@ -57,7 +57,7 @@ const Anchor = ({
 };
 
 Anchor.defaultProps = {
-    target: "_blank",
+    target: "_self",
     rel: "noopener noreferrer",
 };
 

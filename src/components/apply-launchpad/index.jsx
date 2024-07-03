@@ -330,7 +330,7 @@ const ApplyLaunchpadWrapper = () => {
                     // setStep(3);
 
                     const stripe = await loadStripe(
-                        "pk_test_51OeAJVHJ5f4oRHZQGywXAZpVMJsCpgmsIfYFf2XezhXn0Wtx5prHYJjDhTXYxdFv1pGY72uG8wgBcs5yV12708kL00G69kwITz"
+                        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
                     );
                     const body = {
                         collectionName: formData.collectionName,

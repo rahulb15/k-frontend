@@ -26,7 +26,7 @@ const EditProfileImage = (props) => {
             formData.append(name, file);
             const response = await userService.uploadImage(formData);
             console.log("🚀 ~ uploadImage ~ response", response);
-            if (response.data.status === "success") {
+            if (response?.data?.status === "success") {
                 toast.success("Image Uploaded Successfully");
                 if (name === "profileImage") {
                     setSelectedImage((prev) => ({

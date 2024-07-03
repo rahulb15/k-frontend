@@ -70,7 +70,7 @@ const PersonalInformation = (props) => {
             .updateUser(userInformation)
             .then((response) => {
                 console.log("🚀 ~ onSubmitHandler ~ response", response);
-                if (response.data.status === "success") {
+                if (response?.data?.status === "success") {
                     toast.success("User Updated Successfully");
                 }
             })

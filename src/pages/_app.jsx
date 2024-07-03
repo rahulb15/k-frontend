@@ -7,12 +7,17 @@ import "react-toastify/dist/ReactToastify.css";
 import sal from "sal.js";
 import { Providers } from "src/providers";
 import "../assets/css/bootstrap.min.css";
+import "../assets/css/swal.css";
 import "../assets/css/feather.css";
 import "../assets/css/modal-video.css";
 import "../assets/scss/style.scss";
 import "react-country-state-city/dist/react-country-state-city.css";
 import "../containers/wallet-button/styles.css";
 import "../components/search/styles.css";
+import "sweetalert2/src/sweetalert2.scss";
+import { store, persistor } from "src/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
 
 const MyApp = ({ Component, pageProps }) => {
     const router = useRouter();
@@ -27,12 +32,16 @@ const MyApp = ({ Component, pageProps }) => {
         document.body.className = `${pageProps.className}`;
     });
     return (
-        <ThemeProvider defaultTheme="dark">
-            <ToastContainer />
-            <Providers>
-                <Component {...pageProps} />
-            </Providers>
-        </ThemeProvider>
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <ThemeProvider defaultTheme="dark">
+                    <ToastContainer />
+                    <Providers>
+                        <Component {...pageProps} />
+                    </Providers>
+                </ThemeProvider>
+            </PersistGate>
+        </Provider>
     );
 };
 

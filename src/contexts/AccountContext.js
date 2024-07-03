@@ -33,11 +33,11 @@ export const AccountProvider = (props) => {
         if (token?.length > 0) {
             const response = await checkUser(token);
             console.log("response", response);
-            if (response.data.status === "failed") {
+            if (response?.data?.status === "failed") {
                 console.log("failed");
                 logoutWalletConnect();
             }
-            if (response.data.status === "success") {
+            if (response?.data?.status === "success") {
                 console.log("success");
                 setWalletAddressContect(response.data.data.walletAddress);
                 setUser(response.data.data);
