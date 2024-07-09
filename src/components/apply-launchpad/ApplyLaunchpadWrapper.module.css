@@ -3,7 +3,8 @@
 .formWrapper {
     max-width: 800px;
     margin: 0 auto;
-    color: #f0f0f0;
+    color: transparent;
+    margin-bottom: 8%;
   }
   
   .inner {
@@ -14,9 +15,17 @@
   }
   
   .formTitle {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
     text-align: center;
-    margin-bottom: 30px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
     color: #f0f0f0;
+    border-bottom: 1px solid #b9a003;
+    
   }
   
   .form {

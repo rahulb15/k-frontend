@@ -1,18 +1,26 @@
-/* eslint-disable */
+// Your Search component file
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { setSearchFocus } from 'src/features/searchSlice';
 import { Input } from "./Input";
-import { Refresh } from "./Refresh";
 
 const Search = () => {
-    const [count, setCount] = useState(0);
+    const inputRef = useRef(null);
+    const isSearchFocused = useSelector(state => state.search?.isSearchFocused);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (isSearchFocused && inputRef.current) {
+            inputRef.current.focus();
+            dispatch(setSearchFocus(false)); // Reset the focus state
+        }
+    }, [isSearchFocused, dispatch]);
+
     return (
-        <>
-            {/* <Refresh onClick={() => setCount(count + 1)} /> */}
-            <div className="example-container">
-                <Input key={count} />
-            </div>
-        </>
+        <div className="example-container">
+            <Input ref={inputRef} />
+        </div>
     );
 };
 

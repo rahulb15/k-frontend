@@ -128,6 +128,27 @@
         padding: 18px;
         background: var(--background-color-1);
         border-radius: 5px;
+        transition: all 0.15s ease; // Faster transition
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid var(--color-primary-alta);
+            border-radius: 7px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.15s ease; // Faster transition
+        }
+
+        &:hover::before {
+            opacity: 1;
+            animation: rotate 8s linear infinite; // Slower rotation
+        }
+
         .collection-big-thumbnail {
             overflow: hidden;
             border-radius: 5px;
@@ -136,6 +157,7 @@
                 object-fit: cover;
                 width: 100%;
                 height: auto;
+                max-height: 300px;
                 transition: var(--transition);
             }
         }
@@ -207,15 +229,15 @@
                 transition: var(--transition);
 
                 &:hover {
-                    color: var(--color-primary);
+                    animation: textColorRotate 8s linear infinite;
                 }
             }
 
             span {
                 &.items {
-                    padding: 5px 8px;
+                    padding: 7px 10px;
                     background: var(--color-primary-alta);
-                    border-radius: 3px;
+                    border-radius: 5px;
                     color: var(--color-white);
                     transition: var(--transition);
 
@@ -233,7 +255,56 @@
                     transform: scale(1.1);
                 }
             }
+            .collection-deg {
+                h6 {
+                    // Remove the previous gradient effect
+                    // background: none;
+                    // -webkit-background-clip: initial;
+                    // -webkit-text-fill-color: initial;
+
+                    // // Apply the color rotation animation
+                    // animation: textColorRotate 8s linear infinite;
+                }
+                span {
+                    color: var(--color-primary-alta);
+                }
+            }
+
+            .collection-footer {
+                .collection-item {
+                    span {
+                        color: var(--color-primary-alta);
+                    }
+                }
+            }
         }
+    }
+}
+
+@keyframes textColorRotate {
+    0% {
+        color: hsl(49, 100%, 50%);
+    }
+    25% {
+        color: hsl(76, 100%, 50%);
+    }
+    50% {
+        color: hsl(180, 100%, 50%);
+    }
+    75% {
+        color: hsl(251, 62%, 52%);
+    }
+    100% {
+        color: hsl(49, 100%, 50%);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+    100% {
+        filter: hue-rotate(360deg);
     }
 }
 
@@ -291,9 +362,7 @@
     }
 }
 
-
-.horizontal-line
-{
+.horizontal-line {
     width: 100%;
     height: 1px;
     background: var(--color-primary-alta2);

@@ -18,9 +18,14 @@ import "sweetalert2/src/sweetalert2.scss";
 import { store, persistor } from "src/store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useDispatch } from "react-redux";
+import { setSearchFocus } from "src/features/searchSlice"; // Make sure to import this
 
-const MyApp = ({ Component, pageProps }) => {
+const AppContent = ({ Component, pageProps }) => {
     const router = useRouter();
+    const dispatch = useDispatch();
+
     useEffect(() => {
         sal({ threshold: 0.1, once: true });
     }, [router.asPath]);
@@ -28,18 +33,49 @@ const MyApp = ({ Component, pageProps }) => {
     useEffect(() => {
         sal();
     }, []);
+
     useEffect(() => {
         document.body.className = `${pageProps.className}`;
     });
+
+    useHotkeys("ctrl+shift+s", (event) => {
+        console.log("Hotkey triggered");
+        event.preventDefault();
+        dispatch(setSearchFocus(true));
+    });
+
+    useHotkeys("esc", (event) => {
+        console.log("Hotkey triggered");
+        event.preventDefault();
+        dispatch(setSearchFocus(false));
+    });
+
+    useHotkeys("ctrl+shift+l", (event) => {
+        console.log("Hotkey triggered");
+        event.preventDefault();
+        router.push("/launchpad");
+    });
+    useHotkeys("ctrl+shift+c", (event) => {
+        console.log("Hotkey triggered");
+        event.preventDefault();
+        router.push("/connect");
+    });
+
+    return (
+        <ThemeProvider defaultTheme="dark">
+            <ToastContainer />
+            <Providers>
+                <Component {...pageProps} />
+            </Providers>
+        </ThemeProvider>
+    );
+};
+
+const MyApp = ({ Component, pageProps }) => {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-                <ThemeProvider defaultTheme="dark">
-                    <ToastContainer />
-                    <Providers>
-                        <Component {...pageProps} />
-                    </Providers>
-                </ThemeProvider>
+                <AppContent Component={Component} pageProps={pageProps} />
             </PersistGate>
         </Provider>
     );

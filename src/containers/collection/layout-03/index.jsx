@@ -51,7 +51,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                     aria-label="scrollable auto tabs example"
                     TabIndicatorProps={{
                         style: {
-                            backgroundColor: "#D97D54",
+                            backgroundColor: "#ffd700",
                         },
                     }}
                     sx={{
@@ -74,7 +74,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                             fontSize: "16px",
                             color: "#757575", // color for unselected tabs
                             "&.Mui-selected": {
-                                color: "#D97D54",
+                                color: "#ffd700",
                                 fontWeight: "bold",
                             },
                         }}
@@ -86,7 +86,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                             fontSize: "16px",
                             color: "#757575", // color for unselected tabs
                             "&.Mui-selected": {
-                                color: "#D97D54",
+                                color: "#ffd700",
                                 fontWeight: "bold",
                             },
                         }}
@@ -98,7 +98,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                             fontSize: "16px",
                             color: "#757575", // color for unselected tabs
                             "&.Mui-selected": {
-                                color: "#D97D54",
+                                color: "#ffd700",
                                 fontWeight: "bold",
                             },
                         }}

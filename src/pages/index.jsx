@@ -1,13 +1,13 @@
 import SEO from "@components/seo";
 import CreatorArea from "@containers/creator/layout-01";
 import ExploreProductArea from "@containers/explore-product/layout-02";
-import HeroArea from "@containers/hero/layout-06";
 import ServiceArea from "@containers/services/layout-01";
 import TopCollection from "@containers/top-collection";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";
+import HomeHeroArea from "@containers/home-hero";
 
 // Demo data
 import TrendingArea from "@containers/trending";
@@ -21,27 +21,75 @@ export async function getStaticProps() {
 }
 
 const Home = () => {
-    const content = normalizedData(homepageData?.content || []);
+    const content1 = normalizedData(homepageData?.content || []);
+    const content = [
+        {
+            id: 1,
+            title: "Kryptomerch Marketplace",
+            description:
+                "Kryptomerch is a decentralized marketplace for NFTs, digital assets, and collectibles. Buy, sell, and discover exclusive digital assets.",
+            buttons: [
+                { id: 1, path: "/login", content: "Get Started" },
+                // {
+                //     id: 2,
+                //     path: "/launchpad/kadena/priority-pass",
+                //     color: "primary-alta",
+                //     content: "Mint",
+                // },
+            ],
+            image: { src: "/assets-images/AI-cover/AI-3.jpeg" },
+        },
+        {
+            id: 2,
+            title: "Lots of NFTs",
+            description: "Buy, sell, and discover exclusive digital assets.",
+            buttons: [
+                { id: 1, path: "/login", content: "Get Started" },
+                // {
+                //     id: 2,
+                //     path: "/launchpad/kadena/priority-pass",
+                //     color: "primary-alta",
+                //     content: "Mint",
+                // },
+            ],
+            image: { src: "/assets-images/AI-cover/AI-4.jpeg" },
+        },
+        {
+            id: 3,
+            title: "Unique Collections",
+            description: "Collect unique digital assets from creators around the world.",
+            buttons: [
+                { id: 1, path: "/login", content: "Get Started" },
+                // {
+                //     id: 2,
+                //     path: "/launchpad/kadena/priority-pass",
+                //     color: "primary-alta",
+                //     content: "Mint",
+                // },
+            ],
+            image: { src: "/assets-images/AI-cover/AI-5.jpeg" },
+        },
+    ];
     return (
         <Wrapper>
             <SEO pageTitle="Home" />
             <Header />
             <main id="main-content">
-                <HeroArea data={content["hero-section"]} />
+                <HomeHeroArea data={content} />
                 <CreatorArea
                     data={{
-                        ...content["top-sller-section"],
+                        ...content1["top-sller-section"],
                         creators: sellerData,
                     }}
                 />
                 <TrendingArea data={{ ranking: rankingData }} />
                 <ExploreProductArea
                     data={{
-                        ...content["explore-product-section"],
+                        ...content1["explore-product-section"],
                         products: productData,
                     }}
                 />
-                <ServiceArea data={content["service-section"]} />
+                <ServiceArea data={content1["service-section"]} />
 
                 <TopCollection
                     space={4}

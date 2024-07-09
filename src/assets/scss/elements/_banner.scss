@@ -514,6 +514,7 @@
         .banner-read-thumb-lg {
             padding: 20px 50px;
             position: relative;
+            z-index: 2; /* Ensure this is higher than the overlay */
             @media #{$sm-layout} {
                 padding: 20px 30px;
             }
@@ -558,7 +559,60 @@
                     max-width: 100%;
                 }
             }
+            .banner-read-thumb-lg__title {
+                // font-size: 30px;
+                // font-weight: 400;
+                // margin-bottom: 15px;
+                color: #ffd700;
+                font-weight: 700;
+                line-height: 40px;
+                display: block;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+                border-radius: 5px;
+                text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+                @media #{$md-layout} {
+                    font-size: 24px;
+                }
+                @media #{$sm-layout} {
+                    font-size: 24px;
+                }
+                @media #{$large-mobile} {
+                    font-size: 20px;
+                }
+            }
+            .banner-read-thumb-lg__description
+            {
+                font-size: 18px;
+                color: #fff8d1;
+                margin-bottom: 30px;
+                text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                font-weight: 700;
+                // line-height: 20px;
+
+                @media #{$md-layout} {
+                    font-size: 16px;
+                }
+                @media #{$sm-layout} {
+                    font-size: 16px;
+                }
+                @media #{$large-mobile} {
+                    font-size: 14px;
+                }
+            }
+
         }
+    }
+    .slide::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60%; /* Adjust the width of the overlay as needed */
+        height: 100%;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 50%);
+        z-index: 1;
     }
 
     &.slick-arrow-between {

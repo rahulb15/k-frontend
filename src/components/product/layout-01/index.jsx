@@ -10,6 +10,7 @@ import Button from "@ui/button";
 import { ImageType } from "@utils/types";
 import PlaceBidModal from "@components/modals/placebid-modal";
 
+
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
 });

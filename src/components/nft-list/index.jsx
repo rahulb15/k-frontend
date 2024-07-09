@@ -13,6 +13,16 @@ import { SectionTitleType, ProductType } from "@utils/types";
 import FilterButton from "@ui/filter-button";
 import ProductFilter from "@components/product-filter/layout-01";
 import { slideToggle } from "@utils/methods";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        "aria-controls": `simple-tabpanel-${index}`,
+    };
+}
 
 function reducer(state, action) {
     switch (action.type) {
@@ -27,6 +37,8 @@ function reducer(state, action) {
     }
 }
 const NftListArea = ({ className, space, data }) => {
+    const [value, setValue] = useState(0);
+
     console.log(data);
     const filters = [
         ...new Set(
@@ -41,6 +53,25 @@ const NftListArea = ({ className, space, data }) => {
     useEffect(() => {
         setProducts(data?.products);
     }, [data?.products]);
+
+    useEffect(() => {
+        switch (value) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+    }, [value]);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const filterHandler2 = (filterKey) => {
         const prods = data?.products ? [...data.products] : [];
@@ -123,6 +154,9 @@ const NftListArea = ({ className, space, data }) => {
     useEffect(() => {
         itemFilterHandler();
     }, [itemFilterHandler]);
+
+    const overview = `<p>The NFT collection is a collection of unique digital art pieces that are created by the kryptomerch team. Each NFT is unique and has its own story. The collection is a limited edition and only a few pieces are available. The NFTs are created using the latest technology and are stored on the blockchain. Each NFT comes with a certificate of authenticity and is signed by the artist. The NFT collection is a great way to own a piece of digital art that is unique and valuable.</p>`;
+
     return (
         <div
             className={clsx(
@@ -133,27 +167,121 @@ const NftListArea = ({ className, space, data }) => {
         >
             <div className="container">
                 <div className="col-lg-12">
-                    <motion.div layout className="isotope-list item-5">
-                        {products?.slice(0, 10)?.map((prod) => (
-                            <motion.div
-                                key={prod.id}
-                                className={clsx("grid-item")}
-                                layout
-                            >
-                                <Product
-                                    placeBid={!!data.placeBid}
-                                    title={prod.title}
-                                    slug={prod.slug}
-                                    latestBid={prod.latestBid}
-                                    price={prod.price}
-                                    likeCount={prod.likeCount}
-                                    image={prod.images?.[0]}
-                                    authors={prod.authors}
-                                    bitCount={prod.bitCount}
-                                />
-                            </motion.div>
-                        ))}
-                    </motion.div>
+                    {/* <div className="row">
+                    <div className="col-12 mb--50">
+                    <h3
+        className={clsx("title", className)}
+        data-sal-delay="150"
+        data-sal={"slide-up"}
+        data-sal-duration="800"
+        dangerouslySetInnerHTML={{ __html: "NFT" }}
+    />
+                    </div>
+                </div> */}
+
+                    <Box sx={{ width: "100%", marginBottom: "30px" }}>
+                        <Tabs
+                            value={value}
+                            onChange={handleChange}
+                            aria-label="basic tabs example"
+                            sx={{
+                                "& .MuiTab-root": {
+                                    color: "#888",
+                                    fontSize: "small",
+                                    "&.Mui-selected": {
+                                        color: "#a9b729c9",
+                                        fontSize: "large",
+                                    },
+                                },
+                                "& .MuiTabs-indicator": {
+                                    backgroundColor: "#a9b729c9",
+                                },
+                            }}
+                        >
+                            <Tab label="Overview" {...a11yProps(0)} />
+                            <Tab label="Nft's" {...a11yProps(1)} />
+                            {/* <Tab label="Team" {...a11yProps(2)} /> */}
+                            {/* <Tab label="Kryptomerch" {...a11yProps(3)} /> */}
+                        </Tabs>
+                    </Box>
+                    {/* horizontal line */}
+                    <div
+                        style={{
+                            width: "100%",
+                            height: "1px",
+                            backgroundColor: "#a9b729c9",
+                            marginBottom: "30px",
+                        }}
+                    ></div>
+
+                    {value === 0 && (
+                        //overview page with description of collection
+                        <motion.div
+                            layout
+                            className="isotope-list item-5"
+                            style={{ display: "flex", flexDirection: "column" }}
+                        >
+                            <div className={clsx("grid-item")}>
+                                <h3
+                                    style={{
+                                        color: "#a9b729c9",
+                                        fontSize: "x-large",
+                                    }}
+                                >
+                                    Overview
+                                </h3>
+                                {/* <p>
+                                        The NFT collection is a collection of
+                                        unique digital art pieces that are
+                                        created by the Kryptomind team. Each NFT
+                                        is unique and has its own story. The
+                                        collection is a limited edition and only
+                                        a few pieces are available. The NFTs are
+                                        created using the latest technology and
+                                        are stored on the blockchain. Each NFT
+                                        comes with a certificate of authenticity
+                                        and is signed by the artist. The NFT
+                                        collection is a great way to own a piece
+                                        of digital art that is unique and
+                                        valuable.
+                                    </p> */}
+
+                                <p
+                                    style={{
+                                        fontSize: "large",
+                                        textAlign: "justify",
+                                    }}
+                                    dangerouslySetInnerHTML={{
+                                        __html: overview,
+                                    }}
+                                ></p>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {value === 1 && (
+                        <motion.div layout className="isotope-list item-5">
+                            {products?.slice(0, 10)?.map((prod) => (
+                                <motion.div
+                                    key={prod.id}
+                                    className={clsx("grid-item")}
+                                    layout
+                                >
+                                    <Product
+                                        placeBid={!!data.placeBid}
+                                        title={prod.title}
+                                        slug={prod.slug}
+                                        latestBid={prod.latestBid}
+                                        price={prod.price}
+                                        likeCount={prod.likeCount}
+                                        image={prod.images?.[0]}
+                                        authors={prod.authors}
+                                        bitCount={prod.bitCount}
+                                    />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
                 </div>
             </div>
         </div>

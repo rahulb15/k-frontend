@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
@@ -13,12 +14,13 @@ const colors = {
     [Validity.Invalid]: (opacity) => `rgba(255, 0, 85, ${opacity})`,
 };
 
-export const Input = () => {
+export const Input = forwardRef((props, ref) => {
     const [validity, setValidity] = useState(Validity.Neutral);
     const color = colors[validity];
 
     return (
         <motion.input
+        ref={ref}
             initial={false}
             animate={{
                 boxShadow: `0 0 0 5px ${color(0.7)}, 0 0 0 4px ${color(0)}`,
@@ -44,4 +46,7 @@ export const Input = () => {
             }}
         />
     );
-};
+});
+
+
+Input.displayName = 'Input';

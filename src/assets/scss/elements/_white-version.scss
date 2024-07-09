@@ -36,7 +36,6 @@ html[data-theme="light"] body {
     textarea,
     .nice-select .current,
     .nice-select .option,
-    .rn-collection-inner-one .collection-wrapper .collection-deg span.items,
     .footer-list-one .single-list a,
     .rn-icon-list .icon-box > a,
     .mainmenu-nav .mainmenu li a,
@@ -118,6 +117,13 @@ html[data-theme="light"] body {
     .rn-search-mobile.form-group input {
         color: var(--color-light-body);
     }
+
+        .rn-collection-inner-one .collection-wrapper .collection-deg span.items .collection-footer .collection-item span{
+        color: var(--color-light-body);
+        }
+
+
+
 
     .rbt-single-widget.widget_categories ul li a:hover span {
         color: var(--color-primary);
@@ -316,7 +322,7 @@ html[data-theme="light"] body {
         background: var(--color-white);
     }
 
-    .rn-collection-inner-one .collection-wrapper .collection-deg span.items,
+    .rn-collection-inner-one .collection-wrapper .collection-deg span.items .collection-footer .collection-item span
     .form-wrapper-one.form-create .nice-select.open .list {
         background: var(--color-gray-2);
     }
@@ -675,7 +681,6 @@ html[data-theme="light"] body .rn-header.sticky {
 
 html[data-theme="light"] body .product-style-one,
 html[data-theme="light"] body .rn-service-one,
-html[data-theme="light"] body .rn-collection-inner-one .collection-wrapper,
 html[data-theme="light"] body .slider-style-2 .single-slide .inner,
 html[data-theme="light"] body .slider-style-3 .slide-small-wrapper,
 html[data-theme="light"] body .tab-button-one .nav-tabs,
@@ -683,6 +688,14 @@ html[data-theme="light"] body nav.pagination-wrapper .pagination,
 html[data-theme="light"] body .product-tab-nav .nav {
     background: var(--color-white);
 }
+
+html[data-theme="light"] body .rn-collection-inner-one .collection-wrapper
+{
+    color: var(--color-light-heading);
+    background: var(--color-white);
+
+}
+
 
 html[data-theme="light"] body .nice-select::after {
     border-bottom: 2px solid var(--color-light-heading);

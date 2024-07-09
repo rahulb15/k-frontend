@@ -11,6 +11,7 @@ import SumsubWebSdk from "@sumsub/websdk-react";
 import { toast } from "react-toastify";
 import { loadStripe } from "@stripe/stripe-js";
 import { useAccountContext } from "src/contexts";
+import { motion } from "framer-motion";
 
 // const applicantEmail = "rahul.baghel15@gmail.com";
 // const applicantPhone = "9999999998";
@@ -404,7 +405,7 @@ const ApplyLaunchpadWrapper = () => {
     };
 
     const renderStage1Form = () => (
-        <div className={styles.formWrapper}>
+        // <div className={styles.formWrapper}>
             <div
                 className={styles.inner}
                 style={{
@@ -769,11 +770,11 @@ const ApplyLaunchpadWrapper = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        // </div>
     );
 
     const renderStage2Form = () => (
-        <div className={styles.formWrapper}>
+        // <div className={styles.formWrapper}>
             <div
                 className={styles.inner}
                 style={{
@@ -1443,12 +1444,12 @@ const ApplyLaunchpadWrapper = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        // </div>
     );
 
     //3 stage to get wallet address by input field and submit for Payment
     const renderStage3Form = () => (
-        <div className={styles.formWrapper}>
+        // <div className={styles.formWrapper}>
             <div
                 className={styles.inner}
                 style={{
@@ -1498,14 +1499,25 @@ const ApplyLaunchpadWrapper = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        // </div>
     );
 
     console.log("account", account?.user);
 
     return (
         <>
-            <div>
+                <div className={styles.formWrapper}>
+
+            <motion.div
+                whileHover={{
+                    scale: 1.01,
+                    transition: { duration: 0.1 },
+                }}
+                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                // className=Z{styles.container}
+            >
                 {step === 1
                     ? renderStage1Form()
                     : step === 2
@@ -1513,6 +1525,7 @@ const ApplyLaunchpadWrapper = () => {
                     : step === 3
                     ? renderStage3Form()
                     : null}
+            </motion.div>
             </div>
 
             <Modal

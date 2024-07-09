@@ -37,6 +37,13 @@ import WalletButton from "@containers/wallet-button";
 import TickerHeader from "@layout/ticker-header";
 import Canny from "@components/Canny";
 import { toast } from "react-toastify";
+import AnimatedCursor from "react-animated-cursor"
+import dynamic from 'next/dynamic'
+const MouseParticles = dynamic(() => import('react-mouse-particles'), {
+    ssr: false,
+  })
+  
+
 const Header = ({ className }) => {
     const sticky = useSticky();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
@@ -77,6 +84,23 @@ const Header = ({ className }) => {
         <>
         {account?.user?._id && <Canny user={account?.user} />}
             <TickerHeader />
+            {/* <MouseParticles
+        g={1}
+        color="random"
+        cull="MuiSvgIcon-root,MuiButton-root"
+        level={6}
+      /> */}
+            {/* <AnimatedCursor
+                innerSize={8}
+                outerSize={8}
+                color='193, 11, 111'
+                outerAlpha={0.2}
+                innerScale={0.7}
+                outerScale={5}
+            /> */}
+
+
+
             <header
                 className={clsx(
                     "rn-header haeder-default black-logo-version header--fixed header--sticky",
