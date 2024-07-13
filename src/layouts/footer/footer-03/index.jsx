@@ -9,12 +9,20 @@ import axios from "axios";
 import SettingsModal from "@components/SettingsModal";
 import { useRouter } from "next/router";
 import Image from "next/image";
-
+import AnimatedCursor from "react-animated-cursor";
+import dynamic from "next/dynamic";
+const MouseParticles = dynamic(() => import("react-mouse-particles"), {
+    ssr: false,
+});
 const Footer = () => {
     const router = useRouter();
     const [prices, setPrices] = useState({ solana: 0, kda: 0 });
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+
+    const [mouseEffects, setMouseEffects] = useState("none");
+    const [mouseEffectSparkles, setMouseEffectSparkles] = useState(false);
+    const [mouseEffectBubbles, setMouseEffectBubbles] = useState(false);
 
     const toggleSettings = () => {
         setShowSettings(!showSettings);
@@ -167,8 +175,6 @@ const Footer = () => {
                                     width={15}
                                     height={15}
                                 />
-
-
                             </span>
                             <span style={{ color: "#fff" }}>
                                 {" "}
@@ -199,7 +205,32 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <SettingsModal isOpen={showSettings} onClose={toggleSettings} />
+            <SettingsModal
+                isOpen={showSettings}
+                onClose={toggleSettings}
+                mouseEffects={mouseEffects}
+                setMouseEffects={setMouseEffects}
+                setMouseEffectSparkles={setMouseEffectSparkles}
+                setMouseEffectBubbles={setMouseEffectBubbles}
+            />
+            {mouseEffectSparkles && (
+                <MouseParticles
+                    g={1}
+                    color="random"
+                    cull="MuiSvgIcon-root,MuiButton-root"
+                    level={6}
+                />
+            )}
+            {mouseEffectBubbles && (
+                <AnimatedCursor
+                    innerSize={8}
+                    outerSize={8}
+                    color="193, 11, 111"
+                    outerAlpha={0.2}
+                    innerScale={0.7}
+                    outerScale={5}
+                />
+            )}
         </div>
     );
 };

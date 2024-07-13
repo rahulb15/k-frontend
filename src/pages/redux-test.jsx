@@ -1,66 +1,118 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+// src/components/LaunchpadComponent.js
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCollectionRequestMutation } from 'src/services/launchpad.service';
 import {
   setCollectionRequestName,
   setCollectionRequestSymbol,
-  // ... import other action creators
-  collectionRequest,
-  // ... import other async thunks
-} from '../features/launchpadSlice';
+  setCollectionRequestCreator,
+  setLastRequestResult,
+  // ... other action imports
+} from 'src/features/launchpadSlice';
 
-const ReduxTest = () => {
+function LaunchpadComponent() {
   const dispatch = useDispatch();
   const {
     collectionRequestName,
     collectionRequestSymbol,
-    // ... other state properties
-    loading,
-    error,
-  } = useSelector((state) => state.launchpad);
+    collectionRequestCreator,
+    lastRequestResult,
+    // ... other state fields
+  } = useSelector(state => state.launchpad);
 
-  useEffect(() => {
-    // Your useEffect logic here
-  }, []);
+  const [collectionRequest, { isLoading, isError, error }] = useCollectionRequestMutation();
 
-  const handleCollectionRequestForm = async (event) => {
-    event.preventDefault();
-    dispatch(collectionRequest({
-      name: collectionRequestName,
-      symbol: collectionRequestSymbol,
-      // ... other properties
-    }));
+  const handleNameChange = (e) => {
+    dispatch(setCollectionRequestName(e.target.value));
   };
 
-  // ... other handler functions
+  const handleSymbolChange = (e) => {
+    dispatch(setCollectionRequestSymbol(e.target.value));
+  };
+
+  const handleCreatorChange = (e) => {
+    dispatch(setCollectionRequestCreator(e.target.value));
+  };
+
+
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await collectionRequest({
+        collectionRequestName,
+        collectionRequestSymbol,
+        collectionRequestCreator,
+        // ... other form data
+      }).unwrap();
+      dispatch(setLastRequestResult(result));
+      // Handle success (e.g., show a success message)
+    } catch (err) {
+      dispatch(setLastRequestResult(err));
+      // Handle error
+    }
+  };
+
+
+  // const {
+  //   collectionRequestName,
+  //   collectionRequestSymbol,
+  //   collectionRequestCreator,
+  //   collectionRequestDescription,
+  //   collectionRequestCategory,
+  //   collectionRequestSupply,
+  //   collectionRequestUriList,
+  //   collectionRequestMintPrice,
+  //   collectionRequestRoyalityPerc,
+  //   collectionRequestCoverImgUrl,
+  //   collectionRequestBannerImgUrl,
+  //   collectionRequestStartDate,
+  //   collectionRequesEndDate,
+  //   collectionRequestEnableFreeMint,
+  //   collectionRequestEnableWl,
+  //   collectionRequestEnablePresale,
+  //   collectionRequestEnableAirdrop,
+  //   collectionRequestPolicy,
+  //   wallet
+  // } = args;
 
   return (
-    <div>
-      {/* Your JSX here */}
-      <form onSubmit={handleCollectionRequestForm}>
-        <input
-          value={collectionRequestName}
-          onChange={(e) => dispatch(setCollectionRequestName(e.target.value))}
-        />
-    
-    <p>Collection Request Symbol</p>
-    <input
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={collectionRequestName}
+        onChange={handleNameChange}
+        placeholder="Collection Name"
+      />
+      <input
+        type="text"
         value={collectionRequestSymbol}
-        onChange={(e) => dispatch(setCollectionRequestSymbol(e.target.value))}
-        />
-        
-{/* ... value */}
-<span>{collectionRequestSymbol}</span>
-<br />
-<span>{collectionRequestName}</span>
+        onChange={handleSymbolChange}
+        placeholder="Collection Symbol"
+      />
+
+      <input
+        type="text"
+        value={collectionRequestCreator}
+        onChange={handleCreatorChange}
+        placeholder="Collection Creator"
+      />
 
 
 
-        <button type="submit" disabled={loading}>Submit</button>
-      </form>
-      {error && <p>Error: {error}</p>}
-      {/* ... rest of your component JSX */}
-    </div>
+
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? 'Submitting...' : 'Submit Collection Request'}
+      </button>
+      {isError && <div>Error: {error.message}</div>}
+      {lastRequestResult && (
+        <div>
+          Last Request Result: {JSON.stringify(lastRequestResult)}
+        </div>
+      )}
+    </form>
   );
-};
+}
 
-export default ReduxTest;
+export default LaunchpadComponent;

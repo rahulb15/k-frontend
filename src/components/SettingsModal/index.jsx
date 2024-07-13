@@ -1,10 +1,23 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 
-const SettingsModal = ({ isOpen, onClose }) => {
+const SettingsModal = ({ isOpen, onClose,mouseEffects, setMouseEffects, setMouseEffectSparkles, setMouseEffectBubbles }) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const [activeTab, setActiveTab] = useState("GENERAL");
+ 
 
+    useEffect(() => {
+        if (mouseEffects === "none") {
+            setMouseEffectSparkles(false);
+            setMouseEffectBubbles(false);
+        } else if (mouseEffects === "sparkles") {
+            setMouseEffectSparkles(true);
+            setMouseEffectBubbles(false);
+        } else if (mouseEffects === "bubbles") {
+            setMouseEffectBubbles(true);
+            setMouseEffectSparkles(false);
+        }
+    }, [mouseEffects]);
 
     useEffect(() => {
         if (isOpen) {
@@ -22,12 +35,11 @@ const SettingsModal = ({ isOpen, onClose }) => {
             }`}
         >
             <div className={`settings-modal ${isAnimating ? "animating" : ""}`}>
-            <button className="close-button" onClick={onClose}>
-                        <IoClose />
-                    </button>
+                <button className="close-button" onClick={onClose}>
+                    <IoClose />
+                </button>
                 <div className="settings-modal-header">
                     <h2>App Settings</h2>
-                
                 </div>
                 <div className="settings-modal-content">
                     <div className="settings-tabs">
@@ -48,6 +60,27 @@ const SettingsModal = ({ isOpen, onClose }) => {
                     </div>
                     {activeTab === "GENERAL" && (
                         <div className="settings-general">
+
+                            {/* //mouseEffect */}
+                            <div className="settings-section">
+                                <h3>Mouse Effects</h3>
+                                <select
+                                    value={mouseEffects}
+                                    onChange={(e) =>
+                                        setMouseEffects(e.target.value)
+                                    }
+                                >
+                                    <option value="none">None</option>
+                                    <option value="sparkles">Sparkles</option>
+                                    <option value="bubbles">Bubbles</option>
+                                </select>
+                               
+                            </div>
+
+
+
+
+
                             <div className="settings-section">
                                 <h3>RARITY</h3>
                                 <select defaultValue="default">

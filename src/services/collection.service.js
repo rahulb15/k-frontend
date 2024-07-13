@@ -97,10 +97,33 @@ const checkTransaction = async (session_id) => {
 };
 
 
+//uploadImage
+const uploadImage = async (formData,name) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + "launch-collection/upload-image/"+name,
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
 export default {
     launchCollection,
     updateCollection,
     getCollection,
     createCheckoutSession,
     checkTransaction,
+    uploadImage
 };

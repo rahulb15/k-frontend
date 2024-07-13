@@ -444,6 +444,7 @@ const Launchpad = () => {
       ];
       const collectionRequestMintPrice = 1.0;
       const collectionRequestRoyalityPerc = 10;
+      const collectionRequestRoyalityAddress = "";
       const collectionRequestCoverImgUrl = "";
       const collectionRequestBannerImgUrl = "";
       const collectionRequestStartDate = "";
@@ -466,6 +467,7 @@ const Launchpad = () => {
         collectionRequestUriList,
         collectionRequestMintPrice,
         collectionRequestRoyalityPerc,
+        collectionRequestRoyalityAddress,
         collectionRequestCoverImgUrl,
         collectionRequestBannerImgUrl,
         collectionRequestStartDate,
@@ -499,6 +501,7 @@ const Launchpad = () => {
       ]
                                                         1.0
                                                         ${collectionRequestRoyalityPerc}
+                                                        ${JSON.stringify(collectionRequestRoyalityAddress)}
                                                         ${JSON.stringify(collectionRequestCoverImgUrl)}
                                                         ${JSON.stringify(collectionRequestBannerImgUrl)}
                                                         ${JSON.stringify(collectionRequestStartDate)}

@@ -5,11 +5,13 @@ import storage from 'redux-persist/lib/storage'
 import authReducer from 'src/features/authSlice'
 import searchReducer from 'src/features/searchSlice'
 import launchpadReducer from 'src/features/launchpadSlice';
+import { launchpadApi } from 'src/services/launchpad.service'
 
 const rootReducer = combineReducers({
     auth: authReducer,
     search: searchReducer,
-    launchpad: launchpadReducer
+    launchpad: launchpadReducer,
+    [launchpadApi.reducerPath]: launchpadApi.reducer,
 })
 
 const persistConfig = {
@@ -38,7 +40,7 @@ export const store = configureStore({
                 // ignoredActionPaths: ['register'],
                 // ignoredPaths: ['auth.register'],
             },
-        }).concat(loggerMiddleware),
+        }).concat(loggerMiddleware, launchpadApi.middleware),
 })
 
 export const persistor = persistStore(store)

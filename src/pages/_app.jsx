@@ -21,7 +21,8 @@ import { Provider } from "react-redux";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useDispatch } from "react-redux";
 import { setSearchFocus } from "src/features/searchSlice"; // Make sure to import this
-
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 const AppContent = ({ Component, pageProps }) => {
     const router = useRouter();
     const dispatch = useDispatch();
@@ -65,7 +66,9 @@ const AppContent = ({ Component, pageProps }) => {
         <ThemeProvider defaultTheme="dark">
             <ToastContainer />
             <Providers>
-                <Component {...pageProps} />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Component {...pageProps} />
+                </LocalizationProvider>
             </Providers>
         </ThemeProvider>
     );
