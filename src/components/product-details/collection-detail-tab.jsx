@@ -28,8 +28,8 @@ const CollectionDetailTab = ({ image }) => (
                       
                     >
                                 <Image
-                                    src={image.src}
-                                    alt={image?.alt || "Product"}
+                                    src={image}
+                                    alt={"Product"}
                                     width={560}
                                     height={560}
                                     priority

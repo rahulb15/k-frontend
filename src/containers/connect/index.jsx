@@ -540,9 +540,9 @@ const ConnectArea = ({ className, space }) => {
                                         <Wallet
                                             title="EckoWallet"
                                             description="Easiest way to connect your wallet"
-                                            bgcolor="purple"
+                                            bgcolor="#ec7064"
                                             color="#1f2654"
-                                            icon="/wallet/eckowallet1.svg"
+                                            icon="/wallet/eckowallet.png"
                                             onClick={() =>
                                                 onEckoWalletConnect()
                                             }

@@ -15,9 +15,16 @@ import { motion } from "framer-motion";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
 import ErrorText from "@ui/error-text";
-import { MutatingDots } from "react-loader-spinner";
+import Loader from "@components/loader";
 import { useDispatch, useSelector } from "react-redux";
 import { useCollectionRequestMutation } from "src/services/launchpad.service";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Chip from "@mui/material/Chip";
+import { MutatingDots } from "react-loader-spinner";
+import { useTheme } from "@mui/material/styles";
 import {
     setCollectionRequestName,
     setCollectionRequestSymbol,
@@ -41,9 +48,35 @@ import {
     setCollectionRequestPolicy,
     setWalletName,
 } from "src/features/launchpadSlice";
+import moment from "moment";
 
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+            backgroundColor: "#242435",
+            color: "#fff",
+        },
+    },
+};
+
+const policies = ["COLLECTION", "INSTANT-MINT", "MARKETPLACE", "FIXED-SALE"];
+
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
 const shakeAnimation = {
     shake: {
         x: [0, -10, 10, -10, 10, 0],
@@ -54,13 +87,22 @@ const shakeAnimation = {
 };
 
 const ApplyLaunchpadWrapper = ({ className, space }) => {
+    const theme = useTheme();
     const dispatch = useDispatch();
     const [collectionRequest, { isLoading, isError, error }] =
         useCollectionRequestMutation();
     const account = useAccountContext();
-    console.log(account);
     const [step, setStep] = useState(1);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({
+        creatorName: "",
+        twitter: "",
+        discord: "",
+        instagram: "",
+        website: "",
+        contractType: "",
+        tokenList: "",
+        mintPriceCurrency: "kda",
+    });
     const [accessToken, setAccessToken] = useState("");
     const [selectedBannerImage, setSelectedBannerImage] = useState();
     const [selectedImage, setSelectedImage] = useState();
@@ -68,10 +110,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [shake, setShake] = useState(false);
     const [kycStatus, setKycStatus] = useState(false);
     const [open, setOpen] = useState(false);
-    const [collectionName, setCollectionName] = useState("");
     const [imageCoverLoading, setImageCoverLoading] = useState(false);
     const [imageBannerLoading, setImageBannerLoading] = useState(false);
     const [selectedWallet, setSelectedWallet] = useState(null);
+    const [collectionData, setCollectionData] = useState({});
     const {
         collectionRequestName,
         collectionRequestSymbol,
@@ -94,11 +136,17 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         collectionRequestPolicy,
         walletName,
     } = useSelector((state) => state.launchpad);
+    const [policy, setPolicy] = React.useState([]);
 
-    console.log(
-        "🚀 ~ file: ApplyLaunchpadWrapper.js ~ line 86 ~ ApplyLaunchpadWrapper ~ selectedWallet",
-        selectedWallet
-    );
+    const handlePolicyChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setPolicy(
+            // On autofill we get a stringified value.
+            typeof value === "string" ? value.split(",") : value
+        );
+    };
 
     const wallets = [
         { name: "Stripe", src: "/wallet/Stripe.svg", width: 200, height: 200 },
@@ -120,85 +168,295 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         handleSubmit,
         formState: { errors },
         reset,
+        watch,
+        setValue,
     } = useForm({
         mode: "onChange",
     });
 
+    const collectionName = watch("collectionName");
+    const creatorName = watch("creatorName");
+    const creatorEmail = watch("creatorEmail");
+    const creatorWallet = watch("creatorWallet");
+    const projectDescription = watch("projectDescription");
+    const projectCategory = watch("projectCategory");
+    const expectedLaunchDate = watch("expectedLaunchDate");
+    const mintPrice = watch("mintPrice");
+    const mintPriceCurrency = watch("mintPriceCurrency");
+    const royaltyPercentage = watch("royaltyPercentage");
+    const mintStartDate = watch("mintStartDate");
+    const mintStartTime = watch("mintStartTime");
+    const mintEndDate = watch("mintEndDate");
+    const mintEndTime = watch("mintEndTime");
+    const tokenList = watch("tokenList");
+    const royaltyAddress = watch("royaltyAddress");
+    const allowFreeMints = watch("allowFreeMints");
+    const enableWhitelist = watch("enableWhitelist");
+    const enablePresale = watch("enablePresale");
+    const enableAirdrop = watch("enableAirdrop");
+
+    useEffect(() => {
+        console.log("watch", watch("collectionName"));
+        dispatch(setCollectionRequestName(watch("collectionName")));
+    }, [collectionName]);
+
+    useEffect(() => {
+        console.log("watch", watch("creatorName"));
+        setFormData({ ...formData, creatorName: watch("creatorName") });
+    }, [creatorName]);
+
+    useEffect(() => {
+        console.log("watch", watch("creatorWallet"));
+        dispatch(setCollectionRequestCreator(watch("creatorWallet")));
+    }, [creatorWallet]);
+
+    useEffect(() => {
+        console.log("watch", watch("projectDescription"));
+        dispatch(setCollectionRequestDescription(watch("projectDescription")));
+    }, [projectDescription]);
+
+    useEffect(() => {
+        console.log("watch", watch("projectCategory"));
+        dispatch(
+            setCollectionRequestCategory(
+                watch("projectCategory")?.toUpperCase()
+            )
+        );
+    }, [projectCategory]);
+
+    useEffect(() => {
+        console.log("watch", watch("expectedLaunchDate"));
+        dispatch(setCollectionRequestStartDate(watch("expectedLaunchDate")));
+    }, [expectedLaunchDate]);
+
+    useEffect(() => {
+        console.log("watch", watch("mintPrice"));
+        dispatch(setCollectionRequestMintPrice(watch("mintPrice")));
+    }, [mintPrice]);
+
+    useEffect(() => {
+        console.log("watch", watch("royaltyPercentage"));
+        dispatch(setCollectionRequestRoyalityPerc(watch("royaltyPercentage")));
+    }, [royaltyPercentage]);
+
+    useEffect(() => {
+        console.log("watch", watch("mintStartTime"));
+
+        const mintStartDate = moment(
+            `${watch("mintStartDate")} ${watch("mintStartTime")}`
+        ).format("YYYY-MM-DDTHH:mm:ss");
+        const formattedStartDate = `time "${mintStartDate}Z"`;
+        console.log("formattedDate", formattedStartDate);
+
+        dispatch(setCollectionRequestStartDate(formattedStartDate));
+    }, [mintStartTime]);
+
+    useEffect(() => {
+        console.log("watch", watch("mintEndTime"));
+        const mintEndDate = moment(
+            `${watch("mintEndDate")} ${watch("mintEndTime")}`
+        ).format("YYYY-MM-DDTHH:mm:ss");
+        const formattedEndDate = `time "${mintEndDate}Z"`;
+        console.log("formattedEndDate", formattedEndDate);
+
+        dispatch(setCollectionRequesEndDate(formattedEndDate));
+    }, [mintEndTime]);
+
+    useEffect(() => {
+        console.log("watch", watch("tokenList"));
+        dispatch(
+            setCollectionRequestUriList(
+                watch("tokenList")
+                    ?.split(",")
+                    ?.map((token) => token.replace(/"/g, "").trim())
+            )
+        );
+
+        //totalSupply
+        setValue(
+            "totalSupply",
+            watch("tokenList")
+                ?.split(",")
+                .map((token) => token.replace(/"/g, "").trim()).length
+        );
+
+        dispatch(
+            setCollectionRequestSupply(
+                watch("tokenList")
+                    ?.split(",")
+                    ?.map((token) => token.replace(/"/g, "").trim()).length
+            )
+        );
+    }, [tokenList]);
+
+    useEffect(() => {
+        console.log("watch", watch("royaltyAddress"));
+        dispatch(setCollectionRequestRoyalityAddress(watch("royaltyAddress")));
+    }, [royaltyAddress]);
+
+    useEffect(() => {
+        console.log("watch", watch("allowFreeMints"));
+        dispatch(setCollectionRequestEnableFreeMint(watch("allowFreeMints")));
+    }, [allowFreeMints]);
+
+    useEffect(() => {
+        console.log("watch", watch("enableWhitelist"));
+        dispatch(setCollectionRequestEnableWl(watch("enableWhitelist")));
+    }, [enableWhitelist]);
+
+    useEffect(() => {
+        console.log("watch", watch("enablePresale"));
+        dispatch(setCollectionRequestEnablePresale(watch("enablePresale")));
+    }, [enablePresale]);
+
+    useEffect(() => {
+        console.log("watch", watch("enableAirdrop"));
+        dispatch(setCollectionRequestEnableAirdrop(watch("enableAirdrop")));
+    }, [enableAirdrop]);
+
+    useEffect(() => {
+        console.log("policy", policy);
+        const newPolicy = policy.toString().replace(/,/g, " ");
+        console.log("newPolicy", newPolicy);
+
+        dispatch(setCollectionRequestPolicy(newPolicy));
+    }, [policy]);
+
+    useEffect(() => {
+        console.log("selectedWallet", selectedWallet);
+        dispatch(setWalletName(selectedWallet));
+    }, [selectedWallet]);
+
+    //contract
+    const contractType = watch("contractType");
+    useEffect(() => {
+        console.log("watch", watch("contractType"));
+        setFormData({ ...formData, contractType });
+    }, [contractType]);
+
+    //twitter
+    const twitter = watch("twitter");
+    useEffect(() => {
+        console.log("watch", watch("twitter"));
+        setFormData({ ...formData, twitter });
+    }, [twitter]);
+
+    //discord
+    const discord = watch("discord");
+    useEffect(() => {
+        console.log("watch", watch("discord"));
+        setFormData({ ...formData, discord });
+    }, [discord]);
+
+    //instagram
+    const instagram = watch("instagram");
+    useEffect(() => {
+        console.log("watch", watch("instagram"));
+        setFormData({ ...formData, instagram });
+    }, [instagram]);
+
+    //website
+    const website = watch("website");
+    useEffect(() => {
+        console.log("watch", watch("website"));
+        setFormData({ ...formData, website });
+    }, [website]);
+
     const imageChange = (e) => {
         console.log("🚀 ~ imageChange ~ e", e);
         if (e.target.files && e.target.files.length > 0) {
-            // setSelectedImage(e.target.files[0]);
-            uploadImage("coverImage", e.target.files[0]);
+            setSelectedImage(e.target.files[0]);
+            // uploadImage("coverImage", e.target.files[0]);
         }
     };
     const imageBannerChange = (e) => {
         console.log("🚀 ~ imageBannerChange ~ e", e);
         if (e.target.files && e.target.files.length > 0) {
-            // setSelectedBannerImage(e.target.files[0]);
-            uploadImage("profileImage", e.target.files[0]);
+            setSelectedBannerImage(e.target.files[0]);
+            // uploadImage("profileImage", e.target.files[0]);
         }
     };
 
-    useEffect(() => {
-        if (formData && step === 2) {
-            dispatch(setCollectionRequestName(formData.collectionName));
-            dispatch(setCollectionRequestCreator(formData.creatorWallet));
-            dispatch(setCollectionRequestSymbol(""));
-            dispatch(
-                setCollectionRequestDescription(formData.projectDescription)
-            );
-            dispatch(
-                setCollectionRequestCategory(
-                    formData.projectCategory?.toUpperCase()
-                )
-            );
-            dispatch(
-                setCollectionRequestStartDate(formData.expectedLaunchDate)
-            );
-            dispatch(
-                setCollectionRequestUriList([
-                    "ipfs://bafkreifabzsykcr23o2xyzovys6olid63oaxrb3i3byzz32caklymlvm5u",
-                    "ipfs://bafkreic5iyftd6mus6o7llctwpgxyarkcxzz55jiptayot3rya6y3y5teu",
-                    "ipfs://bafkreid3gpivbqhqcjvpcol5l7zpn4oj2na5dthygsrlkdxyjmnm4qaqta",
-                    "ipfs://bafkreicm7uen4kb3y7nwoexrsx7sre6ckfmtbfufslidbesfsbzfi2lguy",
-                ])
-            );
-            dispatch(setCollectionRequestMintPrice(formData.mintPrice));
-            dispatch(
-                setCollectionRequestRoyalityPerc(formData.royaltyPercentage)
-            );
-            dispatch(setCollectionRequestStartDate(formData.mintStartDate));
-            dispatch(setCollectionRequesEndDate(""));
-            dispatch(setCollectionRequestSupply(4));
-            dispatch(setCollectionRequestCoverImgUrl(formData.coverImage));
-            dispatch(setCollectionRequestBannerImgUrl(formData.profileImage));
-            dispatch(
-                setCollectionRequestRoyalityAddress(
-                    "k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069"
-                )
-            );
+    // useEffect(() => {
+    // "ipfs://bafkreifabzsykcr23o2xyzovys6olid63oaxrb3i3byzz32caklymlvm5u","ipfs://bafkreic5iyftd6mus6o7llctwpgxyarkcxzz55jiptayot3rya6y3y5teu","ipfs://bafkreid3gpivbqhqcjvpcol5l7zpn4oj2na5dthygsrlkdxyjmnm4qaqta","ipfs://bafkreicm7uen4kb3y7nwoexrsx7sre6ckfmtbfufslidbesfsbzfi2lguy"
+    //     console.log("formData", formData);
+    //     if (formData && step === 2) {
+    //         dispatch(setCollectionRequestName(formData.collectionName));
+    //         dispatch(setCollectionRequestCreator(formData.creatorWallet));
+    //         dispatch(setCollectionRequestSymbol(""));
+    //         dispatch(
+    //             setCollectionRequestDescription(formData.projectDescription)
+    //         );
+    //         dispatch(
+    //             setCollectionRequestCategory(
+    //                 formData.projectCategory?.toUpperCase()
+    //             )
+    //         );
+    //         dispatch(
+    //             setCollectionRequestStartDate(formData.expectedLaunchDate)
+    //         );
+    //         dispatch(
+    //             // setCollectionRequestUriList([
+    //             //     "ipfs://bafkreifabzsykcr23o2xyzovys6olid63oaxrb3i3byzz32caklymlvm5u",
+    //             //     "ipfs://bafkreic5iyftd6mus6o7llctwpgxyarkcxzz55jiptayot3rya6y3y5teu",
+    //             //     "ipfs://bafkreid3gpivbqhqcjvpcol5l7zpn4oj2na5dthygsrlkdxyjmnm4qaqta",
+    //             //     "ipfs://bafkreicm7uen4kb3y7nwoexrsx7sre6ckfmtbfufslidbesfsbzfi2lguy",
+    //             // ])
+    //             setCollectionRequestUriList(formData?.tokenList?.split(',').map(token => token.replace(/"/g, '').trim()))
+    //         );
+    //         dispatch(setCollectionRequestMintPrice(formData.mintPrice));
+    //         dispatch(
+    //             setCollectionRequestRoyalityPerc(formData.royaltyPercentage)
+    //         );
 
-            dispatch(
-                setCollectionRequestEnableFreeMint(formData.allowFreeMints)
-            );
-            dispatch(setCollectionRequestEnableWl(formData.enableWhitelist));
-            dispatch(setCollectionRequestEnablePresale(formData.enablePresale));
-            dispatch(setCollectionRequestEnableAirdrop(formData.enableAirdrop));
-            dispatch(
-                setCollectionRequestPolicy(
-                    "COLLECTION INSTANT-MINT MARKETPLACE FIXED-SALE"
-                )
-            );
-        }
-        console.log("selectedWallet", selectedWallet);
+    //         // add date and time
+    //         // formData.mintStartTime add in mintStartDate
+    //         //  make this format tpe = (time "2024-03-22T14:00:00Z")
+    //         const mintStartDate = moment( `${formData.mintStartDate} ${formData.mintStartTime}`).format("YYYY-MM-DDTHH:mm:ss");
+    //         const formattedStartDate = `time "${mintStartDate}Z"`;
+    //         console.log("formattedDate", formattedStartDate);
 
-        if (selectedWallet !== "Stripe") {
-            dispatch(setWalletName(selectedWallet));
-        }
-    }, [formData]);
+    //         const mintEndDate = moment( `${formData.mintEndDate} ${formData.mintEndTime}`).format("YYYY-MM-DDTHH:mm:ss");
+    //         const formattedEndDate = `time "${mintEndDate}Z"`;
+    //         console.log("formattedEndDate", formattedEndDate);
 
-    const handleWalletSubmit = async (e) => {
-        e.preventDefault();
+    //         dispatch(setCollectionRequestStartDate(formattedStartDate));
+    //         dispatch(setCollectionRequesEndDate(formattedEndDate));
+    //         dispatch(setCollectionRequestSupply(formData?.tokenList?.split(',').map(token => token.replace(/"/g, '').trim()).length));
+    //         dispatch(setCollectionRequestCoverImgUrl(formData.coverImage));
+    //         dispatch(setCollectionRequestBannerImgUrl(formData.profileImage));
+    //         dispatch(
+    //             // setCollectionRequestRoyalityAddress(
+    //             //     "k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069"
+    //             // )
+    //             setCollectionRequestRoyalityAddress(formData.royaltyAddress)
+    //         );
+
+    //         dispatch(
+    //             setCollectionRequestEnableFreeMint(formData.allowFreeMints)
+    //         );
+    //         dispatch(setCollectionRequestEnableWl(formData.enableWhitelist));
+    //         dispatch(setCollectionRequestEnablePresale(formData.enablePresale));
+    //         dispatch(setCollectionRequestEnableAirdrop(formData.enableAirdrop));
+    //         dispatch(
+    //             setCollectionRequestPolicy(
+    //                 "COLLECTION INSTANT-MINT MARKETPLACE FIXED-SALE"
+    //             )
+    //             // setCollectionRequestPolicy(policy.toString())
+    //         );
+    //     }
+    //     console.log("selectedWallet", selectedWallet);
+
+    //     if (selectedWallet !== "Stripe") {
+    //         dispatch(setWalletName(selectedWallet));
+    //     }
+    // }, [formData]);
+
+    console.log("formData", formData);
+
+    const handleWalletSubmit = async (data) => {
+        
+        console.log(data);
         try {
             const result = await collectionRequest({
                 collectionRequestName,
@@ -223,64 +481,25 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 walletName,
             }).unwrap();
             dispatch(setLastRequestResult(result));
-            // Handle success (e.g., show a success message)
+            if (result.result.status === "success") {
+                const body = {
+                    paymentId: result.reqKey,
+                    paymentStatus: "paid",
+                    paymentAmount: 1,
+                    paymentCurrency: "kda",
+                    paymentDate: new Date(),
+                    paymentMethod: "wallet",
+                    paymentDescription: "collection creation",
+                    paymentUserRole: "user",
+                    order_id: data._id,
+                    order_type: "apply-launchpad",
+                    type: "wallet",
+                };
+                const response = await collectionService.createCheckoutSession(
+                    body
+                );
 
-            // {
-            //     "gas": 1575,
-            //     "result": {
-            //         "status": "success",
-            //         "data": true
-            //     },
-            //     "reqKey": "MHsV1sNWTwE2rEVjvS3W5coWYZ89arO0xLt2BnQFzHQ",
-            //     "logs": "wsATyGqckuIvlm89hhd2j4t6RMkCrcwJe_oeCYr7Th8",
-            //     "events": [
-            //         {
-            //             "params": [
-            //                 "k:23aeee7b47d93716ebd03da536b319ae8114ba17c784d75681a4eb4731f970d3",
-            //                 "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf",
-            //                 1
-            //             ],
-            //             "name": "TRANSFER",
-            //             "module": {
-            //                 "namespace": null,
-            //                 "name": "coin"
-            //             },
-            //             "moduleHash": "klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s"
-            //         },
-            //         {
-            //             "params": [
-            //                 "n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db",
-            //                 "k:23aeee7b47d93716ebd03da536b319ae8114ba17c784d75681a4eb4731f970d3"
-            //             ],
-            //             "name": "CREATE-COLLECTION",
-            //             "module": {
-            //                 "namespace": "free",
-            //                 "name": "lptest001"
-            //             },
-            //             "moduleHash": "6xil_OFd2dN9I_EcdULZS-2s4CUwFT8noxHO9Vc5dMI"
-            //         }
-            //     ],
-            //     "metaData": {
-            //         "publicMeta": {
-            //             "creationTime": 1720774992,
-            //             "ttl": 28800,
-            //             "gasLimit": 150000,
-            //             "chainId": "1",
-            //             "gasPrice": 1e-8,
-            //             "sender": "k:23aeee7b47d93716ebd03da536b319ae8114ba17c784d75681a4eb4731f970d3"
-            //         },
-            //         "blockTime": 1720775000079985,
-            //         "prevBlockHash": "8FcTHQ7PhXfSHwd_7ad_vLtBud7OWny3rijOUI8ZLVw",
-            //         "blockHeight": 4459606
-            //     },
-            //     "continuation": null,
-            //     "txId": null
-            // }
-
-
-
-
-            if(result.result.status === "success") {
+                console.log("🚀 ~ handleWalletSubmit ~ response", response);
                 Swal.fire({
                     title: "Success",
                     text: "Collection Created Successfully",
@@ -288,64 +507,92 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     confirmButtonText: "Cool",
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        dispatch(setCollectionRequestName(""));
+                        dispatch(setCollectionRequestSymbol(""));
+                        dispatch(setCollectionRequestCreator(""));
+                        dispatch(setCollectionRequestDescription(""));
+                        dispatch(setCollectionRequestCategory(""));
+                        dispatch(setCollectionRequestSupply(0));
+                        dispatch(setCollectionRequestUriList([]));
+                        dispatch(setCollectionRequestMintPrice(0));
+                        dispatch(setCollectionRequestRoyalityPerc(0));
+                        dispatch(setCollectionRequestRoyalityAddress(""));
+                        dispatch(setCollectionRequestCoverImgUrl(""));
+                        dispatch(setCollectionRequestBannerImgUrl(""));
+                        dispatch(setCollectionRequestStartDate(""));
+                        dispatch(setCollectionRequesEndDate(""));
+                        dispatch(setCollectionRequestEnableFreeMint(false));
+                        dispatch(setCollectionRequestEnableWl(false));
+                        dispatch(setCollectionRequestEnablePresale(false));
+                        dispatch(setCollectionRequestEnableAirdrop(false));
+                        dispatch(setCollectionRequestPolicy(""));
+                        dispatch(setWalletName(""));
                         window.location.href = "/apply-launchpad";
                     }
-                }
-                );
-
-
-
-
+                });
             }
-
-
-
-
         } catch (err) {
             dispatch(setLastRequestResult(err));
             // Handle error
         }
     };
 
+    const createCollectionRequest = async () => {
+        const body = {
+            collectionName: collectionRequestName,
+            creatorName: account?.user?.name,
+            creatorEmail: account?.user?.email,
+            creatorWallet: creatorWallet,
+            projectDescription: collectionRequestDescription,
+            projectCategory: collectionRequestCategory,
+            expectedLaunchDate: expectedLaunchDate,
+            twitter: formData.twitter,
+            discord: formData.discord,
+            instagram: formData.instagram,
+            website: formData.website,
+            contractType: formData.contractType,
+            totalSupply: collectionRequestSupply,
+            mintPrice: collectionRequestMintPrice,
+            mintPriceCurrency: mintPriceCurrency,
+            royaltyPercentage: collectionRequestRoyalityPerc,
+            mintStartDate: collectionRequestStartDate,
+            mintStartTime: collectionRequestStartDate,
+            allowFreeMints: collectionRequestEnableFreeMint,
+            enableWhitelist: collectionRequestEnableWl,
+            enablePresale: collectionRequestEnablePresale,
+            enableAirdrop: collectionRequestEnableAirdrop,
+            royaltyAddress: collectionRequestRoyalityAddress,
+            policy: collectionRequestPolicy,
+            tokenList: collectionRequestUriList,
+        };
+
+        console.log("🚀 ~ createCollectionRequest ~ body", body);
+
+        const response = await collectionService.launchCollection(body);
+        if (response?.data?.status === "success") {
+            if (selectedImage) {
+                await uploadImage("coverImage", selectedImage);
+            }
+            if (selectedBannerImage) {
+                await uploadImage("profileImage", selectedBannerImage);
+            }
+            console.log("🚀 ~ createCollectionRequest ~ response", response);
+
+            // setCollectionData(response.data.data);
+            return response;
+        } else {
+            if (response?.data?.message === "Conflict") {
+                toast.error("Collection with this name already exists");
+            }
+        }
+    };
+
     const onSubmit = async (data, e) => {
         const { target } = e;
-        const submitBtn =
-            target.localName === "span" ? target.parentElement : target;
-        console.log("🚀 ~ onSubmit ~ data", data);
-
         if (kycStatus) {
             if (step === 1) {
-                const body = {
-                    collectionName: data.collectionName,
-                    creatorName: data.creatorName,
-                    creatorEmail: data.creatorEmail,
-                    creatorWallet: data.creatorWallet,
-                    projectDescription: data.projectDescription,
-                    projectCategory: data.projectCategory,
-                    expectedLaunchDate: data.expectedLaunchDate,
-                    twitter: data.twitter,
-                    discord: data.discord,
-                    instagram: data.instagram,
-                    website: data.website,
-                };
-
-                const response = await collectionService.launchCollection(body);
-                if (response?.data?.status === "success") {
-                    console.log(
-                        "🚀 ~ handleSubmit ~ response.data",
-                        response.data
-                    );
-                    toast.success("Collection launched successfully");
-                    setCollectionName(data.collectionName);
-                    setFormData(data);
-                    setStep(2);
-                } else {
-                    if (response?.data?.message === "Conflict") {
-                        toast.error("Collection with this name already exists");
-                    }
-                }
+                setStep(2);
             }
-
             if (step === 2) {
                 if (!selectedImage || !selectedBannerImage) {
                     setHasImageError(true);
@@ -358,45 +605,16 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     return;
                 }
 
-                const body = {
-                    contractType: data.contractType,
-                    totalSupply: data.totalSupply,
-                    mintPrice: data.mintPrice,
-                    mintPriceCurrency: data.mintPriceCurrency,
-                    royaltyPercentage: data.royaltyPercentage,
-                    mintStartDate: data.mintStartDate,
-                    mintStartTime: data.mintStartTime,
-                    allowFreeMints: data.allowFreeMints,
-                    enableWhitelist: data.enableWhitelist,
-                    enablePresale: data.enablePresale,
-                    enableAirdrop: data.enableAirdrop,
-                };
-
-                const response = await collectionService.updateCollection(
-                    body,
-                    data.collectionName
-                );
-                console.log("🚀 ~ handleSubmit ~ response", response);
-                if (response?.data?.status === "success") {
-                    toast.success("Collection updated successfully");
-                    // setFormData((prev) => ({ ...prev, ...data }));
-
-                    // data and images
-                    setFormData((prev) => ({
-                        ...prev,
-                        ...data,
-                        profileImage: response.data.data.collectionBannerImage,
-                        coverImage: response.data.data.collectionCoverImage,
-                    }));
-
-                    if (selectedWallet === "Stripe") {
+                if (selectedWallet === "Stripe") {
+                    const responsecreate = await createCollectionRequest();
+                    if (responsecreate?.data?.status === "success") {
                         const stripe = await loadStripe(
                             process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
                         );
                         const body = {
-                            collectionName: formData.collectionName,
-                            mintPrice: formData.mintPrice,
-                            mintPriceCurrency: formData.mintPriceCurrency,
+                            collectionName: collectionRequestName,
+                            mintPrice: collectionRequestMintPrice,
+                            mintPriceCurrency: mintPriceCurrency,
                             type: "apply-launchpad",
                         };
                         const response =
@@ -406,12 +624,17 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                             sessionId: session.id,
                         });
                     }
-                    if (selectedWallet === "EckoWallet" || selectedWallet === "Chainweaver") {
-                        console.log("EckoWallet");
-                        handleWalletSubmit(e);
+                }
+                if (
+                    selectedWallet === "EckoWallet" ||
+                    selectedWallet === "Chainweaver"
+                ) {
+                    console.log("EckoWallet");
+
+                    const createResponse = await createCollectionRequest();
+                    if (createResponse?.data?.status === "success") {
+                        handleWalletSubmit(createResponse.data.data);
                     }
-                } else {
-                    console.log("failed");
                 }
             }
         } else {
@@ -434,18 +657,27 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             formData.append(name, file);
             const response = await collectionService.uploadImage(
                 formData,
-                collectionName
+                collectionRequestName
             );
             console.log("🚀 ~ uploadImage ~ response", response);
             if (response?.data?.status === "success") {
-                toast.success("Image Uploaded Successfully");
                 if (name === "coverImage") {
                     setSelectedImage(file);
                     setImageCoverLoading(false);
+                    dispatch(
+                        setCollectionRequestCoverImgUrl(
+                            response.data.data.collectionCoverImage
+                        )
+                    );
                 }
                 if (name === "profileImage") {
                     setSelectedBannerImage(file);
                     setImageBannerLoading(false);
+                    dispatch(
+                        setCollectionRequestBannerImgUrl(
+                            response.data.data.collectionBannerImage
+                        )
+                    );
                 }
             } else {
                 toast.error("Image Upload Failed");
@@ -464,10 +696,14 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     };
 
     useEffect(() => {
-        console.log("account", account);
         if (account?.user?.verified) {
             setKycStatus(true);
         }
+        reset({
+            creatorName: account?.user?.name,
+            creatorEmail: account?.user?.email,
+            creatorWallet: account?.user?.walletAddress,
+        });
     }, [account]);
 
     const handleKyc = async (e) => {
@@ -502,6 +738,65 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         } else {
             toast.error("Oops! Something went wrong. Please try again later.");
         }
+    };
+
+    const updateCollectionRequest = async () => {
+        // const body = {
+        //     contractType: data.contractType,
+        //     totalSupply: data.totalSupply,
+        //     mintPrice: data.mintPrice,
+        //     mintPriceCurrency: data.mintPriceCurrency,
+        //     royaltyPercentage: data.royaltyPercentage,
+        //     mintStartDate: data.mintStartDate,
+        //     mintStartTime: data.mintStartTime,
+        //     allowFreeMints: data.allowFreeMints,
+        //     enableWhitelist: data.enableWhitelist,
+        //     enablePresale: data.enablePresale,
+        //     enableAirdrop: data.enableAirdrop,
+        // };
+        // const response = await collectionService.updateCollection(
+        //     body,
+        //     data.collectionName
+        // );
+        // console.log("🚀 ~ handleSubmit ~ response", response);
+        // if (response?.data?.status === "success") {
+        //     toast.success("Collection updated successfully");
+        //     // setFormData((prev) => ({ ...prev, ...data }));
+        //     // data and images
+        //     setFormData((prev) => ({
+        //         ...prev,
+        //         ...data,
+        //         profileImage: response.data.data.collectionBannerImage,
+        //         coverImage: response.data.data.collectionCoverImage,
+        //         id: response.data.data._id,
+        //     }));
+        //     if (selectedWallet === "Stripe") {
+        //         const stripe = await loadStripe(
+        //             process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        //         );
+        //         const body = {
+        //             collectionName: formData.collectionName,
+        //             mintPrice: formData.mintPrice,
+        //             mintPriceCurrency: formData.mintPriceCurrency,
+        //             type: "apply-launchpad",
+        //         };
+        //         const response =
+        //             await collectionService.createCheckoutSession(body);
+        //         const session = response.data.data;
+        //         const result = await stripe.redirectToCheckout({
+        //             sessionId: session.id,
+        //         });
+        //     }
+        //     if (
+        //         selectedWallet === "EckoWallet" ||
+        //         selectedWallet === "Chainweaver"
+        //     ) {
+        //         console.log("EckoWallet");
+        //         handleWalletSubmit(e);
+        //     }
+        // } else {
+        //     console.log("failed");
+        // }
     };
 
     const renderStage1Form = () => (
@@ -626,6 +921,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 <input
                                                     id="creatorName"
                                                     placeholder="e. g. `John Doe`"
+                                                    // value={account?.user?.name}
                                                     {...register(
                                                         "creatorName",
                                                         {
@@ -656,6 +952,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 <input
                                                     id="creatorEmail"
                                                     placeholder="e. g. `abc@example.com`"
+                                                    // value={account?.user?.email}
                                                     {...register(
                                                         "creatorEmail",
                                                         {
@@ -663,6 +960,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                                 "Creator Email is required",
                                                         }
                                                     )}
+                                                    disabled={
+                                                        account?.user?.email
+                                                            ? true
+                                                            : false
+                                                    }
                                                 />
                                                 {errors.creatorEmail && (
                                                     <ErrorText>
@@ -686,6 +988,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 <input
                                                     id="creatorWallet"
                                                     placeholder="e. g. `k:0x1234567890`"
+                                                    // value={account?.user?.walletAddress}
                                                     {...register(
                                                         "creatorWallet",
                                                         {
@@ -700,6 +1003,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                                 "Wallet Address is required",
                                                         }
                                                     )}
+                                                    disabled={
+                                                        account?.user
+                                                            ?.walletAddress
+                                                            ? true
+                                                            : false
+                                                    }
                                                 />
                                                 {errors.creatorWallet && (
                                                     <ErrorText>
@@ -776,13 +1085,34 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                         Select a category
                                                     </option>
                                                     <option value="art">
-                                                        Art
+                                                        Art & Collectibles
                                                     </option>
                                                     <option value="photography">
                                                         Photography
                                                     </option>
                                                     <option value="gaming">
                                                         Gaming
+                                                    </option>
+                                                    <option value="music">
+                                                        Music & Audio
+                                                    </option>
+                                                    <option value="virtual">
+                                                        Virtual Real Estate
+                                                    </option>
+                                                    <option value="fashion">
+                                                        Fashion & Accessories
+                                                    </option>
+                                                    <option value="sports">
+                                                        Sports
+                                                    </option>
+                                                    <option value="utility">
+                                                        Utility & Memberships
+                                                    </option>
+                                                    <option value="domains">
+                                                        Domains & Virtual Assets
+                                                    </option>
+                                                    <option value="real">
+                                                        Real World Assets
                                                     </option>
                                                 </select>
                                                 {errors.projectCategory && (
@@ -1179,6 +1509,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             </label>
                                             <input
                                                 id="totalSupply"
+                                                // value={[formData.tokenList].length || 0}
                                                 type="number"
                                                 {...register("totalSupply", {
                                                     pattern: {
@@ -1223,6 +1554,23 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                         "Mint Price is required",
                                                 })}
                                             />
+
+                                            {errors.mintPrice && (
+                                                <ErrorText>
+                                                    {errors.mintPrice?.message}
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="mintPriceCurrency"
+                                                className="form-label"
+                                            >
+                                                Mint Price Currency
+                                            </label>
                                             <select
                                                 id="mintPriceCurrency"
                                                 name="mintPriceCurrency"
@@ -1230,7 +1578,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     padding: "10px",
                                                     borderRadius: "5px",
                                                     border: "1px solid #363545",
-                                                    marginTop: "10px",
                                                     marginBottom: "10px",
                                                     height: "50px",
                                                     backgroundColor: "#242435",
@@ -1239,18 +1586,234 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     "mintPriceCurrency"
                                                 )}
                                             >
-                                                <option value="kda">
-                                                    {" "}
-                                                    KDA{" "}
-                                                </option>
-                                                <option value="matic">
-                                                    MATIC
-                                                </option>
+                                                <option value="kda">KDA</option>
+                                                <option value="usd">USD</option>
                                             </select>
 
-                                            {errors.mintPrice && (
+                                            {errors.mintPriceCurrency && (
                                                 <ErrorText>
-                                                    {errors.mintPrice?.message}
+                                                    {
+                                                        errors.mintPriceCurrency
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="mintStartDate"
+                                                className="form-label"
+                                            >
+                                                Mint Start Date
+                                            </label>
+                                            <input
+                                                id="mintStartDate"
+                                                type="date"
+                                                {...register("mintStartDate", {
+                                                    required:
+                                                        "Mint Start Date is required",
+                                                })}
+                                            />
+
+                                            {errors.mintStartDate && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintStartDate
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="mintEndDate"
+                                                className="form-label"
+                                            >
+                                                Mint End Date
+                                            </label>
+                                            <input
+                                                id="mintEndDate"
+                                                type="date"
+                                                {...register("mintEndDate", {
+                                                    required:
+                                                        "Mint End Date is required",
+                                                })}
+                                            />
+
+                                            {errors.mintEndDate && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintEndDate
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="mintStartTime"
+                                                className="form-label"
+                                            >
+                                                Mint Start Time
+                                            </label>
+                                            <input
+                                                id="mintStartTime"
+                                                type="time"
+                                                {...register("mintStartTime", {
+                                                    required:
+                                                        "Mint Start Time is required",
+                                                })}
+                                            />
+                                            {errors.mintStartTime && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintStartTime
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-4">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="mintEndTime"
+                                                className="form-label"
+                                            >
+                                                Mint End Time
+                                            </label>
+                                            <input
+                                                id="mintEndTime"
+                                                type="time"
+                                                {...register("mintEndTime", {
+                                                    required:
+                                                        "Mint End Time is required",
+                                                })}
+                                            />
+                                            {errors.mintEndTime && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintEndTime
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="policy"
+                                                className="form-label"
+                                            >
+                                                Policy
+                                            </label>
+                                            <Select
+                                                labelId="demo-multiple-chip-label"
+                                                id="demo-multiple-chip"
+                                                style={{
+                                                    width: "100%",
+                                                    backgroundColor: "#242435",
+                                                    color: "#fff",
+                                                    borderRadius: 5,
+                                                }}
+                                                multiple
+                                                value={policy}
+                                                onChange={handlePolicyChange}
+                                                input={
+                                                    <OutlinedInput
+                                                        id="select-multiple-chip"
+                                                        label="Chip"
+                                                    />
+                                                }
+                                                renderValue={(selected) => (
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: 0.5,
+                                                            alignItems:
+                                                                "center",
+                                                            p: 0.5,
+                                                            bgcolor: "#242435",
+                                                            borderRadius: 5,
+                                                        }}
+                                                    >
+                                                        {selected.map(
+                                                            (value) => (
+                                                                <Chip
+                                                                    key={value}
+                                                                    label={
+                                                                        value
+                                                                    }
+                                                                    style={{
+                                                                        color: "#fff",
+                                                                        backgroundColor:
+                                                                            "#363545",
+                                                                    }}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {policies.map((name) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                        style={getStyles(
+                                                            name,
+                                                            policy,
+                                                            theme
+                                                        )}
+                                                    >
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="tokenList"
+                                                className="form-label"
+                                            >
+                                                Token List
+                                            </label>
+                                            <textarea
+                                                id="tokenList"
+                                                rows="3"
+                                                placeholder={`e. g. "token1","token2","token3"`}
+                                                {...register("tokenList", {
+                                                    pattern: {
+                                                        // i want validate to accept any value inside "" and "","" like this
+                                                        value: /^("[^"]*"(,"[^"]*")*)?$/,
+
+                                                        message:
+                                                            "Please enter a valid token list",
+                                                    },
+
+                                                    required:
+                                                        "Token List is required",
+                                                })}
+                                            />
+                                            {errors.tokenList && (
+                                                <ErrorText>
+                                                    {errors.tokenList?.message}
                                                 </ErrorText>
                                             )}
                                         </div>
@@ -1293,54 +1856,34 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         </div>
                                     </div>
 
-                                    <div className="col-md-4">
+                                    {/* //royal address k address */}
+                                    <div className="col-md-8">
                                         <div className="input-box pb--20">
                                             <label
-                                                htmlFor="mintStartDate"
+                                                htmlFor="royaltyAddress"
                                                 className="form-label"
                                             >
-                                                Mint Start Date
+                                                Royalty Address
                                             </label>
                                             <input
-                                                id="mintStartDate"
-                                                type="date"
-                                                {...register("mintStartDate", {
+                                                id="royaltyAddress"
+                                                placeholder="e. g. `k:0x1234567890`"
+                                                {...register("royaltyAddress", {
+                                                    pattern: {
+                                                        // wallet address start with k
+                                                        value: /^k:/,
+                                                        message:
+                                                            "Please enter a valid wallet address",
+                                                    },
+
                                                     required:
-                                                        "Mint Start Date is required",
+                                                        "Wallet Address is required",
                                                 })}
                                             />
-
-                                            {errors.mintStartDate && (
+                                            {errors.royaltyAddress && (
                                                 <ErrorText>
                                                     {
-                                                        errors.mintStartDate
-                                                            ?.message
-                                                    }
-                                                </ErrorText>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-4">
-                                        <div className="input-box pb--20">
-                                            <label
-                                                htmlFor="mintStartTime"
-                                                className="form-label"
-                                            >
-                                                Mint Start Time
-                                            </label>
-                                            <input
-                                                id="mintStartTime"
-                                                type="time"
-                                                {...register("mintStartTime", {
-                                                    required:
-                                                        "Mint Start Time is required",
-                                                })}
-                                            />
-                                            {errors.mintStartTime && (
-                                                <ErrorText>
-                                                    {
-                                                        errors.mintStartTime
+                                                        errors.royaltyAddress
                                                             ?.message
                                                     }
                                                 </ErrorText>
@@ -1663,6 +2206,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     </div>
                 </Box>
             </Modal>
+
+            {isLoading && <Loader />}
         </>
     );
 };

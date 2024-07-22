@@ -1,13 +1,20 @@
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Anchor from "@ui/anchor";
-
-const CollectionDetailHeader = ({
-    pageTitle,
-    data,
-    className,
-    space,
-}) => (
+import {
+    EmailShareButton,
+    EmailIcon,
+    FacebookShareButton,
+    FacebookIcon,
+    LinkedinShareButton,
+    LinkedinIcon,
+    TelegramShareButton,
+    TelegramIcon,
+    TwitterShareButton,
+    TwitterIcon,
+} from "react-share";
+const CollectionDetailHeader = ({ pageTitle, data, className, space }) => (
+    console.log(data),
     <div
         className={clsx(
             "rn-breadcrumb-inner",
@@ -19,7 +26,7 @@ const CollectionDetailHeader = ({
             <div className="row align-items-center">
                 <div className="col-lg-6 col-md-6 col-12">
                     <h5 className="pageTitle text-center text-md-start">
-                       Collections / {pageTitle}
+                        Collections / {pageTitle}
                     </h5>
                 </div>
                 <div className="col-lg-6 col-md-6 col-12">
@@ -71,15 +78,16 @@ const CollectionDetailHeader = ({
                                 20
                             </span>
                         </li> */}
-                        <li className="item current"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
+                        <li
+                            className="item current"
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
                         >
-                            <span>Listed/Supply</span>
+                            {/* <span>Listed/Supply</span>
                             <span
                                 style={{
                                     fontSize: "12px",
@@ -88,17 +96,32 @@ const CollectionDetailHeader = ({
                                 }}
                             >
                                 20
-                            </span>
+                            </span> */}
+                            {/* <a href="#!">
+                        <span className="icon">
+                            <i className="feather-facebook" />
+                        </span> */}
+
+                            {/* </a> */}
+
+                            <FacebookShareButton
+                                url={"https://www.facebook.com"}
+                                quote={"Facebook share button"}
+                                hashtag="#facebook"
+                            >
+                                <FacebookIcon size={32} round />
+                            </FacebookShareButton>
                         </li>
-                        <li className="item current"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
+                        <li
+                            className="item current"
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
                         >
-                            <span>Volume[24h]</span>
+                            {/* <span>Volume[24h]</span>
                             <span
                                 style={{
                                     fontSize: "12px",
@@ -107,17 +130,27 @@ const CollectionDetailHeader = ({
                                 }}
                             >
                                 20
-                            </span>
+                            </span> */}
+                            <TwitterShareButton
+                                url={"https://www.twitter.com"}
+                                title={"Twitter share button"}
+                                hashtags={["twitter"]}
+                            >
+                                <TwitterIcon size={32} round />
+                            </TwitterShareButton>
+
+
                         </li>
-                        <li className="item current"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
+                        <li
+                            className="item current"
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
                         >
-                            <span>Volume[all]</span>
+                            {/* <span>Volume[all]</span>
                             <span
                                 style={{
                                     fontSize: "12px",
@@ -126,17 +159,25 @@ const CollectionDetailHeader = ({
                                 }}
                             >
                                 20
-                            </span>
+                            </span> */}
+                            <TelegramShareButton
+                                url={"https://www.telegram.com"}
+                                title={"Telegram share button"}
+                            >
+                                <TelegramIcon size={32} round />
+                            </TelegramShareButton>
+
                         </li>
-                        <li className="item current"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
+                        <li
+                            className="item current"
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
                         >
-                            <span>Sales</span>
+                            {/* <span>Sales</span>
                             <span
                                 style={{
                                     fontSize: "12px",
@@ -145,17 +186,26 @@ const CollectionDetailHeader = ({
                                 }}
                             >
                                 20
-                            </span>
+                            </span> */}
+                            <LinkedinShareButton
+                                url={"https://www.linkedin.com"}
+                                title={"Linkedin share button"}
+                                summary={"Linkedin share button"}
+                            >
+                                <LinkedinIcon size={32} round />
+                            </LinkedinShareButton>
+
                         </li>
-                        <li className="item current"
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
+                        <li
+                            className="item current"
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
                         >
-                            <span>Price</span>
+                            {/* <span>Price</span>
                             <span
                                 style={{
                                     fontSize: "12px",
@@ -164,7 +214,15 @@ const CollectionDetailHeader = ({
                                 }}
                             >
                                 20
-                            </span>
+                            </span> */}
+                            <EmailShareButton
+                                url={"https://www.email.com"}
+                                subject={"Email share button"}
+                                body={"Email share button"}
+                            >
+                                <EmailIcon size={32} round />
+                            </EmailShareButton>
+
                         </li>
                     </ul>
                 </div>

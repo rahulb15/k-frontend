@@ -27,11 +27,11 @@ const CollectionDetailsArea = ({ space, className, product }) => {
         console.log("Values:", values);
     };
 
-    const imageUrl = product?.image.src.startsWith("/")
-        ? product.image.src
-        : `/${product.image.src}`;
+    // const imageUrl = product?.image.src.startsWith("/")
+    //     ? product.image.src
+    //     : `/${product.image.src}`;
 
-    console.log("Adjusted image URL:", imageUrl);
+    // console.log("Adjusted image URL:", imageUrl);
 
     return (
         <div
@@ -54,10 +54,10 @@ const CollectionDetailsArea = ({ space, className, product }) => {
                     right: 0,
                     bottom: 0,
                     // backgroundImage: `linear-gradient(rgba(70, 70, 70, 0.7), rgba(70, 70, 70, 0.7)), url(${imageUrl})`,
-                    backgroundImage: `url(${imageUrl})`,
+                    backgroundImage: `url(${product?.bannerUrl})`,
                     backgroundSize: "cover",
                     backgroundPosition: "bottom",
-                    filter: "blur(15px)",
+                    filter: "blur(5px)",
                     transform: "scale(1.1)", // Prevents blur from showing edges
                     zIndex: -2,
                 }}
@@ -79,7 +79,7 @@ const CollectionDetailsArea = ({ space, className, product }) => {
                 <div className="row g-2 mb--30">
                     <div className="col-lg-7 col-md-12 col-sm-12">
                         <Sticky>
-                            <CollectionDetailTab image={product.image} />
+                            <CollectionDetailTab image={product?.imageUrl} />
                         </Sticky>
                     </div>
                     {/* <div className="col-lg-5 col-md-12 col-sm-12 mt_md--50 mt_sm--60"> */}

@@ -11,7 +11,7 @@ import Tab from "@mui/material/Tab";
 const POSTS_PER_PAGE = 8;
 
 const CollectionArea = ({ className, space, id, data }) => {
-    const [collections, setCollections] = useState([]);
+    console.log(data);
     const [currentPage, setCurrentPage] = useState(1);
     const numberOfPages = Math.ceil(data.collections.length / POSTS_PER_PAGE);
     const paginationHandler = (page) => {
@@ -20,14 +20,14 @@ const CollectionArea = ({ className, space, id, data }) => {
     };
     const [value, setValue] = useState("one");
 
-    const creatorHandler = useCallback(() => {
-        const start = (currentPage - 1) * POSTS_PER_PAGE;
-        setCollections(data.collections.slice(start, start + POSTS_PER_PAGE));
-    }, [currentPage, data.collections]);
+    // const creatorHandler = useCallback(() => {
+    //     const start = (currentPage - 1) * POSTS_PER_PAGE;
+    //     setCollections(data.collections.slice(start, start + POSTS_PER_PAGE));
+    // }, [currentPage, data.collections]);
 
-    useEffect(() => {
-        creatorHandler();
-    }, [currentPage, creatorHandler]);
+    // useEffect(() => {
+    //     creatorHandler();
+    // }, [currentPage, creatorHandler]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -113,18 +113,21 @@ const CollectionArea = ({ className, space, id, data }) => {
                 <div className="tab-content">
                     {value === "one" && (
                         <div className="row g-5">
-                            {collections.map((collection) => (
+                            {data?.collections?.map((collection) => (
                                 <div
-                                    key={collection.id}
+                                    key={collection._id}
                                     className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
                                 >
+                                    {console.log(collection)}
+
                                     <Collection
-                                        title={collection.title}
-                                        total_item={collection.total_item}
+                                        title={collection.collectionName}
+                                        total_item={collection.totalSupply}
                                         path={collection.slug}
-                                        image={collection.image}
-                                        thumbnails={collection.thumbnails}
-                                        profile_image={collection.profile_image}
+                                        image={collection.imageUrl}
+                                        thumbnails={collection.bannerUrl}
+                                        price={collection.mintPrice}
+                                        // profile_image={collection.profile_image}
                                     />
                                 </div>
                             ))}
@@ -133,7 +136,7 @@ const CollectionArea = ({ className, space, id, data }) => {
 
                     {value === "two" && (
                         <div className="row g-5">
-                            {collections.map((collection) => (
+                            {data?.collections?.map((collection) => (
                                 <div
                                     key={collection.id}
                                     className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"
@@ -153,7 +156,7 @@ const CollectionArea = ({ className, space, id, data }) => {
 
                     {value === "three" && (
                         <div className="row g-5">
-                            {collections.map((collection) => (
+                            {data?.collections?.map((collection) => (
                                 <div
                                     key={collection.id}
                                     className="col-lg-6 col-xl-3 col-md-6 col-sm-6 col-12"

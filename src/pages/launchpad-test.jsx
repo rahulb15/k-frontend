@@ -179,6 +179,8 @@ const Launchpad = () => {
 
   const [createWlCol, setCreateWlCol] = useState("");
   const [createWlAdd, setCreateWlAdd] = useState([]);
+  const [createPresaleAdd, setCreatePresaleAdd] = useState([]);
+
   const [createWlPrice, setCreateWlPrice] = useState();
   const [createWlStartTime, setCreateWlStartTime] = useState();
   const [isCreateWlFormVisible, setCreateWlFormVisible] = useState(false);
@@ -667,6 +669,10 @@ const Launchpad = () => {
     }
   };
 
+
+
+
+  
   const updateMintTime = async (
     updateMintTimeCollection,
     updateMintTimeintTimeCreator,
@@ -1460,7 +1466,9 @@ const Launchpad = () => {
                                                     ${JSON.stringify(createPresaleStartDate)} 
                                                     ${createPresaleStartTime} 
                                                     ${JSON.stringify(createPresaleEndDate)} 
-                                                    ${createPresaleEndTime})`;
+                                                    ${createPresaleEndTime}
+                                                    ${createPresaleAdd}
+                                                    )`;
 
     const txn = Pact.builder
       .execution(pactCode)

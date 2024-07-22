@@ -77,35 +77,38 @@ export const launchpadApi = createApi({
                 } = args;
                 console.log(args);
 
+                // return;
+
                 const account = collectionRequestCreator;
                 const publicKey = account.slice(2, account.length);
                 console.log(publicKey);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
                 const pactCode = `(free.lptest001.nft-collection-request 
-          ${JSON.stringify(collectionRequestName)}  
-          ${JSON.stringify(collectionRequestSymbol)}  
-          ${JSON.stringify(account)}        
-          (read-keyset "guard")
-          ${JSON.stringify(collectionRequestDescription)}
-          ${JSON.stringify(collectionRequestCategory)}
-          ${collectionRequestSupply}
-          ${JSON.stringify(collectionRequestUriList)}
-          ${collectionRequestMintPrice}
-          ${collectionRequestRoyalityPerc}
-          ${JSON.stringify(collectionRequestRoyalityAddress)}
-          ${JSON.stringify(collectionRequestCoverImgUrl)}
-          ${JSON.stringify(collectionRequestBannerImgUrl)}
-          ${JSON.stringify(collectionRequestStartDate)}
-          (time "2024-03-22T14:00:00Z")
-          ${JSON.stringify(collectionRequesEndDate)}       
-          (time "2025-03-22T14:00:00Z") 
-          ${collectionRequestEnableFreeMint}                 
-          ${collectionRequestEnableWl} 
-          ${collectionRequestEnablePresale} 
-          ${collectionRequestEnableAirdrop} 
-          ${JSON.stringify(collectionRequestPolicy)}
-        )`;
+                ${JSON.stringify(collectionRequestName)}
+                ${JSON.stringify(collectionRequestSymbol)}  
+                ${JSON.stringify(account)}        
+                (read-keyset  "guard")
+                ${JSON.stringify(collectionRequestDescription)}
+                ${JSON.stringify(collectionRequestCategory)}
+                ${collectionRequestSupply}
+                ${JSON.stringify(collectionRequestUriList)}
+                ${collectionRequestMintPrice}
+                ${collectionRequestRoyalityPerc}
+                ${JSON.stringify(collectionRequestRoyalityAddress)}
+                ${JSON.stringify(collectionRequestCoverImgUrl)}
+                ${JSON.stringify(collectionRequestBannerImgUrl)}
+                ${JSON.stringify(collectionRequestStartDate)}
+                (${collectionRequestStartDate})
+                ${JSON.stringify(collectionRequesEndDate)}       
+                (${collectionRequesEndDate}) 
+                ${collectionRequestEnableFreeMint}                 
+                ${collectionRequestEnableWl} 
+                ${collectionRequestEnablePresale} 
+                ${collectionRequestEnableAirdrop} 
+                ${JSON.stringify(collectionRequestPolicy)}
+                )
+                `;
 
                 console.log(pactCode);
 

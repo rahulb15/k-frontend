@@ -11,17 +11,18 @@ const Collection = ({
     image,
     thumbnails,
     profile_image,
+    price,
     path,
 }) => (
     <Anchor
-        path={`/launchpad/kadena${path}`}
+        path={`/launchpad/kadena/${path}`}
         className="rn-collection-inner-one"
     >
         <div className="collection-wrapper">
-            {image?.src && (
+            {image && (
                 <div className="collection-big-thumbnail">
                     <Image
-                        src={image.src}
+                        src={image}
                         alt={image?.alt || "Nft_Profile"}
                         width={507}
                         height={339}
@@ -80,7 +81,7 @@ const Collection = ({
                     <span style={{ fontWeight: "bold" }}>{total_item}</span>
                 </div>
                 <div className="collection-item">
-                    <span style={{ fontWeight: "bold" }}>0.5 KDA</span>
+                    <span style={{ fontWeight: "bold" }}>{price} KDA</span>
                 </div>
                 <div className="collection-item">
                     <span style={{ fontWeight: "bold" }}>100</span>

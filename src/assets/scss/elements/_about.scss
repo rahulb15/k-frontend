@@ -171,11 +171,11 @@
 }
 .rn-about-card {
     border: 1px solid var(--color-border);
-    background: #191925;
+    background: #cbd02e;
     padding: 50px 40px;
     border-radius: 5px;
     &.transparent-bg {
-        background: transparent;
+        background: #cbd02e;
         border: 1px solid var(--color-border);
         margin-top: 140px;
         @media #{$smlg-device} {
@@ -197,6 +197,7 @@
         p {
             margin-bottom: 20px;
             font-weight: 400;
+            color: #000;
         }
     }
 }

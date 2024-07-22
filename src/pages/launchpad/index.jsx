@@ -1,14 +1,20 @@
 import SEO from "@components/seo";
+import React from "react";
+import { useReducer, useRef, useEffect, useCallback } from "react";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import LaunchpadHeroArea from "@containers/launchpad-hero";
-import { normalizedData } from "@utils/methods";
+import collectionService from "src/services/collection.service";
+import LaunchpadChainHeader from "@components/launchpad-chain-header";
+import ProductFilter from "@components/product-filter/layout-01";
+import FilterButton from "@ui/filter-button";
+import { slideToggle } from "@utils/methods";
+import LaunchpadFilter from "@components/launchpad-filter";
 
 // Demo data
 import CollectionArea from "@containers/collection/layout-03";
-
-import homepageData from "../../data/homepages/home-06.json";
+import LaunchpadCategory from "@containers/launchpad-category";
 
 // import collectionsData from "../data/collections.json";
 
@@ -16,102 +22,161 @@ export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
 }
 
-const Home = () => {
-    // const content = normalizedData(homepageData?.content || []);
+function reducer(state, action) {
+    switch (action.type) {
+        case "FILTER_TOGGLE":
+            return { ...state, filterToggle: !state.filterToggle };
+        case "SET_INPUTS":
+            return { ...state, inputs: { ...state.inputs, ...action.payload } };
+        case "SET_PRODUCTS":
+            return { ...state, products: action.payload };
+        default:
+            return state;
+    }
+}
 
-    const collectionsData = [
-        {
-            id: 1,
-            title: "Priority Pass",
-            slug: "/priority-pass",
-            total_item: 27,
-            image: { src: "/assets-images/AI-nft/AI-1.jpeg" },
-            thumbnails: [
-                { src: "/assets-images/AI-nft/AI-7.jpeg" },
-                { src: "/assets-images/AI-nft/AI-2.jpeg" },
-                { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            ],
-            profile_image: { src: "/images/client/client-15.png" },
-        },
-        {
-            id: 2,
-            title: "DB cooper",
-            slug: "/db-cooper",
-            total_item: 20,
-            image: { src: "/assets-images/AI-nft/AI-4.jpeg" },
-            thumbnails: [
-                { src: "/assets-images/AI-nft/AI-7.jpeg" },
-                { src: "/assets-images/AI-nft/AI-2.jpeg" },
-                { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            ],
-            profile_image: { src: "/images/client/client-12.png" },
-        },
-        {
-            id: 3,
-            title: "Monkey",
-            slug: "/monkey",
-            total_item: 20,
-            image: { src: "/assets-images/AI-nft/AI-5.jpeg" },
-            thumbnails: [
-                { src: "/assets-images/AI-nft/AI-7.jpeg" },
-                { src: "/assets-images/AI-nft/AI-2.jpeg" },
-                { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            ],
-            profile_image: { src: "/images/client/client-12.png" },
-        },
-        {
-            id: 4,
-            title: "Batman",
-            slug: "/batman",
-            total_item: 20,
-            image: { src: "/assets-images/AI-nft/AI-6.jpeg" },
-            thumbnails: [
-                { src: "/assets-images/AI-nft/AI-7.jpeg" },
-                { src: "/assets-images/AI-nft/AI-2.jpeg" },
-                { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            ],
-            profile_image: { src: "/images/client/client-12.png" },
-        },
-        {
-            id: 5,
-            title: "Shaktiman",
-            slug: "/shaktiman",
-            total_item: 20,
-            image: { src: "/assets-images/AI-nft/shaktiman/AI-1.jpeg" },
-            thumbnails: [
-                { src: "/assets-images/AI-nft/AI-2.jpeg" },
-                { src: "/assets-images/AI-nft/AI-3.jpeg" },
-                { src: "/assets-images/AI-nft/AI-4.jpeg" },
-            ],
-            profile_image: { src: "/images/client/client-12.png" },
-        },
-        {
-          id: 6,
-          title: "Bharat Mata",
-          slug: "/bharat-mata",
-          total_item: 20,
-          image: { src: "/assets-images/AI-nft/shaktiman/AI-4.jpeg" },
-          thumbnails: [
-              { src: "/assets-images/AI-nft/AI-2.jpeg" },
-              { src: "/assets-images/AI-nft/AI-3.jpeg" },
-              { src: "/assets-images/AI-nft/AI-4.jpeg" },
-          ],
-          profile_image: { src: "/images/client/client-12.png" },
-      },
-      {
-        id: 7,
-        title: "Papu Pompom",
-        slug: "/papu-pompom",
-        total_item: 20,
-        image: { src: "/assets-images/AI-nft/shaktiman/AI-3.jpeg" },
-        thumbnails: [
-            { src: "/assets-images/AI-nft/AI-2.jpeg" },
-            { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            { src: "/assets-images/AI-nft/AI-4.jpeg" },
-        ],
-        profile_image: { src: "/images/client/client-12.png" },
-    },
-    ];
+const Home = () => {
+    const data = {
+        products: [
+            {
+                id: 1,
+                title: "Priority Pass",
+                slug: "/priority-pass",
+                total_item: 27,
+                image: { src: "/assets-images/AI-nft/AI-1.jpeg" },
+                thumbnails: [
+                    { src: "/assets-images/AI-nft/AI-7.jpeg" },
+                    { src: "/assets-images/AI-nft/AI-2.jpeg" },
+                    { src: "/assets-images/AI-nft/AI-3.jpeg" },
+                ],
+                profile_image: { src: "/images/client/client-15.png" },
+            },
+            {
+                id: 2,
+                title: "DB cooper",
+                slug: "/db-cooper",
+                total_item: 20,
+                image: { src: "/assets-images/AI-nft/AI-4.jpeg" },
+                thumbnails: [
+                    { src: "/assets-images/AI-nft/AI-7.jpeg" },
+                    { src: "/assets-images/AI-nft/AI-2.jpeg" },
+                    { src: "/assets-images/AI-nft/AI-3.jpeg" },
+                ],
+                profile_image: { src: "/images/client/client-12.png" },
+            }
+        ]
+    };
+
+
+
+    console.log("data", data);
+    const [collectionsData, setCollectionsData] = React.useState([]);
+    const itemsToFilter = [...data.products];
+    const [state, dispatch] = useReducer(reducer, {
+        filterToggle: false,
+        products: data.products || [],
+        inputs: { price: [0, 100] },
+    });
+    React.useEffect(() => {
+        collectionService.getAllCollections().then((response) => {
+            console.log("response", response);
+            setCollectionsData(response.data.data);
+        });
+    }, []);
+
+    // const collectionsData = [
+    //     {
+    //         id: 1,
+    //         title: "Priority Pass",
+    //         slug: "/priority-pass",
+    //         total_item: 27,
+    //         image: { src: "/assets-images/AI-nft/AI-1.jpeg" },
+    //         thumbnails: [
+    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //         ],
+    //         profile_image: { src: "/images/client/client-15.png" },
+    //     },
+    //     {
+    //         id: 2,
+    //         title: "DB cooper",
+    //         slug: "/db-cooper",
+    //         total_item: 20,
+    //         image: { src: "/assets-images/AI-nft/AI-4.jpeg" },
+    //         thumbnails: [
+    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //         ],
+    //         profile_image: { src: "/images/client/client-12.png" },
+    //     },
+    //     {
+    //         id: 3,
+    //         title: "Monkey",
+    //         slug: "/monkey",
+    //         total_item: 20,
+    //         image: { src: "/assets-images/AI-nft/AI-5.jpeg" },
+    //         thumbnails: [
+    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //         ],
+    //         profile_image: { src: "/images/client/client-12.png" },
+    //     },
+    //     {
+    //         id: 4,
+    //         title: "Batman",
+    //         slug: "/batman",
+    //         total_item: 20,
+    //         image: { src: "/assets-images/AI-nft/AI-6.jpeg" },
+    //         thumbnails: [
+    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //         ],
+    //         profile_image: { src: "/images/client/client-12.png" },
+    //     },
+    //     {
+    //         id: 5,
+    //         title: "Shaktiman",
+    //         slug: "/shaktiman",
+    //         total_item: 20,
+    //         image: { src: "/assets-images/AI-nft/shaktiman/AI-1.jpeg" },
+    //         thumbnails: [
+    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //             { src: "/assets-images/AI-nft/AI-4.jpeg" },
+    //         ],
+    //         profile_image: { src: "/images/client/client-12.png" },
+    //     },
+    //     {
+    //       id: 6,
+    //       title: "Bharat Mata",
+    //       slug: "/bharat-mata",
+    //       total_item: 20,
+    //       image: { src: "/assets-images/AI-nft/shaktiman/AI-4.jpeg" },
+    //       thumbnails: [
+    //           { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //           { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //           { src: "/assets-images/AI-nft/AI-4.jpeg" },
+    //       ],
+    //       profile_image: { src: "/images/client/client-12.png" },
+    //   },
+    //   {
+    //     id: 7,
+    //     title: "Papu Pompom",
+    //     slug: "/papu-pompom",
+    //     total_item: 20,
+    //     image: { src: "/assets-images/AI-nft/shaktiman/AI-3.jpeg" },
+    //     thumbnails: [
+    //         { src: "/assets-images/AI-nft/AI-2.jpeg" },
+    //         { src: "/assets-images/AI-nft/AI-3.jpeg" },
+    //         { src: "/assets-images/AI-nft/AI-4.jpeg" },
+    //     ],
+    //     profile_image: { src: "/images/client/client-12.png" },
+    // },
+    // ];
     console.log("collectionsData", collectionsData);
 
     const content = [
@@ -150,13 +215,99 @@ const Home = () => {
     ];
     console.log("content", content);
 
+
+    const filterRef = useRef(null);
+    const filterHandler = () => {
+        dispatch({ type: "FILTER_TOGGLE" });
+        if (!filterRef.current) return;
+        slideToggle(filterRef.current);
+    };
+
+    const slectHandler = ({ value }, name) => {
+        dispatch({ type: "SET_INPUTS", payload: { [name]: value } });
+    };
+
+    const priceHandler = (value) => {
+        dispatch({ type: "SET_INPUTS", payload: { price: value } });
+    };
+
+    const sortHandler = ({ value }) => {
+        const sortedProducts = state.products.sort((a, b) => {
+            if (value === "most-liked") {
+                return a.likeCount < b.likeCount ? 1 : -1;
+            }
+            return a.likeCount > b.likeCount ? 1 : -1;
+        });
+        dispatch({ type: "SET_PRODUCTS", payload: sortedProducts });
+    };
+
+    const filterMethods = (item, filterKey, value) => {
+        if (value === "all") return false;
+        let itemKey = filterKey;
+        if (filterKey === "category") {
+            itemKey = "categories";
+        }
+        if (filterKey === "price") {
+            return (
+                item[itemKey].amount <= value[0] / 100 ||
+                item[itemKey].amount >= value[1] / 100
+            );
+        }
+        if (Array.isArray(item[itemKey])) {
+            return !item[itemKey].includes(value);
+        }
+        if (filterKey === "collection") {
+            return item[itemKey].name !== value;
+        }
+        return item[itemKey] !== value;
+    };
+
+    const itemFilterHandler = useCallback(() => {
+        let filteredItems = [];
+
+        filteredItems = itemsToFilter.filter((item) => {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const key in state.inputs) {
+                if (filterMethods(item, key, state.inputs[key])) return false;
+            }
+            return true;
+        });
+        dispatch({ type: "SET_PRODUCTS", payload: filteredItems });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.inputs]);
+
+
+
+console.log("state", state);
+
     return (
         <Wrapper>
             <SEO pageTitle="Home" />
             <Header />
             <main id="main-content">
+                <LaunchpadChainHeader state={state} filterHandler={filterHandler} />
+                        {/* <FilterButton
+                            open={state.filterToggle}
+                            onClick={filterHandler}
+                        /> */}
+                <LaunchpadFilter
+                    ref={filterRef}
+                    slectHandler={slectHandler}
+                    sortHandler={sortHandler}
+                    priceHandler={priceHandler}
+                    inputs={state.inputs}
+                />
                 <LaunchpadHeroArea data={content} />
                 <CollectionArea data={{ collections: collectionsData }} />
+                <LaunchpadCategory
+                    data={{
+                        section_title: {
+                            title: "Browse By Category",
+                            description:
+                                "Discover the latest collections from top creators.",
+                        },
+                    }}
+                />
             </main>
             <div style={{ marginTop: "100px" }} />
             <Footer />

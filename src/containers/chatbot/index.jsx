@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import claudeService from "src/services/claude.service";
-
+import { motion } from "framer-motion";
 const ChatBotArea = () => {
     const [chatbotOpen, setChatbotOpen] = useState(false);
     const [chats, setChats] = useState([]);
@@ -74,14 +74,29 @@ const ChatBotArea = () => {
     return (
         <>
             <div className="chatbot__icon">
-                <button onClick={chatbotHandler}>
+                {/* <button onClick={chatbotHandler}>
                     <Image
                         src="/chatbot/chat-bot.png"
                         alt="Chatbot"
                         width={80}
                         height={80}
                     />
-                </button>
+                </button> */}
+                <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={chatbotHandler}
+                >
+                    <Image
+                        src="/chatbot/bot.png"
+                        alt="Chatbot"
+                        width={80}
+                        height={80}
+                    />
+                </motion.button>
+                
+
+
             </div>
             {chatbotOpen && (
                 <div className="chatbot__overlay">

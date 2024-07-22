@@ -11,6 +11,55 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import AnimatedCursor from "react-animated-cursor";
 import dynamic from "next/dynamic";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { motion } from "framer-motion";
+import styled from "styled-components";
+import Foote from "@layout/footer/footer-01";
+// Styled component for the button with gradient border
+const GradientBorderButton = styled(motion.div)`
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 50%;
+    padding: 10px;
+    cursor: pointer;
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(
+            45deg,
+            #ff0000,
+            #ff7300,
+            #fffb00,
+            #48ff00,
+            #00ffd5,
+            #002bff,
+            #7a00ff,
+            #ff00c8,
+            #ff0000
+        );
+        z-index: -1;
+        border-radius: inherit;
+        animation: gradientAnimation 20s linear infinite;
+    }
+
+    @keyframes gradientAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+`;
 const MouseParticles = dynamic(() => import("react-mouse-particles"), {
     ssr: false,
 });
@@ -23,6 +72,11 @@ const Footer = () => {
     const [mouseEffects, setMouseEffects] = useState("none");
     const [mouseEffectSparkles, setMouseEffectSparkles] = useState(false);
     const [mouseEffectBubbles, setMouseEffectBubbles] = useState(false);
+    const [isDetailedFooterOpen, setIsDetailedFooterOpen] = useState(false);
+
+    const toggleDetailedFooter = () => {
+        setIsDetailedFooterOpen(!isDetailedFooterOpen);
+    };
 
     const toggleSettings = () => {
         setShowSettings(!showSettings);
@@ -75,8 +129,22 @@ const Footer = () => {
         router.push("/");
     };
 
+    const heartbeatVariants = {
+        beat: {
+            scale: [1, 1.08, 1],
+            transition: {
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+            },
+        },
+    };
+
     return (
-        <div className="footer-fixed">
+        <div
+            className={`footer-fixed ${isDetailedFooterOpen ? "expanded" : ""}`}
+        >
             <div className="footer-container">
                 <div className="footer-menu">
                     <div className="footer-section start">
@@ -93,21 +161,37 @@ const Footer = () => {
                         </div>
                     </div>
                     <div className="footer-section middle">
-                        {/* <div className="setting-option">
-                            
+                        {/* <div
+                            className="setting-option"
+                            onClick={toggleDetailedFooter}
+                        >
+                            {isDetailedFooterOpen ? (
+                                <FaChevronUp />
+                            ) : (
+                                <FaChevronDown />
+                            )}
                         </div> */}
-                        {/* copyright */}
-                        <div style={{ color: "#fff", fontSize: "1.2rem" }}>
-                            <span
-                                style={{
-                                    color: "#fff",
-                                    fontSize: "1.2rem",
-                                    fontWeight: "bold",
-                                    marginRight: "5px",
-                                }}
-                            >
-                                Kryptomerch
-                            </span>
+
+                        <motion.div
+                            className="setting-option"
+                            onClick={toggleDetailedFooter}
+                            initial={{ opacity: 0.5 }}
+                            animate={{ opacity: 1, ...heartbeatVariants.beat }}
+                            exit={{ opacity: 0.5 }}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                        >
+                            {isDetailedFooterOpen ? (
+                                // <FaChevronUp />
+                                <FaChevronDown />
+                            ) : (
+                                // <FaChevronDown />
+                                <FaChevronUp />
+                            )}
+                        </motion.div>
+
+                        <div className="copy-right">
+                            <span>Kryptomerch</span>
                             <span>&copy; {new Date().getFullYear()}</span>
                         </div>
                     </div>
@@ -205,6 +289,51 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
+
+            {isDetailedFooterOpen && (
+                <div className="detailed-footer">
+                    {/* Add your detailed footer content here */}
+                    <div className="container">
+                        {/* <div className="row">
+                            <div className="col-md-3">
+                                <h4>About Us</h4>
+                                <p>
+                                    Brief description about your company or
+                                    website.
+                                </p>
+                            </div>
+                            <div className="col-md-3">
+                                <h4>Quick Links</h4>
+                                <ul>
+                                    <li>
+                                        <a href="#">Home</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Products</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Services</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Contact</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="col-md-3">
+                                <h4>Contact Us</h4>
+                                <p>Address: Your Address Here</p>
+                                <p>Email: your@email.com</p>
+                                <p>Phone: (123) 456-7890</p>
+                            </div>
+                            <div className="col-md-3">
+                                <h4>Follow Us</h4>
+                            </div>
+                        </div> */}
+                        <Foote />
+                    </div>
+                </div>
+            )}
+
             <SettingsModal
                 isOpen={showSettings}
                 onClose={toggleSettings}

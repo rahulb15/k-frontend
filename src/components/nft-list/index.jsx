@@ -36,7 +36,8 @@ function reducer(state, action) {
             return state;
     }
 }
-const NftListArea = ({ className, space, data }) => {
+const NftListArea = ({ className, space, data, collection }) => {
+    console.log(collection);
     const [value, setValue] = useState(0);
 
     console.log(data);
@@ -252,7 +253,7 @@ const NftListArea = ({ className, space, data }) => {
                                         textAlign: "justify",
                                     }}
                                     dangerouslySetInnerHTML={{
-                                        __html: overview,
+                                        __html: collection?.collectionInfo || "",
                                     }}
                                 ></p>
                             </div>

@@ -4,46 +4,46 @@
         {
             "section": "about-section",
             "section_title": {
-                "title": "Direct Teams. <br> For Your Dadicated Dreams"
+                "title": "Kryptomerch is the first NFT-based merchandising store and marketplace"
             },
             "image": {
-                "src": "/images/bg/bg-image-22.jpg"
+                "src": "/about/Designer12.jpeg"
             },
             "items": [
                 {
                     "id": 1,
-                    "title": "Why We Do This",
-                    "description": "NFTs are virtual tokens that represent ownership of something inherently distinct and scarce, whether it be a physical or digital item, such as artwork, a soundtrack, a collectible, an in-game item or real estate. Unlike regular cryptocurrencies like bitcoin or fiat money like the U.S.",
+                    "title": "About Us",
+                    "description": "Kryptomerch is the first NFT-based merchandising store and marketplace, providing easy access to a wide range of high-quality products with lightning-fast shipping. Users will be able to sell their NFT-based merchandise on our marketplace, allowing them more utility with their NFTs. Kryptomerch will serve as a launchpad for NFT projects, allowing the Metaverse to expand.",
                     "path": "/blog"
                 },
                 {
                     "id": 2,
-                    "title": "Helping You <br/> Grow In Every Stage.",
-                    "description": "NFTs are virtual tokens that represent ownership of something inherently distinct and scarce, whether it be a physical or digital item, such as artwork, a soundtrack, a collectible, an in-game item or real estate. Unlike regular cryptocurrencies like bitcoin or fiat money like the U.S."
+                    "title": "NFT Merchandising & Marketplace",
+                    "description": "The most exciting combination of NFTs and Merchandising. Design your own Merch, sell to other users on our Marketplace, earn rewards and utilize your NFTs effectively."
                 }
             ]
         },
         {
             "section": "quote-section",
             "section_title": {
-                "title": "Create, Sell well & Collect your Wonderful NFTs at Nuron Very Fast"
+                "title": "Create your own NFTs and sell them on our marketplace"
             },
             "texts": [
                 {
                     "id": 1,
-                    "content": "The NFTs is a one-trick pony that climbed the ladders of success in recent years. The growth NFTs is tremendous, and according to Pymnts.com, the total sales volume of NFTs has nearly crossed $2.5 billion in the last six months of 2021. Surprisingly, the total sales volume of NFTs was $13.7 million in 2020. On comparing both the values,"
+                    "content": "NFT projects will be able to build and integrate their own DAPPs within the gamified environment provided by Kryptomerch within this growing Metaverse. This allows projects to gain traction and expand their reach, while also providing KDM protocol users with additional opportunities to generate yield in the form of Its cross-protocol rewards."
                 }
             ]
         },
         {
             "section": "funfact-section",
             "section_title": {
-                "title": "Nuron Statistics"
+                "title": "Kryptomerch Statistics"
             },
             "funfacts": [
                 {
                     "id": 1,
-                    "title": "Nuron All NFT's",
+                    "title": "Kryptomerch All NFT's",
                     "counter": 100
                 },
                 {
@@ -54,7 +54,7 @@
                 },
                 {
                     "id": 3,
-                    "title": "Nuron Earning",
+                    "title": "Kryptomerch Earning",
                     "counter": 700
                 },
                 {
@@ -93,14 +93,18 @@
                 }
             ],
             "image": {
-                "src": "/images/bg/bg-image-6.jpg"
+                "src": "/about/Designer13.jpeg"
             }
         },
         {
             "section": "blog-section",
             "section_title": {
                 "title": "Our Recent Blog"
+            },
+            "image": {
+                "src": "/assets-images/about-img.png"
             }
         }
+        
     ]
 }

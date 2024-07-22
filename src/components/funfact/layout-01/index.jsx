@@ -20,7 +20,7 @@ const FunFact = ({ className, counter, title, suffix }) => {
                     {({ countUpRef }) => (
                         <div>
                             <span ref={countUpRef} />
-                            <InView
+                            {/* <InView
                                 as="span"
                                 onChange={(inView) =>
                                     visibleChangeHandler(inView)
@@ -30,7 +30,7 @@ const FunFact = ({ className, counter, title, suffix }) => {
                                     <span className="visually-hidden">+</span>
                                     {suffix && <span>{suffix}</span>}
                                 </>
-                            </InView>
+                            </InView> */}
                         </div>
                     )}
                 </CountUp>

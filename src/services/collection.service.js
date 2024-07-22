@@ -118,6 +118,36 @@ const uploadImage = async (formData,name) => {
 };
 
 
+//get all collections
+const getAllCollections = async () => {
+    try {
+        const response = await axios.get(
+            API_URL + "collection"
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+//get collection by name
+const getCollectionByName = async (name) => {
+    console.log(name)
+    try {
+        const response = await axios.get(
+            API_URL + "collection/"+name
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+
+
+
 
 export default {
     launchCollection,
@@ -125,5 +155,7 @@ export default {
     getCollection,
     createCheckoutSession,
     checkTransaction,
-    uploadImage
+    uploadImage,
+    getAllCollections,
+    getCollectionByName
 };

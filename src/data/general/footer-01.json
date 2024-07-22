@@ -7,14 +7,14 @@
                 "alt": "logo"
             }
         ],
-        "text": "Created with the collaboration of over 60 of the world's best Nuron Artists."
+        "text": "Kryptomerch.io is an innovative NFT launchpad marketplace and merchandising platform, offering high-quality products and the ability to buy and sell NFT-based merchandise quickly."
     },
     "newsletter-widget": {
-        "title": "Get The Latest Nuron Updates",
+        "title": "Get The Latest Kryptomerch Updates",
         "note": "Email is safe. We don't spam."
     },
     "quicklink-widget": {
-        "title": "Nuron",
+        "title": "Kryptomerch",
         "menu": [
             {
                 "id": 1,
@@ -142,5 +142,5 @@
             }
         ]
     },
-    "copyright_text": "©2022 Nuron, Inc. All rights reserved"
+    "copyright_text": "©2022 Kryptomerch, Inc. All rights reserved"
 }
