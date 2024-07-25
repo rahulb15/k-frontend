@@ -123,10 +123,14 @@ const CollectionArea = ({ className, space, id, data }) => {
                                     <Collection
                                         title={collection.collectionName}
                                         total_item={collection.totalSupply}
-                                        path={collection.slug}
-                                        image={collection.imageUrl}
-                                        thumbnails={collection.bannerUrl}
+                                        path={collection.collectionName}
+                                        image={collection.collectionCoverImage}
+                                        thumbnails={collection.collectionBannerImage}
                                         price={collection.mintPrice}
+                                        reservePrice = {collection.reservePrice}
+                                        mintStartDate = {collection.mintStartDate}
+                                        mintEndDate = {collection.mintEndDate}
+                                        data={collection}
                                         // profile_image={collection.profile_image}
                                     />
                                 </div>

@@ -165,7 +165,330 @@ export const launchpadApi = createApi({
                 }
             },
         }),
+
+
+        getColCreator: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.get-collection-creator ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+
+
+
+        checkPublic: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.check-public ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+        checkWl: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.check-whitelist ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        checkPresale: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.check-presale ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+        checkPublicPrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.get-mint-price ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        checkWlPrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.get-wl-price ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        checkPresalePrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest001.get-presale-price ${JSON.stringify(
+                    colName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: "1" })
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        reserveTokens: builder.mutation({
+            async queryFn(args, api, extraOptions, baseQuery) {
+                const {
+                    reseveTknColName,
+                    reserverAcc,
+                    reserveTknAmount,
+                    walletName,
+                } = args;
+                console.log(args);
+                // Use the api object to dispatch other mutations
+        const chkPublic = await api.dispatch(launchpadApi.endpoints.checkPublic.initiate({ colName: reseveTknColName })).unwrap();
+        console.log("chkPublic", chkPublic);
+        const chkWl = await api.dispatch(launchpadApi.endpoints.checkWl.initiate({ colName: reseveTknColName })).unwrap();
+        console.log("chkWl", chkWl);
+        const chkPresale = await api.dispatch(launchpadApi.endpoints.checkPresale.initiate({ colName: reseveTknColName })).unwrap();
+        console.log("chkPresale", chkPresale);
+
+        let price;
+        if (chkPresale) {
+            price = await api.dispatch(launchpadApi.endpoints.checkPresalePrice.initiate({ colName: reseveTknColName })).unwrap();
+        } else if (chkWl) {
+            price = await api.dispatch(launchpadApi.endpoints.checkWlPrice.initiate({ colName: reseveTknColName })).unwrap();
+        } else if (chkPublic) {
+            price = await api.dispatch(launchpadApi.endpoints.checkPublicPrice.initiate({ colName: reseveTknColName })).unwrap();
+        } else {
+            throw new Error("Sale is not live");
+        }
+
+        console.log("Determined price:", price);
+
+                const account = reserverAcc;
+                const creator = await api.dispatch(launchpadApi.endpoints.getColCreator.initiate({ colName: reseveTknColName })).unwrap();
+                console.log("creator", creator);
+                const publicKey = account.slice(2, account.length);
+                const guard = { keys: [publicKey], pred: "keys-all" };
+
+                let txn;
+                let mintPrice = reserveTknAmount * price;
+                console.log(
+                    "mintPrice",
+                    mintPrice,
+                    "Calculation",
+                    "reserveTknAmount",
+                    reserveTknAmount,
+                    "*",
+                    "price",
+                    price
+                );
+
+                const pactCode = `(free.lptest001.reserve-token ${JSON.stringify(
+                    reseveTknColName
+                )} ${JSON.stringify(account)} ${reserveTknAmount})`;
+                console.log(pactCode);
+
+                if (account == creator) {
+                    txn = Pact.builder
+                        .execution(pactCode)
+                        .addData("guard", guard)
+                        .addSigner(publicKey, (withCapability) => [
+                            withCapability("coin.GAS"),
+                            withCapability("free.lptest001.MINT-NFT", account),
+                        ])
+                        .setMeta({
+                            creationTime: creationTime(),
+                            sender: account,
+                            gasLimit: 150000,
+                            chainId: CHAIN_ID,
+                            ttl: 28800,
+                        })
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+                } else {
+                    txn = Pact.builder
+                        .execution(pactCode)
+                        .addData("guard", guard)
+                        .addSigner(publicKey, (withCapability) => [
+                            withCapability("coin.GAS"),
+                            withCapability("free.lptest001.MINT-NFT", account),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                creator,
+                                mintPrice
+                            ),
+                        ])
+                        .setMeta({
+                            creationTime: creationTime(),
+                            sender: account,
+                            gasLimit: 150000,
+                            chainId: CHAIN_ID,
+                            ttl: 28800,
+                        })
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+                }
+
+                console.log("updateMintTime", txn);
+                console.log("sign");
+
+                const localResponse = await client.local(txn, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+                console.log("localResponse", localResponse);
+
+                if (localResponse.result.status == "success") {
+                    let signedTx;
+                    if (walletName == "Ecko Wallet") {
+                        signedTx = await eckoWallet(txn);
+                    }
+                    if (walletName == "Chainweaver") {
+                        signedTx = await signWithChainweaver(txn);
+                    }
+                    console.log("sign1");
+                    const response = await signFunction(signedTx);
+                    if (response.result.status == "success") {
+                        return { data: response };
+                    } else {
+                        console.log("Error in response", response.result.error);
+                    }
+                } else {
+                    console.log(
+                        "Error in local response",
+                        localResponse.result.error
+                    );
+                }
+            },
+        }),
     }),
 });
 
-export const { useCollectionRequestMutation } = launchpadApi;
+export const {
+    useCollectionRequestMutation,
+    useGetColCreatorMutation,
+    useCheckPublicMutation,
+    useCheckWlMutation,
+    useCheckPresaleMutation,
+    useCheckPublicPriceMutation,
+    useCheckWlPriceMutation,
+    useCheckPresalePriceMutation,
+    useReserveTokensMutation,
+} = launchpadApi;

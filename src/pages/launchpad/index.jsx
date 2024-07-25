@@ -36,6 +36,9 @@ function reducer(state, action) {
 }
 
 const Home = () => {
+    const [page, setPage] = React.useState(1);
+    const [limit, setLimit] = React.useState(10);
+    const [search, setSearch] = React.useState("");
     const data = {
         products: [
             {
@@ -77,12 +80,27 @@ const Home = () => {
         products: data.products || [],
         inputs: { price: [0, 100] },
     });
+    // React.useEffect(() => {
+    //     collectionService.getAllCollections().then((response) => {
+    //         console.log("response", response);
+    //         setCollectionsData(response.data.data);
+    //     });
+    // }, []);
+
     React.useEffect(() => {
-        collectionService.getAllCollections().then((response) => {
+        console.log("page", page, limit, search);
+        collectionService.getAllLaunched( page, limit, search ).then((response) => {
             console.log("response", response);
-            setCollectionsData(response.data.data);
-        });
-    }, []);
+            setCollectionsData(response?.data?.data[0]?.data || []);
+        }
+        );
+
+    }, [page, limit, search]);
+
+
+console.log("collectionsData", collectionsData);
+
+
 
     // const collectionsData = [
     //     {

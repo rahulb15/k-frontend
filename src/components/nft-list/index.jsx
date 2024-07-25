@@ -39,6 +39,7 @@ function reducer(state, action) {
 const NftListArea = ({ className, space, data, collection }) => {
     console.log(collection);
     const [value, setValue] = useState(0);
+  
 
     console.log(data);
     const filters = [
@@ -253,7 +254,7 @@ const NftListArea = ({ className, space, data, collection }) => {
                                         textAlign: "justify",
                                     }}
                                     dangerouslySetInnerHTML={{
-                                        __html: collection?.collectionInfo || "",
+                                        __html: collection?.projectDescription || "",
                                     }}
                                 ></p>
                             </div>

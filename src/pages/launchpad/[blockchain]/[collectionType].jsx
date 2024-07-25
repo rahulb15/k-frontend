@@ -392,7 +392,7 @@ async function fetchCollectionData(blockchain, collectionType) {
     // await new Promise((resolve) => setTimeout(resolve, 100));
 
     // getCollectionByName
-    const response = await collectionService.getCollectionByName(collectionType);
+    const response = await collectionService.getLaunchCollectionByName(collectionType);
     console.log("🚀 ~ fetchCollectionData ~ response", response?.data);
 
     return {

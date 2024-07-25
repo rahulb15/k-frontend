@@ -487,6 +487,9 @@ const Launchpad = () => {
       const publicKey = account.slice(2, account.length);
       const guard = { keys: [publicKey], pred: "keys-all" };
 
+      // "ipfs://QmVdXq6EjDEQq6U5cDqab2xvaMzHLgpQKjW56iVJYbji7a","ipfs://QmRPqajKGNCtKyA7oE5Lx3H8YijyfopS8oaVcdZCSUDyEP","ipfs://QmPJAuW9MpZwcdzw86ECFyBqVb9HvTfHsaqAQiKCvPmSPD","ipfs://QmXHR1BFLd8MYMEYbrhMkboLc1oEG2tbygomaxCknosQNN"
+
+
       const pactCode = `(free.lptest001.nft-collection-request 
                                                         ${JSON.stringify(collectionRequestName)}  
                                                         ${JSON.stringify(collectionRequestSymbol)}  

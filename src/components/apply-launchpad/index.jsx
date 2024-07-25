@@ -137,6 +137,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         walletName,
     } = useSelector((state) => state.launchpad);
     const [policy, setPolicy] = React.useState([]);
+    const [mintStartDateTime, setMintStartDateTime] = useState(null);
+    const [mintEndDateTime, setMintEndDateTime] = useState(null);
 
     const handlePolicyChange = (event) => {
         const {
@@ -244,23 +246,35 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
         const mintStartDate = moment(
             `${watch("mintStartDate")} ${watch("mintStartTime")}`
-        ).format("YYYY-MM-DDTHH:mm:ss");
+        ).utc().format("YYYY-MM-DDTHH:mm:ss");
         const formattedStartDate = `time "${mintStartDate}Z"`;
         console.log("formattedDate", formattedStartDate);
 
         dispatch(setCollectionRequestStartDate(formattedStartDate));
+
+        // setMintStartDateTime(moment(dateTime).utc().format());
+        setMintStartDateTime(
+            moment(`${watch("mintStartDate")} ${watch("mintStartTime")}`)
+                .utc()
+                .format()
+        );
     }, [mintStartTime]);
+    console.log("mintStartDateTime get time only ", mintStartDateTime);
 
     useEffect(() => {
         console.log("watch", watch("mintEndTime"));
         const mintEndDate = moment(
             `${watch("mintEndDate")} ${watch("mintEndTime")}`
-        ).format("YYYY-MM-DDTHH:mm:ss");
+        ).utc().format("YYYY-MM-DDTHH:mm:ss");
         const formattedEndDate = `time "${mintEndDate}Z"`;
         console.log("formattedEndDate", formattedEndDate);
 
         dispatch(setCollectionRequesEndDate(formattedEndDate));
+
+        setMintEndDateTime( moment(`${watch("mintEndDate")} ${watch("mintEndTime")}`).utc().format());
+
     }, [mintEndTime]);
+    console.log("mintEndDateTime", mintEndDateTime);
 
     useEffect(() => {
         console.log("watch", watch("tokenList"));
@@ -455,7 +469,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     console.log("formData", formData);
 
     const handleWalletSubmit = async (data) => {
-        
         console.log(data);
         try {
             const result = await collectionRequest({
@@ -532,7 +545,21 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 });
             }
         } catch (err) {
+           
+
+
             dispatch(setLastRequestResult(err));
+            console.log("🚀 ~ handleWalletSubmit ~ err", err);
+           if (err.message === "Insufficient funds") {
+                Swal.fire({
+                    title: "Error",
+                    text: "Insufficient funds",
+                    icon: "error",
+                    confirmButtonText: "Cool",
+                });
+            }
+
+
             // Handle error
         }
     };
@@ -555,8 +582,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             mintPrice: collectionRequestMintPrice,
             mintPriceCurrency: mintPriceCurrency,
             royaltyPercentage: collectionRequestRoyalityPerc,
-            mintStartDate: collectionRequestStartDate,
+            mintStartDate: mintStartDateTime,
             mintStartTime: collectionRequestStartDate,
+            mintEndDate: mintEndDateTime,
+            mintEndTime: collectionRequesEndDate,
             allowFreeMints: collectionRequestEnableFreeMint,
             enableWhitelist: collectionRequestEnableWl,
             enablePresale: collectionRequestEnablePresale,
@@ -1672,6 +1701,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     required:
                                                         "Mint Start Time is required",
                                                 })}
+                                                disabled={ //if date is not selected
+                                                    watch("mintStartDate")
+                                                        ? false
+                                                        : true
+                                                }
+
                                             />
                                             {errors.mintStartTime && (
                                                 <ErrorText>
@@ -1699,6 +1734,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     required:
                                                         "Mint End Time is required",
                                                 })}
+                                                disabled={ //if date is not selected
+                                                    watch("mintEndDate")
+                                                        ? false
+                                                        : true
+                                                }
                                             />
                                             {errors.mintEndTime && (
                                                 <ErrorText>
