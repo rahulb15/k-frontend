@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import AnimatedCursor from "react-animated-cursor";
 import dynamic from "next/dynamic";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaLink } from "react-icons/fa";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import Foote from "@layout/footer/footer-01";
@@ -158,6 +158,49 @@ const Footer = () => {
                             >
                                 <ColorSwitcher />
                             </div>
+                        </div>
+                        <div className="setting-option">
+                            {/* //chain icon and chain NEXT_PUBLIC_KDA_CHAIN_ID */}
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                {/* <FaLink />
+                                <span style={{ color: "#fff" }}>{process.env.NEXT_PUBLIC_KDA_CHAIN_ID}  </span> */}
+
+                                {/* well formated */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            color: "#fff",
+                                            fontSize: "1.2rem",
+                                            fontWeight: "bold",
+                                            marginRight: "5px",
+                                        }}
+                                    >
+                                        {/* <Image
+                                            src="/wallet/Kadena.png"
+                                            alt="Kadena"
+                                            width={20}
+                                            height={20}
+                                        /> */}
+                                        <FaLink />
+                                    </span>
+                                    <span style={{ color: "#fff" }}>
+                                        {" "}
+                                        {process.env.NEXT_PUBLIC_KDA_CHAIN_ID}
+                                    </span>
+                                </div>
+
+
+
+                            </motion.div>
                         </div>
                     </div>
                     <div className="footer-section middle">
