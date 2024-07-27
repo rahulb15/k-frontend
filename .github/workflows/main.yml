@@ -43,6 +43,12 @@ jobs:
         with:
           fetch-depth: 0
       
+      # - name: Download coverage artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: coverage
+      #     path: coverage
+      
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -50,8 +56,14 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.organization=rahulb15
             -Dsonar.projectKey=rahulb15_k-frontend
+            -Dsonar.projectName=k-frontend
+            -Dsonar.organization=rahulb15
+            -Dsonar.projectVersion=1.0
+            -Dsonar.sources=.
+            -Dsonar.exclusions=node_modules/**,dist/**
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.eslint.eslintconfigpath=./.eslintrc
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
 
   docker:
