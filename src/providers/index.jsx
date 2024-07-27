@@ -5,13 +5,16 @@ import { ClientContextProvider } from "src/contexts/WalletConnectContext";
 import { AccountProvider } from "src/contexts/AccountContext";
 import { EckoWalletContextProvider } from "src/contexts/EckoWalletContext";
 import { KoalaWalletContextProvider } from "src/contexts/KoalaWalletContext";
+import { WalletProvider } from "src/contexts/WalletContext";
 
 export function Providers({ children }) {
     return (
         <ClientContextProvider>
             <EckoWalletContextProvider>
                 <KoalaWalletContextProvider>
-                    <AccountProvider>{children}</AccountProvider>
+                    <AccountProvider>
+                        <WalletProvider>{children}</WalletProvider>
+                    </AccountProvider>
                 </KoalaWalletContextProvider>
             </EckoWalletContextProvider>
         </ClientContextProvider>

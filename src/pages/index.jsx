@@ -57,7 +57,8 @@ const Home = () => {
         {
             id: 3,
             title: "Unique Collections",
-            description: "Collect unique digital assets from creators around the world.",
+            description:
+                "Collect unique digital assets from creators around the world.",
             buttons: [
                 { id: 1, path: "/login", content: "Get Started" },
                 // {

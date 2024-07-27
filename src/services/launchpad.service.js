@@ -1,17 +1,16 @@
+/* eslint-disable */
+import {
+    Pact,
+    createClient,
+    createEckoWalletQuicksign,
+    createSignWithChainweaver,
+} from "@kadena/client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
-    createClient,
-    Pact,
-    createSignWithChainweaver,
-    createEckoWalletQuicksign,
-} from "@kadena/client";
-import {
-    NETWORKID,
-    GAS_PRICE,
-    GAS_LIMIT,
-    creationTime,
     CHAIN_ID,
     NETWORK,
+    NETWORKID,
+    creationTime,
 } from "src/constants/contextConstants";
 
 const API_HOST = NETWORK;
@@ -19,8 +18,7 @@ const client = createClient(API_HOST);
 const signWithChainweaver = createSignWithChainweaver();
 const eckoWallet = createEckoWalletQuicksign();
 
-const admin =
-    "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf";
+const admin = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
 
 const signFunction = async (signedTx) => {
     const transactionDescriptor = await client.submit(signedTx);
@@ -166,7 +164,6 @@ export const launchpadApi = createApi({
             },
         }),
 
-
         getColCreator: builder.mutation({
             async queryFn(args) {
                 const { colName } = args;
@@ -192,9 +189,6 @@ export const launchpadApi = createApi({
                 }
             },
         }),
-
-
-
 
         checkPublic: builder.mutation({
             async queryFn(args) {
@@ -360,28 +354,70 @@ export const launchpadApi = createApi({
                 } = args;
                 console.log(args);
                 // Use the api object to dispatch other mutations
-        const chkPublic = await api.dispatch(launchpadApi.endpoints.checkPublic.initiate({ colName: reseveTknColName })).unwrap();
-        console.log("chkPublic", chkPublic);
-        const chkWl = await api.dispatch(launchpadApi.endpoints.checkWl.initiate({ colName: reseveTknColName })).unwrap();
-        console.log("chkWl", chkWl);
-        const chkPresale = await api.dispatch(launchpadApi.endpoints.checkPresale.initiate({ colName: reseveTknColName })).unwrap();
-        console.log("chkPresale", chkPresale);
+                const chkPublic = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkPublic.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
+                console.log("chkPublic", chkPublic);
+                const chkWl = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkWl.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
+                console.log("chkWl", chkWl);
+                const chkPresale = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkPresale.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
+                console.log("chkPresale", chkPresale);
 
-        let price;
-        if (chkPresale) {
-            price = await api.dispatch(launchpadApi.endpoints.checkPresalePrice.initiate({ colName: reseveTknColName })).unwrap();
-        } else if (chkWl) {
-            price = await api.dispatch(launchpadApi.endpoints.checkWlPrice.initiate({ colName: reseveTknColName })).unwrap();
-        } else if (chkPublic) {
-            price = await api.dispatch(launchpadApi.endpoints.checkPublicPrice.initiate({ colName: reseveTknColName })).unwrap();
-        } else {
-            throw new Error("Sale is not live");
-        }
+                let price;
+                if (chkPresale) {
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkPresalePrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
+                } else if (chkWl) {
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkWlPrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
+                } else if (chkPublic) {
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkPublicPrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
+                } else {
+                    throw new Error("Sale is not live");
+                }
 
-        console.log("Determined price:", price);
+                console.log("Determined price:", price);
 
                 const account = reserverAcc;
-                const creator = await api.dispatch(launchpadApi.endpoints.getColCreator.initiate({ colName: reseveTknColName })).unwrap();
+                const creator = await api
+                    .dispatch(
+                        launchpadApi.endpoints.getColCreator.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
                 console.log("creator", creator);
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };

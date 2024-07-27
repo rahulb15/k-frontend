@@ -153,12 +153,18 @@ const enable2FA = async (token) => {
     }
 };
 
-const verify2FA = async (body) => {
+const verify2FA = async (body, jwtToken) => {
     try {
         const response = await axios.post(
             API_URL + "user/verifyTwoFactorAuth",
-            body
+            body,
+            {
+                headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                },
+            }
         );
+
         return response;
     } catch (error) {
         console.error(error);
@@ -282,17 +288,12 @@ const createVerification = async (body) => {
 // verifyEmail
 const verifyEmail = async (token) => {
     try {
-        const response = await axios.get(
-            API_URL + `user/verify/${token}`
-        );
+        const response = await axios.get(API_URL + `user/verify/${token}`);
         return response;
     } catch (error) {
         console.error(error);
     }
 };
-
-
-
 
 export default {
     register,

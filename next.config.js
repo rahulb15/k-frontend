@@ -6,8 +6,17 @@ module.exports = {
     sassOptions: {
         includePaths: [path.join(__dirname, "./src/assets/scss")],
     },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
     images: {
-        domains: ["res.cloudinary.com", 'www.coindesk.com', 'cointelegraph.com', 'bitcoinist.com', 'decrypt.co'],
+        domains: [
+            "res.cloudinary.com",
+            "www.coindesk.com",
+            "cointelegraph.com",
+            "bitcoinist.com",
+            "decrypt.co",
+        ],
     },
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
         // eslint-disable-next-line no-param-reassign

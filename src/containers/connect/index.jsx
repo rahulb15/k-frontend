@@ -45,9 +45,11 @@ const ConnectArea = ({ className, space }) => {
     const [walletAddress, setWalletAddress] = useState("");
     const [twoFactorCode, setTwoFactorCode] = useState("");
     const [walletName, setWalletName] = useState("");
+    const [jwtToken, setJwtToken] = useState("");
 
-    const enable2FA = async () => {
-        const token = localStorage.getItem("token");
+    const enable2FA = async (token) => {
+        // const token = localStorage.getItem("token");
+        setJwtToken(token);
 
         const response = await userService.enable2FA(token || "");
 
@@ -74,7 +76,7 @@ const ConnectArea = ({ className, space }) => {
             }
 
             if (user?.data?.data?.is2FAEnabled) {
-                enable2FA();
+                await enable2FA(user.data.token);
                 return;
             }
 
@@ -109,12 +111,17 @@ const ConnectArea = ({ className, space }) => {
             token: twoFactorCode.trim(),
             secret,
         };
+        
 
-        const response = await userService.verify2FA(data);
+        const response = await userService.verify2FA(data, jwtToken);
 
         if (response?.data?.status === "success") {
             setIsTwoFactorModalOpen(false);
             setTwoFactorCode("");
+            localStorage.setItem("token", jwtToken);
+            await account.authWalletConnect(walletAddress);
+            router.push("/");
+
             toast.success("Login Successfully");
         } else {
             toast.error("Invalid Code");
@@ -354,34 +361,7 @@ const ConnectArea = ({ className, space }) => {
                 )}
             >
                 <div className="container">
-                    {/* <div className="row g mb--50 mb_md--30 mb_sm--30 align-items-center">
-                    <div
-                        className="col-lg-6"
-                        data-sal="slide-up"
-                        data-sal-delay="150"
-                        data-sal-duration="800"
-                    >
-                        <h3 className="connect-title">Connect your wallet</h3>
-                        <p className="connect-td">
-                            Connect with one of available wallet providers or
-                            create a new wallet.{" "}
-                            <Anchor path="/collection">
-                                What is a wallet?
-                            </Anchor>
-                        </p>
-                    </div>
-                    <div
-                        className="col-lg-6"
-                        data-sal="slide-up"
-                        data-sal-delay="200"
-                        data-sal-duration="800"
-                    >
-                        <p className="wallet-bootm-disc">
-                            We do not own your private keys and cannot access
-                            your funds without your confirmation.
-                        </p>
-                    </div>
-                </div> */}
+               
                     <div className="row g-5">
                         <div
                             className="col-lg-6"
@@ -391,14 +371,7 @@ const ConnectArea = ({ className, space }) => {
                         >
                             <div className="connect-thumbnail">
                                 <div className="left-image">
-                                    {/* <Image
-                                    // src="/assets-images/pact-img.png"
-                                    src={`${openRegisterModal ? "/auth-images/designer.svg" : isEmailNotRegistered ? "/auth-images/business_deal.svg" : "/assets-images/pact-img.png"}`}
-                                    alt="Nft_Profile"
-                                    width={670}
-                                    height={576}
-                                    priority
-                                /> */}
+                              
                                     {isEmailNotRegistered ? (
                                         <Image
                                             src="/auth-images/business_deal.svg"
@@ -533,9 +506,7 @@ const ConnectArea = ({ className, space }) => {
                                 <div className="row g-5">
                                     <div
                                         className="col-xxl-4 col-lg-6 col-md-4 col-12 col-sm-6 col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                      
                                     >
                                         <Wallet
                                             title="EckoWallet"
@@ -546,14 +517,11 @@ const ConnectArea = ({ className, space }) => {
                                             onClick={() =>
                                                 onEckoWalletConnect()
                                             }
-                                            // onClick={() => setOpenRegisterModal(true)}
                                         />
                                     </div>
                                     <div
                                         className="col-xxl-4 col-lg-6 col-md-4 col-12 col-sm-6 col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                      
                                     >
                                         <Wallet
                                             title="Chainweaver"
@@ -566,9 +534,7 @@ const ConnectArea = ({ className, space }) => {
                                     </div>
                                     <div
                                         className="col-xxl-4 col-lg-6 col-md-4 col-12 col-sm-6 col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                       
                                     >
                                         <Wallet
                                             title="Koala"
@@ -583,9 +549,7 @@ const ConnectArea = ({ className, space }) => {
                                     </div>
                                     <div
                                         className="col-xxl-4 col-lg-6 col-md-4 col-12 col-sm-6 col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                      
                                     >
                                         <Wallet
                                             title="Wallet Connect"
@@ -598,9 +562,7 @@ const ConnectArea = ({ className, space }) => {
                                     </div>
                                     <div
                                         className="col-xxl-4 col-lg-6 col-md-4 col-12 col-sm-6 col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                      
                                     >
                                         <Wallet
                                             title="Zelcore"
@@ -615,9 +577,7 @@ const ConnectArea = ({ className, space }) => {
                                     </div>
                                     <div
                                         className="col-12"
-                                        // data-sal="slide-up"
-                                        // data-sal-delay="150"
-                                        // data-sal-duration="800"
+                                     
                                     >
                                         <div
                                             className={clsx(
@@ -864,22 +824,7 @@ const ConnectArea = ({ className, space }) => {
                                                                     Google
                                                                 </span>
                                                             </button>
-                                                            {/* <button
-                                                type="button"
-                                                className="another-login login-facebook"
-                                            >
-                                                <span className="small-image">
-                                                    <Image
-                                                        src="/images/icons/facebook.png"
-                                                        alt="facebook login"
-                                                        width={26}
-                                                        height={27}
-                                                    />
-                                                </span>
-                                                <span>
-                                                    Log in with Facebook
-                                                </span>
-                                            </button> */}
+                                                      
                                                         </>
                                                     )}
                                                 </>
@@ -968,35 +913,7 @@ const ConnectArea = ({ className, space }) => {
                             <div className="modal-content">
                                 <h3>Connect with Chainweaver</h3>
                                 <div className="modal-body">
-                                    {/* <div className="form-group">
-                                    <label htmlFor="address">
-                                        Wallet Address
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="address"
-                                        placeholder="Enter your wallet address"
-                                        value={address}
-                                        onChange={(e) =>
-                                            setAddress(e.target.value)
-                                        }
-                                    />
-                                    {errors.address && (
-                                        <ErrorText>
-                                            {errors.address?.message}
-                                        </ErrorText>
-                                    )}
-
-                                </div>
-                                <div className="modal-footer">
-                                    <Button
-                                        type="button"
-                                        size="medium"
-                                        onClick={handleConnectChainweaver}
-                                    >
-                                        Connect
-                                    </Button>
-                                </div> */}
+                                   
 
                                     <div className="mb-5">
                                         <label

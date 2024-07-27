@@ -1,7 +1,7 @@
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header-01";
-import Footer from "@layout/footer/footer-01";
+import Footer from "@layout/footer/footer-03";
 import AuthorIntroArea from "@containers/author-intro";
 import AuthorProfileArea from "@containers/author-profile";
 
@@ -17,7 +17,7 @@ const Author = () => (
     <Wrapper>
         <SEO pageTitle="Author" />
         <Header />
-        <main id="main-content">
+        <main id="main-content" style={{ marginBottom: "200px" }}>
             <AuthorIntroArea data={authorData} />
             <AuthorProfileArea data={{ products: productData }} />
         </main>

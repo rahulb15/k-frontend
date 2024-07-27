@@ -49,6 +49,7 @@ import {
     setWalletName,
 } from "src/features/launchpadSlice";
 import moment from "moment";
+import ConnectModal from "@components/modals/connect-modal";
 
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -114,6 +115,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [imageBannerLoading, setImageBannerLoading] = useState(false);
     const [selectedWallet, setSelectedWallet] = useState(null);
     const [collectionData, setCollectionData] = useState({});
+    const [showConnectModal, setShowConnectModal] = useState(false);
     const {
         collectionRequestName,
         collectionRequestSymbol,
@@ -139,6 +141,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [policy, setPolicy] = React.useState([]);
     const [mintStartDateTime, setMintStartDateTime] = useState(null);
     const [mintEndDateTime, setMintEndDateTime] = useState(null);
+
+    const handleConnectModal = () => {
+        setShowConnectModal((prev) => !prev);
+    };
 
     const handlePolicyChange = (event) => {
         const {
@@ -246,7 +252,9 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
         const mintStartDate = moment(
             `${watch("mintStartDate")} ${watch("mintStartTime")}`
-        ).utc().format("YYYY-MM-DDTHH:mm:ss");
+        )
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
         const formattedStartDate = `time "${mintStartDate}Z"`;
         console.log("formattedDate", formattedStartDate);
 
@@ -265,14 +273,19 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         console.log("watch", watch("mintEndTime"));
         const mintEndDate = moment(
             `${watch("mintEndDate")} ${watch("mintEndTime")}`
-        ).utc().format("YYYY-MM-DDTHH:mm:ss");
+        )
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
         const formattedEndDate = `time "${mintEndDate}Z"`;
         console.log("formattedEndDate", formattedEndDate);
 
         dispatch(setCollectionRequesEndDate(formattedEndDate));
 
-        setMintEndDateTime( moment(`${watch("mintEndDate")} ${watch("mintEndTime")}`).utc().format());
-
+        setMintEndDateTime(
+            moment(`${watch("mintEndDate")} ${watch("mintEndTime")}`)
+                .utc()
+                .format()
+        );
     }, [mintEndTime]);
     console.log("mintEndDateTime", mintEndDateTime);
 
@@ -545,12 +558,9 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 });
             }
         } catch (err) {
-           
-
-
             dispatch(setLastRequestResult(err));
             console.log("🚀 ~ handleWalletSubmit ~ err", err);
-           if (err.message === "Insufficient funds") {
+            if (err.message === "Insufficient funds") {
                 Swal.fire({
                     title: "Error",
                     text: "Insufficient funds",
@@ -558,7 +568,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     confirmButtonText: "Cool",
                 });
             }
-
 
             // Handle error
         }
@@ -617,57 +626,63 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     };
 
     const onSubmit = async (data, e) => {
-        const { target } = e;
-        if (kycStatus) {
-            if (step === 1) {
-                setStep(2);
-            }
-            if (step === 2) {
-                if (!selectedImage || !selectedBannerImage) {
-                    setHasImageError(true);
-                    return;
+        console.log("account", account);
+        if (account?.user?.walletAddress) {
+            if (kycStatus) {
+                if (step === 1) {
+                    setStep(2);
                 }
+                if (step === 2) {
+                    if (!selectedImage || !selectedBannerImage) {
+                        setHasImageError(true);
+                        return;
+                    }
 
-                if (selectedWallet === null) {
-                    setShake(true);
-                    toast.error("Please select payment option");
-                    return;
-                }
+                    if (selectedWallet === null) {
+                        setShake(true);
+                        toast.error("Please select payment option");
+                        return;
+                    }
 
-                if (selectedWallet === "Stripe") {
-                    const responsecreate = await createCollectionRequest();
-                    if (responsecreate?.data?.status === "success") {
-                        const stripe = await loadStripe(
-                            process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-                        );
-                        const body = {
-                            collectionName: collectionRequestName,
-                            mintPrice: collectionRequestMintPrice,
-                            mintPriceCurrency: mintPriceCurrency,
-                            type: "apply-launchpad",
-                        };
-                        const response =
-                            await collectionService.createCheckoutSession(body);
-                        const session = response.data.data;
-                        const result = await stripe.redirectToCheckout({
-                            sessionId: session.id,
-                        });
+                    if (selectedWallet === "Stripe") {
+                        const responsecreate = await createCollectionRequest();
+                        if (responsecreate?.data?.status === "success") {
+                            const stripe = await loadStripe(
+                                process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+                            );
+                            const body = {
+                                collectionName: collectionRequestName,
+                                mintPrice: collectionRequestMintPrice,
+                                mintPriceCurrency: mintPriceCurrency,
+                                type: "apply-launchpad",
+                            };
+                            const response =
+                                await collectionService.createCheckoutSession(
+                                    body
+                                );
+                            const session = response.data.data;
+                            const result = await stripe.redirectToCheckout({
+                                sessionId: session.id,
+                            });
+                        }
+                    }
+                    if (
+                        selectedWallet === "EckoWallet" ||
+                        selectedWallet === "Chainweaver"
+                    ) {
+                        console.log("EckoWallet");
+
+                        const createResponse = await createCollectionRequest();
+                        if (createResponse?.data?.status === "success") {
+                            handleWalletSubmit(createResponse.data.data);
+                        }
                     }
                 }
-                if (
-                    selectedWallet === "EckoWallet" ||
-                    selectedWallet === "Chainweaver"
-                ) {
-                    console.log("EckoWallet");
-
-                    const createResponse = await createCollectionRequest();
-                    if (createResponse?.data?.status === "success") {
-                        handleWalletSubmit(createResponse.data.data);
-                    }
-                }
+            } else {
+                setShake(true);
             }
         } else {
-            setShake(true);
+            handleConnectModal();
         }
     };
 
@@ -1701,12 +1716,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     required:
                                                         "Mint Start Time is required",
                                                 })}
-                                                disabled={ //if date is not selected
+                                                disabled={
+                                                    //if date is not selected
                                                     watch("mintStartDate")
                                                         ? false
                                                         : true
                                                 }
-
                                             />
                                             {errors.mintStartTime && (
                                                 <ErrorText>
@@ -1734,7 +1749,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     required:
                                                         "Mint End Time is required",
                                                 })}
-                                                disabled={ //if date is not selected
+                                                disabled={
+                                                    //if date is not selected
                                                     watch("mintEndDate")
                                                         ? false
                                                         : true
@@ -2248,6 +2264,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             </Modal>
 
             {isLoading && <Loader />}
+            <ConnectModal
+                show={showConnectModal}
+                handleModal={handleConnectModal}
+            />
         </>
     );
 };

@@ -1,59 +1,148 @@
+import React, { useEffect, useState } from 'react';
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import TabContent from "react-bootstrap/TabContent";
 import TabContainer from "react-bootstrap/TabContainer";
 import TabPane from "react-bootstrap/TabPane";
 import Nav from "react-bootstrap/Nav";
-// import Product from "@components/product/layout-01";
 import { ProductType } from "@utils/types";
-// import { shuffleArray } from "@utils/methods";
+import { shuffleArray } from "@utils/methods";
+import { useGetNFTsQuery } from "src/services/nft.service";
+import Nft from '@components/nfts';
 
-const AuthorProfileArea = ({ className }) => (
-    // const AuthorProfileArea = ({ className, data }) => {
-    // const onSaleProducts = shuffleArray(data.products).slice(0, 10);
-    // const ownedProducts = shuffleArray(data.products).slice(0, 10);
-    // const createdProducts = shuffleArray(data.products).slice(0, 10);
-    // const likedProducts = shuffleArray(data.products).slice(0, 10);
+// const AuthorProfileArea = ({ className }) => (
+const AuthorProfileArea = ({ className }) => {
+    const [pageNo, setPageNo] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const [search, setSearch] = useState('');
+    const [total, setTotal] = useState(0);
+    const [nfts, setNfts] = useState([]);
+    const { data, error, isLoading } = useGetNFTsQuery({ pageNo, limit, search });
+    console.log("🚀 ~ file: index.jsx ~ line 38 ~ AuthorProfileArea ~ data", data)
 
-    <div className={clsx("rn-authore-profile-area", className)}>
-        <TabContainer defaultActiveKey="nav-profile">
-            <div className="container">
-                <div className="row">
-                    <div className="col-12">
-                        <div className="tab-wrapper-one">
-                            <nav className="tab-button-one">
-                                <Nav
-                                    className="nav nav-tabs"
-                                    id="nav-tab"
-                                    role="tablist"
-                                >
-                                    <Nav.Link as="button" eventKey="nav-home">
-                                        On Sale
-                                    </Nav.Link>
-                                    <Nav.Link
-                                        as="button"
-                                        eventKey="nav-profile"
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
+
+
+   
+
+
+    // data: {
+    //     nfts: [
+    //       {
+    //         _id: '66a36d930c6577263d4ee3cc',
+    //         user: {
+    //           _id: '66a0d2394efea0ada8460285',
+    //           name: 'Rahul',
+    //           isAdminAccess: true,
+    //           email: 'rahulb@yopmail.com',
+    //           walletAddress: 
+    //             'k:d1d47937b0ec42efa859048d0fb5f51707639ddad991e58ae9efcff5f4ff9dbe',
+    //           walletBalance: 0,
+    //           walletName: 'Ecko Wallet',
+    //           isWalletConnected: true,
+    //           password: '$2b$10$2EToEK2E09f5nulyk8YlEeCvJ6Z6EegdvVoVfkihUGuAptZM.VJa2',
+    //           is2FAEnabled: true,
+    //           is2FAVerified: true,
+    //           role: 'user',
+    //           status: 'active',
+    //           verified: true,
+    //           followers: [],
+    //           following: [],
+    //           posts: [],
+    //           comments: [],
+    //           likes: [],
+    //           isEmailVerified: true,
+    //           isPhoneVerified: false,
+    //           isSocialLogin: false,
+    //           isActive: true,
+    //           isDeleted: false,
+    //           createdAt: '2024-07-24T10:06:49.107Z',
+    //           updatedAt: '2024-07-26T08:27:09.739Z',
+    //           __v: 0,
+    //           adminPassword: 
+    //             '$2b$10$SXnVdXM7QC/AbWhq9l4/We6kW5qhSC6QvfqYVju5.zBxs2hv4Ma1i',
+    //           username: 'j3vq31',
+    //           secret2FA: 'JJFUIPTXERNWMPBMHQYTGNTOIMTEKJSP'
+    //         },
+    //         collectionId: '66a1e6160a133887fa037ed1',
+    //         collectionType: 'Launchpad',
+    //         collectionName: 'monkeyaz8',
+    //         tokenImage: '',
+    //         tokenId: 't:VjGG8oUD4t_Z73IrS8dAKGeuxV_A-4T0IzYBaDNiP3Q',
+    //         nftPrice: 0,
+    //         unlockable: false,
+    //         isRevealed: false,
+    //         digitalCode: '',
+    //         onMarketplace: false,
+    //         onSale: false,
+    //         bidInfo: [],
+    //         onAuction: false,
+    //         sellingType: 'All',
+    //         creatorName: 'j3vq31',
+    //         duration: '',
+    //         properties: [],
+    //         likes: 0,
+    //         creator: 'j3vq31'
+    //       }
+    //     ],
+    //     total: 1,
+    //     currentPage: 1
+    //   }
+    // useEffect(() => {
+    //     if (data) {
+    //         setTotal(data.total);
+    //     }
+    // }
+    // , [data]);
+
+
+    return (
+        <div className={clsx("rn-authore-profile-area", className)}>
+            <TabContainer defaultActiveKey="nav-profile">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="tab-wrapper-one">
+                                <nav className="tab-button-one">
+                                    <Nav
+                                        className="nav nav-tabs"
+                                        id="nav-tab"
+                                        role="tablist"
                                     >
-                                        Owned
-                                    </Nav.Link>
-                                    <Nav.Link
-                                        as="button"
-                                        eventKey="nav-contact"
-                                    >
-                                        Created
-                                    </Nav.Link>
-                                    <Nav.Link as="button" eventKey="nav-liked">
-                                        Liked
-                                    </Nav.Link>
-                                </Nav>
-                            </nav>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-home"
+                                        >
+                                            On Sale
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-profile"
+                                        >
+                                            Owned
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-contact"
+                                        >
+                                            Created
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-liked"
+                                        >
+                                            Liked
+                                        </Nav.Link>
+                                    </Nav>
+                                </nav>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <TabContent className="tab-content rn-bid-content">
-                    <TabPane className="row d-flex g-5" eventKey="nav-home">
-                        {/* {onSaleProducts?.map((prod) => (
+                    <TabContent className="tab-content rn-bid-content">
+                        <TabPane className="row d-flex g-5" eventKey="nav-home">
+                            {/* {onSaleProducts?.map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -73,9 +162,12 @@ const AuthorProfileArea = ({ className }) => (
                                     />
                                 </div>
                             ))} */}
-                    </TabPane>
-                    <TabPane className="row g-5 d-flex" eventKey="nav-profile">
-                        {/* {ownedProducts?.map((prod) => (
+                        </TabPane>
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-profile"
+                        >
+                            {/* {ownedProducts?.map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -95,9 +187,39 @@ const AuthorProfileArea = ({ className }) => (
                                     />
                                 </div>
                             ))} */}
-                    </TabPane>
-                    <TabPane className="row g-5 d-flex" eventKey="nav-contact">
-                        {/* {createdProducts?.map((prod) => (
+
+                            {data?.data?.nfts?.map((prod) => (
+                                <div
+                                    key={prod._id}
+                                    className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                                >
+                                    {console.log("🚀 ~ file: index.jsx ~ line 38 ~ AuthorProfileArea ~ prod", prod)}
+                                    <Nft
+                                        overlay
+                                        placeBid
+                                        title={prod.collectionName}
+                                        slug={prod.tokenId}
+                                        latestBid={prod.nftPrice}
+                                        price={prod.nftPrice}
+                                        likeCount={prod.likes}
+                                        auction_date={prod.createdAt}
+                                        image={prod.tokenImage}
+                                        authors={prod.creatorName}
+                                        bitCount={prod.likes}
+                                        data={prod}
+                                    />
+                                </div>
+                            ))}
+
+
+
+
+                        </TabPane>
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-contact"
+                        >
+                            {/* {createdProducts?.map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -117,9 +239,12 @@ const AuthorProfileArea = ({ className }) => (
                                     />
                                 </div>
                             ))} */}
-                    </TabPane>
-                    <TabPane className="row g-5 d-flex" eventKey="nav-liked">
-                        {/* {likedProducts?.map((prod) => (
+                        </TabPane>
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-liked"
+                        >
+                            {/* {likedProducts?.map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -139,12 +264,13 @@ const AuthorProfileArea = ({ className }) => (
                                     />
                                 </div>
                             ))} */}
-                    </TabPane>
-                </TabContent>
-            </div>
-        </TabContainer>
-    </div>
-);
+                        </TabPane>
+                    </TabContent>
+                </div>
+            </TabContainer>
+        </div>
+    );
+};
 
 AuthorProfileArea.propTypes = {
     className: PropTypes.string,

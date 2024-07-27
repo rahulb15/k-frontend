@@ -1,16 +1,15 @@
+/* eslint-disable */
+
+import LaunchpadChainHeader from "@components/launchpad-chain-header";
+import LaunchpadFilter from "@components/launchpad-filter";
 import SEO from "@components/seo";
-import React from "react";
-import { useReducer, useRef, useEffect, useCallback } from "react";
+import LaunchpadHeroArea from "@containers/launchpad-hero";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
-import LaunchpadHeroArea from "@containers/launchpad-hero";
-import collectionService from "src/services/collection.service";
-import LaunchpadChainHeader from "@components/launchpad-chain-header";
-import ProductFilter from "@components/product-filter/layout-01";
-import FilterButton from "@ui/filter-button";
 import { slideToggle } from "@utils/methods";
-import LaunchpadFilter from "@components/launchpad-filter";
+import React, { useCallback, useReducer, useRef } from "react";
+import collectionService from "src/services/collection.service";
 
 // Demo data
 import CollectionArea from "@containers/collection/layout-03";
@@ -66,11 +65,9 @@ const Home = () => {
                     { src: "/assets-images/AI-nft/AI-3.jpeg" },
                 ],
                 profile_image: { src: "/images/client/client-12.png" },
-            }
-        ]
+            },
+        ],
     };
-
-
 
     console.log("data", data);
     const [collectionsData, setCollectionsData] = React.useState([]);
@@ -80,122 +77,16 @@ const Home = () => {
         products: data.products || [],
         inputs: { price: [0, 100] },
     });
-    // React.useEffect(() => {
-    //     collectionService.getAllCollections().then((response) => {
-    //         console.log("response", response);
-    //         setCollectionsData(response.data.data);
-    //     });
-    // }, []);
 
     React.useEffect(() => {
         console.log("page", page, limit, search);
-        collectionService.getAllLaunched( page, limit, search ).then((response) => {
-            console.log("response", response);
-            setCollectionsData(response?.data?.data[0]?.data || []);
-        }
-        );
-
+        collectionService
+            .getAllLaunched(page, limit, search)
+            .then((response) => {
+                console.log("response", response);
+                setCollectionsData(response?.data?.data[0]?.data || []);
+            });
     }, [page, limit, search]);
-
-
-console.log("collectionsData", collectionsData);
-
-
-
-    // const collectionsData = [
-    //     {
-    //         id: 1,
-    //         title: "Priority Pass",
-    //         slug: "/priority-pass",
-    //         total_item: 27,
-    //         image: { src: "/assets-images/AI-nft/AI-1.jpeg" },
-    //         thumbnails: [
-    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //         ],
-    //         profile_image: { src: "/images/client/client-15.png" },
-    //     },
-    //     {
-    //         id: 2,
-    //         title: "DB cooper",
-    //         slug: "/db-cooper",
-    //         total_item: 20,
-    //         image: { src: "/assets-images/AI-nft/AI-4.jpeg" },
-    //         thumbnails: [
-    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //         ],
-    //         profile_image: { src: "/images/client/client-12.png" },
-    //     },
-    //     {
-    //         id: 3,
-    //         title: "Monkey",
-    //         slug: "/monkey",
-    //         total_item: 20,
-    //         image: { src: "/assets-images/AI-nft/AI-5.jpeg" },
-    //         thumbnails: [
-    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //         ],
-    //         profile_image: { src: "/images/client/client-12.png" },
-    //     },
-    //     {
-    //         id: 4,
-    //         title: "Batman",
-    //         slug: "/batman",
-    //         total_item: 20,
-    //         image: { src: "/assets-images/AI-nft/AI-6.jpeg" },
-    //         thumbnails: [
-    //             { src: "/assets-images/AI-nft/AI-7.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //         ],
-    //         profile_image: { src: "/images/client/client-12.png" },
-    //     },
-    //     {
-    //         id: 5,
-    //         title: "Shaktiman",
-    //         slug: "/shaktiman",
-    //         total_item: 20,
-    //         image: { src: "/assets-images/AI-nft/shaktiman/AI-1.jpeg" },
-    //         thumbnails: [
-    //             { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //             { src: "/assets-images/AI-nft/AI-4.jpeg" },
-    //         ],
-    //         profile_image: { src: "/images/client/client-12.png" },
-    //     },
-    //     {
-    //       id: 6,
-    //       title: "Bharat Mata",
-    //       slug: "/bharat-mata",
-    //       total_item: 20,
-    //       image: { src: "/assets-images/AI-nft/shaktiman/AI-4.jpeg" },
-    //       thumbnails: [
-    //           { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //           { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //           { src: "/assets-images/AI-nft/AI-4.jpeg" },
-    //       ],
-    //       profile_image: { src: "/images/client/client-12.png" },
-    //   },
-    //   {
-    //     id: 7,
-    //     title: "Papu Pompom",
-    //     slug: "/papu-pompom",
-    //     total_item: 20,
-    //     image: { src: "/assets-images/AI-nft/shaktiman/AI-3.jpeg" },
-    //     thumbnails: [
-    //         { src: "/assets-images/AI-nft/AI-2.jpeg" },
-    //         { src: "/assets-images/AI-nft/AI-3.jpeg" },
-    //         { src: "/assets-images/AI-nft/AI-4.jpeg" },
-    //     ],
-    //     profile_image: { src: "/images/client/client-12.png" },
-    // },
-    // ];
-    console.log("collectionsData", collectionsData);
 
     const content = [
         {
@@ -232,7 +123,6 @@ console.log("collectionsData", collectionsData);
         },
     ];
     console.log("content", content);
-
 
     const filterRef = useRef(null);
     const filterHandler = () => {
@@ -294,17 +184,18 @@ console.log("collectionsData", collectionsData);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.inputs]);
 
-
-
-console.log("state", state);
+    console.log("state", state);
 
     return (
         <Wrapper>
             <SEO pageTitle="Home" />
             <Header />
             <main id="main-content">
-                <LaunchpadChainHeader state={state} filterHandler={filterHandler} />
-                        {/* <FilterButton
+                <LaunchpadChainHeader
+                    state={state}
+                    filterHandler={filterHandler}
+                />
+                {/* <FilterButton
                             open={state.filterToggle}
                             onClick={filterHandler}
                         /> */}

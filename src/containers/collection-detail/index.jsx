@@ -666,6 +666,7 @@ import {
 } from "src/services/launchpad.service";
 import axios from "axios";
 import Loader from "@components/loader";
+import { useCreateNFTMutation } from "src/services/nft.service";
 
 const CollectionDetailsArea = ({ space, className, product }) => {
     console.log("Product:", product);
@@ -720,6 +721,7 @@ const CollectionDetailsArea = ({ space, className, product }) => {
     const [checkPresale] = useCheckPresaleMutation();
     const [checkPresalePrice] = useCheckPresalePriceMutation();
     const [reserveTokens] = useReserveTokensMutation();
+    const [createNFT, { isError, data, error }] = useCreateNFTMutation();
     const account = useAccountContext();
 
     const [stageInfo, setStageInfo] = useState({
@@ -937,6 +939,17 @@ const CollectionDetailsArea = ({ space, className, product }) => {
                     product.collectionName
                 );
                 if (updateResponse?.data?.status === "success") {
+
+                    // const data = {
+                    //     collectionName: syncColName,
+                    //     wallet: user?.walletName,
+                    //   };
+
+
+                    // const result = await createNFT(nftData).unwrap();
+
+
+
                     Swal.fire({
                         icon: "success",
                         title: "Success!",

@@ -1,20 +1,18 @@
-import PropTypes from "prop-types";
 import SEO from "@components/seo";
-import Wrapper from "@layout/wrapper";
-import Header from "@layout/header/header-01";
-import Footer from "@layout/footer/footer-03";
 import AboutArea from "@containers/about/layout-02";
-import QuoteArea from "@containers/quote-area";
-import FunfactArea from "@containers/funfact";
 import CTAArea from "@containers/cta";
-import BlogArea from "@containers/blog/layout-01";
+import FunfactArea from "@containers/funfact";
+import QuoteArea from "@containers/quote-area";
+import Footer from "@layout/footer/footer-03";
+import Header from "@layout/header/header-01";
+import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";
 import { getAllPosts } from "../lib/api";
 
 // Demo data
 import aboutData from "../data/innerpages/about.json";
 
-const About = ({ posts }) => {
+const About = () => {
     const content = normalizedData(aboutData?.content || []);
     return (
         <Wrapper>
@@ -22,10 +20,12 @@ const About = ({ posts }) => {
             <Header />
             <main id="main-content">
                 <AboutArea data={content["about-section"]} />
-                <QuoteArea data={content["quote-section"]} data1={content["blog-section"]} />
+                <QuoteArea
+                    data={content["quote-section"]}
+                    data1={content["blog-section"]}
+                />
                 <FunfactArea data={content["funfact-section"]} />
                 <CTAArea data={content["cta-section"]} />
-                {/* <BlogArea data={{ ...content["blog-section"], posts }} /> */}
             </main>
             <Footer />
         </Wrapper>
@@ -49,9 +49,5 @@ export async function getStaticProps() {
         },
     };
 }
-
-About.propTypes = {
-    posts: PropTypes.arrayOf(PropTypes.shape({})),
-};
 
 export default About;

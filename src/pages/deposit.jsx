@@ -1,9 +1,8 @@
 import SEO from "@components/seo";
-import Wrapper from "@layout/wrapper";
-import Header from "@layout/header/header-01";
-import Footer from "@layout/footer/footer-01";
-import Breadcrumb from "@components/breadcrumb";
 import DepositArea from "@containers/deposit";
+import Footer from "@layout/footer/footer-01";
+import Header from "@layout/header/header-01";
+import Wrapper from "@layout/wrapper";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -14,11 +13,7 @@ const Deposit = () => (
         <SEO pageTitle="Deposit" />
         <Header />
         <main id="main-content">
-            {/* <Breadcrumb
-                pageTitle="Kryptomerch Login"
-                currentPage="Kryptomerch Login"
-            /> */}
-            < DepositArea />
+            <DepositArea />
         </main>
         <Footer />
     </Wrapper>

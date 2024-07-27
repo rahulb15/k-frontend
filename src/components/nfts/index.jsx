@@ -1,141 +1,160 @@
-/* eslint-disable */
-import * as THREE from "three";
-import { Suspense, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Preload, Image as ImageImpl } from "@react-three/drei";
-import { ScrollControls, Scroll, useScroll } from "./ScrollControls";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import PropTypes from "prop-types";
+import Image from "next/image";
+import clsx from "clsx";
+import Anchor from "@ui/anchor";
+import ClientAvatar from "@ui/client-avatar";
+import ProductBid from "@components/product-bid";
+import Button from "@ui/button";
+import { ImageType } from "@utils/types";
+import PlaceBidModal from "@components/modals/placebid-modal";
 
-function Image(props) {
-    const ref = useRef();
-    const group = useRef();
-    const data = useScroll();
-    useFrame((state, delta) => {
-        group.current.position.z = THREE.MathUtils.damp(
-            group.current.position.z,
-            Math.max(0, data.delta * 50),
-            4,
-            delta
-        );
-    });
-    return (
-        <group ref={group}>
-            <ImageImpl ref={ref} {...props} />
-        </group>
-    );
-}
 
-function Page({ m = 0.4, urls, ...props }) {
-    const { width } = useThree((state) => state.viewport);
-    // const width = 12
-    const w = width < 10 ? 1.5 / 3 : 1 / 3;
-    return (
-        <group {...props}>
-            <Image
-                position={[-width * w, 0, -1]}
-                scale={[width * w - m * 2, 5, 1]}
-                url={urls[0]}
-            />
-            <Image
-                position={[0, 0, 0]}
-                scale={[width * w - m * 2, 5, 1]}
-                url={urls[1]}
-            />
-            <Image
-                position={[width * w, 0, 1]}
-                scale={[width * w - m * 2, 5, 1]}
-                url={urls[2]}
-            />
-        </group>
-    );
-}
+const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
+    ssr: false,
+});
 
-function Pages() {
-    const { width } = useThree((state) => state.viewport);
-    // const width = 18
+const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
+    ssr: false,
+});
+
+const Nft = ({
+    overlay,
+    title,
+    slug,
+    latestBid,
+    price,
+    likeCount,
+    auction_date,
+    image,
+    bitCount,
+    authors,
+    placeBid,
+    data,
+    disableShareDropdown,
+}) => {
+    console.log("🚀 ~ file: index.jsx ~ line 13 ~ Nft ~ data", data);
+    const [showBidModal, setShowBidModal] = useState(false);
+    const handleBidModal = () => {
+        setShowBidModal((prev) => !prev);
+    };
     return (
         <>
-            <Page
-                position={[-width * 1, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/launchpadteam2.png",
-                    "/assets-images/launchpadteam3.png",
-                ]}
-            />
-            <Page
-                position={[width * 0, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/ken-img1.png",
-                    "/assets-images/ken-img1.png",
-                ]}
-            />
-            <Page
-                position={[width * 1, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/ken-img1.png",
-                    "/assets-images/ken-img1.png",
-                ]}
-            />
-            <Page
-                position={[width * 2, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/ken-img1.png",
-                    "/assets-images/ken-img1.png",
-                ]}
-            />
-            <Page
-                position={[width * 3, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/ken-img1.png",
-                    "/assets-images/ken-img1.png",
-                ]}
-            />
-            <Page
-                position={[width * 4, 0, 0]}
-                urls={[
-                    "/assets-images/launchpadteam1.png",
-                    "/assets-images/ken-img1.png",
-                    "/assets-images/ken-img1.png",
-                ]}
-            />
+            <div
+                className={clsx(
+                    "product-style-one",
+                    !overlay && "no-overlay",
+                    placeBid && "with-placeBid"
+                )}
+            >
+                <div className="card-thumbnail">
+                    {/* {image?.src && (
+                        <Anchor path={`/product/${slug}`}>
+                            <Image
+                                src={image.src}
+                                alt={image?.alt || "NFT_portfolio"}
+                                width={533}
+                                height={533}
+                            />
+                        </Anchor>
+                    )} */}
+
+                    {data?.isRevealed === false ? (
+                        <Image
+                            src="/assets-images/nft/nft2.jpeg"
+                            alt="NFT_portfolio"
+                            width={533}
+                            height={533}
+                        />
+                    ) : (
+                        <Image
+                            src={data?.image}
+                            alt={data?.title}
+                            width={533}
+                            height={533}
+                        />
+                        
+                    )}
+                    
+
+
+
+
+
+                    {auction_date && <CountdownTimer date={auction_date} />}
+                    {/* {placeBid && (
+                        <Button onClick={handleBidModal} size="small">
+                            Place Bid
+                        </Button>
+                    )} */}
+                    {/* {placeBid && (
+                        <Button onClick={handleBidModal} size="small">
+                            Place Bid
+                        </Button>
+                    )} */}
+
+                   
+                    
+
+                </div>
+                <div className="product-share-wrapper">
+                    <div className="profile-share">
+                        {/* {authors?.map((client) => (
+                            <ClientAvatar
+                                key={client.name}
+                                slug={client.slug}
+                                name={client.name}
+                                image={client.image}
+                            />
+                        ))} */}
+                        {data?.isRevealed === false ? (
+                                       <span className="latest-bid">
+                                        Not Revealed
+                                       </span>
+                        ) : (
+                            <></>
+                        )}
+
+                    </div>
+                    {!disableShareDropdown && <ShareDropdown />}
+                </div>
+                <Anchor path={`/product/${slug}`}>
+                    <span className="product-name">{title}</span>
+                </Anchor>
+                {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
+                {/* <ProductBid price={price} likeCount={likeCount} /> */}
+            </div>
         </>
     );
-}
+};
 
-export default function NftsBanner() {
-    return (
-        <Canvas
-            gl={{ antialias: false }}
-            dpr={[1, 1.5]}
-            camera={{ position: [0, 0, 10], fov: 50 }}
-            style={{ height: "100vh" }}
-        >
-            <Suspense fallback={null}>
-                <ScrollControls
-                    infinite
-                    horizontal
-                    damping={4}
-                    pages={4}
-                    distance={1}
-                >
-                    <Scroll>
-                        <Pages />
-                    </Scroll>
-                    {/* <Scroll html>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '-75vw' }}>home</h1>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '25vw' }}>to</h1>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '125vw' }}>be</h1>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '225vw' }}>home</h1>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '325vw' }}>to</h1>
-            <h1 style={{ position: 'absolute', top: '20vh', left: '425vw' }}>be</h1>
-          </Scroll> */}
-                </ScrollControls>
-                <Preload />
-            </Suspense>
-        </Canvas>
-    );
-}
+Nft.propTypes = {
+    overlay: PropTypes.bool,
+    title: PropTypes.string.isRequired,
+    slug: PropTypes.string.isRequired,
+    latestBid: PropTypes.string.isRequired,
+    price: PropTypes.shape({
+        amount: PropTypes.number.isRequired,
+        currency: PropTypes.string.isRequired,
+    }).isRequired,
+    likeCount: PropTypes.number.isRequired,
+    auction_date: PropTypes.string,
+    image: ImageType.isRequired,
+    authors: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            slug: PropTypes.string.isRequired,
+            image: ImageType.isRequired,
+        })
+    ),
+    bitCount: PropTypes.number,
+    placeBid: PropTypes.bool,
+    disableShareDropdown: PropTypes.bool,
+};
+
+Nft.defaultProps = {
+    overlay: false,
+};
+
+export default Nft;

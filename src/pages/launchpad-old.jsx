@@ -1,14 +1,13 @@
+/* eslint-disable */
+
 import SEO from "@components/seo";
+import LaunchpadHeroArea from "@containers/launchpad-hero";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
-import LaunchpadHeroArea from "@containers/launchpad-hero";
-import { normalizedData } from "@utils/methods";
 
 // Demo data
 import CollectionArea from "@containers/collection/layout-03";
-
-import homepageData from "../data/homepages/home-06.json";
 
 // import collectionsData from "../data/collections.json";
 
@@ -86,31 +85,31 @@ const Home = () => {
             profile_image: { src: "/images/client/client-12.png" },
         },
         {
-          id: 6,
-          title: "Bharat Mata",
-          slug: "/collection",
-          total_item: 20,
-          image: { src: "/assets-images/AI-nft/shaktiman/AI-4.jpeg" },
-          thumbnails: [
-              { src: "/assets-images/AI-nft/AI-2.jpeg" },
-              { src: "/assets-images/AI-nft/AI-3.jpeg" },
-              { src: "/assets-images/AI-nft/AI-4.jpeg" },
-          ],
-          profile_image: { src: "/images/client/client-12.png" },
-      },
-      {
-        id: 7,
-        title: "Papu Pompom",
-        slug: "/collection",
-        total_item: 20,
-        image: { src: "/assets-images/AI-nft/shaktiman/AI-3.jpeg" },
-        thumbnails: [
-            { src: "/assets-images/AI-nft/AI-2.jpeg" },
-            { src: "/assets-images/AI-nft/AI-3.jpeg" },
-            { src: "/assets-images/AI-nft/AI-4.jpeg" },
-        ],
-        profile_image: { src: "/images/client/client-12.png" },
-    },
+            id: 6,
+            title: "Bharat Mata",
+            slug: "/collection",
+            total_item: 20,
+            image: { src: "/assets-images/AI-nft/shaktiman/AI-4.jpeg" },
+            thumbnails: [
+                { src: "/assets-images/AI-nft/AI-2.jpeg" },
+                { src: "/assets-images/AI-nft/AI-3.jpeg" },
+                { src: "/assets-images/AI-nft/AI-4.jpeg" },
+            ],
+            profile_image: { src: "/images/client/client-12.png" },
+        },
+        {
+            id: 7,
+            title: "Papu Pompom",
+            slug: "/collection",
+            total_item: 20,
+            image: { src: "/assets-images/AI-nft/shaktiman/AI-3.jpeg" },
+            thumbnails: [
+                { src: "/assets-images/AI-nft/AI-2.jpeg" },
+                { src: "/assets-images/AI-nft/AI-3.jpeg" },
+                { src: "/assets-images/AI-nft/AI-4.jpeg" },
+            ],
+            profile_image: { src: "/images/client/client-12.png" },
+        },
     ];
     console.log("collectionsData", collectionsData);
 

@@ -13,7 +13,6 @@ import productData from "../../data/products.json";
 
 const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
     <Wrapper>
-        {console.log(product)}
         <SEO pageTitle="Product Details" />
         <Header />
         <main id="main-content">

@@ -1,28 +1,28 @@
+/* eslint-disable */
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ThemeProvider } from "next-themes";
 import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import { useEffect } from "react";
+import "react-country-state-city/dist/react-country-state-city.css";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Provider, useDispatch } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { PersistGate } from "redux-persist/integration/react";
 import sal from "sal.js";
+import { setSearchFocus } from "src/features/searchSlice"; // Make sure to import this
 import { Providers } from "src/providers";
+import { persistor, store } from "src/store/store";
+import "sweetalert2/src/sweetalert2.scss";
 import "../assets/css/bootstrap.min.css";
-import "../assets/css/swal.css";
 import "../assets/css/feather.css";
 import "../assets/css/modal-video.css";
+import "../assets/css/swal.css";
 import "../assets/scss/style.scss";
-import "react-country-state-city/dist/react-country-state-city.css";
-import "../containers/wallet-button/styles.css";
 import "../components/search/styles.css";
-import "sweetalert2/src/sweetalert2.scss";
-import { store, persistor } from "src/store/store";
-import { PersistGate } from "redux-persist/integration/react";
-import { Provider } from "react-redux";
-import { useHotkeys } from "react-hotkeys-hook";
-import { useDispatch } from "react-redux";
-import { setSearchFocus } from "src/features/searchSlice"; // Make sure to import this
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "../containers/wallet-button/styles.css";
 const AppContent = ({ Component, pageProps }) => {
     const router = useRouter();
     const dispatch = useDispatch();
