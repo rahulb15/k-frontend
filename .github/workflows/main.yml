@@ -42,13 +42,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      # - name: Download coverage artifact
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: coverage
-      #     path: coverage
-      
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '20' 
+      - name: Install dependencies
+        run: npm install
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -56,15 +55,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=rahulb15_k-frontend
-            -Dsonar.projectName=k-frontend
             -Dsonar.organization=rahulb15
-            -Dsonar.projectVersion=1.0
-            -Dsonar.sources=.
-            -Dsonar.exclusions=node_modules/**,dist/**
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.eslint.eslintconfigpath=./.eslintrc
-            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+            -Dsonar.projectKey=rahulb15_k-frontend
 
   docker:
     name: Build and Push Docker Image
