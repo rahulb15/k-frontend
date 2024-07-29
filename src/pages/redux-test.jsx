@@ -18,7 +18,6 @@ function LaunchpadComponent() {
         collectionRequestSymbol,
         collectionRequestCreator,
         lastRequestResult,
-        // ... other state fields
     } = useSelector((state) => state.launchpad);
 
     const [collectionRequest, { isLoading, isError, error }] =
@@ -43,37 +42,12 @@ function LaunchpadComponent() {
                 collectionRequestName,
                 collectionRequestSymbol,
                 collectionRequestCreator,
-                // ... other form data
             }).unwrap();
             dispatch(setLastRequestResult(result));
-            // Handle success (e.g., show a success message)
         } catch (err) {
             dispatch(setLastRequestResult(err));
-            // Handle error
         }
     };
-
-    // const {
-    //   collectionRequestName,
-    //   collectionRequestSymbol,
-    //   collectionRequestCreator,
-    //   collectionRequestDescription,
-    //   collectionRequestCategory,
-    //   collectionRequestSupply,
-    //   collectionRequestUriList,
-    //   collectionRequestMintPrice,
-    //   collectionRequestRoyalityPerc,
-    //   collectionRequestCoverImgUrl,
-    //   collectionRequestBannerImgUrl,
-    //   collectionRequestStartDate,
-    //   collectionRequesEndDate,
-    //   collectionRequestEnableFreeMint,
-    //   collectionRequestEnableWl,
-    //   collectionRequestEnablePresale,
-    //   collectionRequestEnableAirdrop,
-    //   collectionRequestPolicy,
-    //   wallet
-    // } = args;
 
     return (
         <form onSubmit={handleSubmit}>
