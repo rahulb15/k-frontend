@@ -1,6 +1,6 @@
 import SEO from "@components/seo";
 import DepositArea from "@containers/deposit";
-import Footer from "@layout/footer/footer-01";
+import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 

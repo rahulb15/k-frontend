@@ -50,6 +50,7 @@ import {
 } from "src/features/launchpadSlice";
 import moment from "moment";
 import ConnectModal from "@components/modals/connect-modal";
+import { useRouter } from "next/router";
 
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -89,6 +90,8 @@ const shakeAnimation = {
 
 const ApplyLaunchpadWrapper = ({ className, space }) => {
     const theme = useTheme();
+    const router = useRouter();
+
     const dispatch = useDispatch();
     const [collectionRequest, { isLoading, isError, error }] =
         useCollectionRequestMutation();
@@ -104,6 +107,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         tokenList: "",
         mintPriceCurrency: "kda",
     });
+    const balance = useSelector((state) => state.balance.value);
+    console.log(balance, "balance");
     const [accessToken, setAccessToken] = useState("");
     const [selectedBannerImage, setSelectedBannerImage] = useState();
     const [selectedImage, setSelectedImage] = useState();
@@ -141,6 +146,16 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [policy, setPolicy] = React.useState([]);
     const [mintStartDateTime, setMintStartDateTime] = useState(null);
     const [mintEndDateTime, setMintEndDateTime] = useState(null);
+    const [haveSufficientBalance, setHaveSufficientBalance] = useState(false);
+    console.log(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES);
+
+    useEffect(() => {
+        if (balance >= parseFloat(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES)) {
+            setHaveSufficientBalance(true);
+        } else {
+            setHaveSufficientBalance(false);
+        }
+    }, [balance]);
 
     const handleConnectModal = () => {
         setShowConnectModal((prev) => !prev);
@@ -626,6 +641,23 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     };
 
     const onSubmit = async (data, e) => {
+        if (haveSufficientBalance === false) {
+            Swal.fire({
+                title: "Error",
+                text: "Insufficient balance",
+                icon: "error",
+                confirmButtonText: "Top Up",
+                showCancelButton: true,
+                cancelButtonText: "Close",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.push("/deposit");
+                }
+            });
+
+            return;
+        }
+
         console.log("account", account);
         if (account?.user?.walletAddress) {
             if (kycStatus) {

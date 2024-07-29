@@ -37,24 +37,30 @@ import WalletButton from "@containers/wallet-button";
 import TickerHeader from "@layout/ticker-header";
 import Canny from "@components/Canny";
 import { toast } from "react-toastify";
-import AnimatedCursor from "react-animated-cursor"
-import dynamic from 'next/dynamic'
-const MouseParticles = dynamic(() => import('react-mouse-particles'), {
+import AnimatedCursor from "react-animated-cursor";
+import dynamic from "next/dynamic";
+import { useSelector, useDispatch } from "react-redux";
+import { setBalance, setLoading, setError } from "src/features/balanceSlice";
+import { useBalanceMutation } from "src/services/launchpad.service";
+import BalanceDropdown from "@components/BalanceDropdown";
+const MouseParticles = dynamic(() => import("react-mouse-particles"), {
     ssr: false,
-  })
-  
+});
 
 const Header = ({ className }) => {
     const sticky = useSticky();
+    const dispatch = useDispatch();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
     const { search, searchHandler } = useFlyoutSearch();
+    const [balanceMutation, { isLoading, isError, error }] =
+        useBalanceMutation();
     const account = useAccountContext();
     console.log(account, "account");
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
-    // const [ethBalance, setEthBalance] = useState("");
     const [isDropDownEnabled, setIsDropDownEnabled] = useState(false);
     const router = useRouter();
     const { disconnect } = useWalletConnectClient();
+    const balance = useSelector((state) => state.balance.value);
+    console.log(balance, "balance");
 
     const logout = async () => {
         const response = await userService.logout();
@@ -64,6 +70,26 @@ const Header = ({ className }) => {
         disconnect();
         setIsDropDownEnabled(false);
     };
+
+    useEffect(() => {
+        const fetchBalance = async () => {
+            try {
+                if (account?.walletAddressContect?.length > 0) {
+                    dispatch(setLoading(true));
+                    const response = await balanceMutation({
+                        account: account.walletAddressContect,
+                    }).unwrap();
+                    dispatch(setBalance(response));
+                }
+            } catch (error) {
+                dispatch(setError(error.toString()));
+            } finally {
+                dispatch(setLoading(false));
+            }
+        };
+
+        fetchBalance();
+    }, [account.walletAddressContect, balanceMutation, dispatch]);
 
     // const getUser = async () => {
     //     const response = await userService.getUserInit();
@@ -82,25 +108,8 @@ const Header = ({ className }) => {
 
     return (
         <>
-        {account?.user?._id && <Canny user={account?.user} />}
+            {account?.user?._id && <Canny user={account?.user} />}
             <TickerHeader />
-            {/* <MouseParticles
-        g={1}
-        color="random"
-        cull="MuiSvgIcon-root,MuiButton-root"
-        level={6}
-      /> */}
-            {/* <AnimatedCursor
-                innerSize={8}
-                outerSize={8}
-                color='193, 11, 111'
-                outerAlpha={0.2}
-                innerScale={0.7}
-                outerScale={5}
-            /> */}
-
-
-
             <header
                 className={clsx(
                     "rn-header haeder-default black-logo-version header--fixed header--sticky",
@@ -141,12 +150,21 @@ const Header = ({ className }) => {
                                 </div>
                                 <FlyoutSearchForm isOpen={search} />
                             </div>
-
-                            {/* <a data-canny-link href="https://testkryptomerch.canny.io">
-          Give feedback
-        </a> */}
-
-                            {/* i con for cannny */}
+                            <div className="setting-option rn-icon-list">
+                                <div className="icon-box">
+                                    <span
+                                        className="current"
+                                        style={{
+                                            color: "white",
+                                            fontSize: "1.2rem",
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {/* {parseFloat(balance).toFixed(2)} KDA */}
+                                        <BalanceDropdown balance={balance} />
+                                    </span>
+                                </div>
+                            </div>
                             <div className="setting-option rn-icon-list">
                                 <div className="icon-box">
                                     <a
@@ -182,95 +200,14 @@ const Header = ({ className }) => {
                             <div className="setting-option header-btn">
                                 <div className="icon-box">
                                     {account.walletAddressContect.length > 0 ? (
-                                        // <div
-                                        //     className={clsx(
-                                        //         "nice-select",
-                                        //         isDropDownEnabled && "open"
-                                        //     )}
-                                        //     role="button"
-                                        //     tabIndex={0}
-                                        //     onClick={() =>
-                                        //         setIsDropDownEnabled(
-                                        //             (prev) => !prev
-                                        //         )
-                                        //     }
-                                        // >
-                                        //     <span className="current">
-                                        //         {account.walletAddressContect.slice(
-                                        //             0,
-                                        //             6
-                                        //         )}
-                                        //         ...
-                                        //         {account.walletAddressContect.slice(
-                                        //             -4
-                                        //         )}
-                                        //     </span>
-                                        //     <ul
-                                        //         className="list"
-                                        //         role="menubar"
-                                        //         onClick={(e) =>
-                                        //             e.stopPropagation()
-                                        //         }
-                                        //         style={{
-                                        //             width: "100%",
-                                        //             minWidth: "auto",
-                                        //             marginTop: "3px",
-                                        //             height: "auto",
-                                        //         }}
-                                        //     >
-                                        //         <li
-                                        //             className={clsx(
-                                        //                 "option",
-                                        //                 "selected focus"
-                                        //             )}
-                                        //             role="menuitem"
-                                        //             onClick={() =>
-                                        //                 router.push("/author")
-                                        //             }
-                                        //         >
-                                        //             <ImProfile />
-                                        //             Profile
-                                        //         </li>
-
-                                        //         <li
-                                        //             className={clsx(
-                                        //                 "option",
-                                        //                 "selected focus"
-                                        //             )}
-                                        //             role="menuitem"
-                                        //             onClick={() => {
-                                        //                 logout();
-                                        //             }}
-                                        //         >
-                                        //             <IoLogOut />
-                                        //             Logout
-                                        //         </li>
-                                        //     </ul>
-                                        // </div>
                                         <>
                                             <ProfileBar />
                                         </>
                                     ) : (
-                                        // <Link
-                                        //     href="/connect"
-                                        //     className="cn-btn"
-                                        // >
-                                        //     <span>Connect Wallet</span>
-                                        // </Link>
                                         <WalletButton />
                                     )}
                                 </div>
                             </div>
-
-                            {/* {isAuthenticated && (
-                                <div className="setting-option rn-icon-list user-account">
-                                    <UserDropdown
-                                        onDisconnect={onDisconnect}
-                                        ethBalance={ethBalance}
-                                    />
-                                </div>
-                            )} */}
-
                             <div className="setting-option mobile-menu-bar d-block d-xl-none">
                                 <div className="hamberger">
                                     <BurgerButton onClick={offcanvasHandler} />

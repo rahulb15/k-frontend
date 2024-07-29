@@ -18,6 +18,8 @@ import Swal from "sweetalert2";
 import { useSearchParams } from "next/navigation";
 import collectionService from "src/services/collection.service";
 import { loadStripe } from "@stripe/stripe-js";
+import { useSelector, useDispatch } from "react-redux";
+
 import axios from "axios";
 
 const DarkPaper = styled(Paper)({
@@ -76,7 +78,6 @@ const DepositArea = () => {
     const searchParams = useSearchParams();
     const [amount, setAmount] = useState(0);
     const [fee, setFee] = useState(0);
-    const [balance, setBalance] = useState(0);
     const [address, setAddress] = useState("");
     const [depositAmount, setDepositAmount] = useState(0);
     const [depositFee, setDepositFee] = useState(0);
@@ -93,6 +94,10 @@ const DepositArea = () => {
             date: "2024-10-11",
         },
     ]);
+
+    const balance = useSelector((state) => state.balance.value);
+    console.log(balance, "balance");
+
 
     useEffect(() => {
         const fetchPrice = async () => {
@@ -255,7 +260,7 @@ const DepositArea = () => {
                     width={30}
                     height={30}
                 />
-                <span style={{ marginLeft: 10 }}>≋ {balance.toFixed(8)}</span>
+                <span style={{ marginLeft: 10 }}>≋ {parseFloat(balance).toFixed(2)}</span>
                 <SyncIcon />
             </Typography>
             <Box
@@ -324,7 +329,7 @@ const DepositArea = () => {
                                     height={30}
                                 />
                                 <span style={{ marginLeft: 10 }}>
-                                    ≋ {balance.toFixed(8)}
+                                    ≋ {parseFloat(balance).toFixed(2)}
                                 </span>
                             </Typography>
                             <Typography>

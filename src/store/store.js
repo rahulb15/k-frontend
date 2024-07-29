@@ -16,11 +16,13 @@ import launchpadReducer from "src/features/launchpadSlice";
 import searchReducer from "src/features/searchSlice";
 import { launchpadApi } from "src/services/launchpad.service";
 import { nftApi } from "src/services/nft.service";
+import balanceReducer from "src/features/balanceSlice";
 
 const rootReducer = combineReducers({
     auth: authReducer,
     search: searchReducer,
     launchpad: launchpadReducer,
+    balance: balanceReducer,
     [launchpadApi.reducerPath]: launchpadApi.reducer,
     [nftApi.reducerPath]: nftApi.reducer,
 });
@@ -29,7 +31,7 @@ const persistConfig = {
     key: "root",
     version: 1,
     storage,
-    whitelist: ["auth", "search", "launchpad"],
+    whitelist: ["auth", "search", "launchpad", "balance"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
