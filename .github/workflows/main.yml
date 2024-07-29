@@ -80,3 +80,19 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/kryptomerch:latest
+          build-args: |
+            NEXT_PUBLIC_PROJECT_ID=${{ secrets.NEXT_PUBLIC_PROJECT_ID }}
+            NEXT_PUBLIC_RELAY_URL=${{ secrets.NEXT_PUBLIC_RELAY_URL }}
+            NEXT_PUBLIC_KDA_NETWORK_TYPE=${{ secrets.NEXT_PUBLIC_KDA_NETWORK_TYPE }}
+            NEXT_PUBLIC_KDA_CHAIN_ID=${{ secrets.NEXT_PUBLIC_KDA_CHAIN_ID }}
+            NEXT_PUBLIC_KDA_GAS_PRICE=${{ secrets.NEXT_PUBLIC_KDA_GAS_PRICE }}
+            NEXT_PUBLIC_KDA_GAS_LIMIT=${{ secrets.NEXT_PUBLIC_KDA_GAS_LIMIT }}
+            NEXT_PUBLIC_KDA_PRECISION=${{ secrets.NEXT_PUBLIC_KDA_PRECISION }}
+            NEXT_PUBLIC_KDA_NETWORK_ID=${{ secrets.NEXT_PUBLIC_KDA_NETWORK_ID }}
+            NEXT_PUBLIC_KDA_FEE=${{ secrets.NEXT_PUBLIC_KDA_FEE }}
+            NEXT_PUBLIC_APR_FEE=${{ secrets.NEXT_PUBLIC_APR_FEE }}
+            NEXT_PUBLIC_KDA_NETWORK=${{ secrets.NEXT_PUBLIC_KDA_NETWORK }}
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_ZELCORE_URL=${{ secrets.NEXT_PUBLIC_ZELCORE_URL }}
+            NEXT_PUBLIC_ADMIN_ADDRESS=${{ secrets.NEXT_PUBLIC_ADMIN_ADDRESS }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
