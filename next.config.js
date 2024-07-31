@@ -9,6 +9,7 @@ module.exports = {
     eslint: {
         ignoreDuringBuilds: true,
     },
+
     images: {
         domains: [
             "res.cloudinary.com",
@@ -16,6 +17,7 @@ module.exports = {
             "cointelegraph.com",
             "bitcoinist.com",
             "decrypt.co",
+            "ipfs.io"
         ],
     },
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

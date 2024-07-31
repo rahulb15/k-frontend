@@ -39,6 +39,7 @@ const Nft = ({
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
     };
+    console.log("imge", image);
     return (
         <>
             <div
@@ -59,7 +60,7 @@ const Nft = ({
                             />
                         </Anchor>
                     )} */}
-
+{console.log("🚀 ~ file: index.jsx ~ line 41 ~ Nft ~ data?.isRevealed", data?.isRevealed)}
                     {data?.isRevealed === false ? (
                         <Image
                             src="/assets-images/nft/nft2.jpeg"
@@ -68,12 +69,24 @@ const Nft = ({
                             height={533}
                         />
                     ) : (
+                        // <Image
+                        //     src={data?.image}
+                        //     alt={data?.title}
+                        //     width={533}
+                        //     height={533}
+                        // />
+
+                        // 'blob:nodedata:9588165b-ce9f-4483-8001-5747671a925c'
                         <Image
-                            src={data?.image}
+                            src={image}
                             alt={data?.title}
                             width={533}
                             height={533}
                         />
+                        
+
+
+
                         
                     )}
                     

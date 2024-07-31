@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 import collectionService from "src/services/collection.service";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
 
 import axios from "axios";
 
@@ -37,7 +38,7 @@ const Toast = Swal.mixin({
         popup: "colored-toast",
     },
     showConfirmButton: false,
-    timer: 1500,
+    timer: 2500,
     timerProgressBar: true,
 });
 
@@ -82,6 +83,7 @@ const DepositArea = () => {
     const [depositAmount, setDepositAmount] = useState(0);
     const [depositFee, setDepositFee] = useState(0);
     const [price, setPrice] = useState(null);
+    const router = useRouter();
     const [depositHistory, setDepositHistory] = useState([
         {
             id: 1,
@@ -141,6 +143,13 @@ const DepositArea = () => {
                 icon: "success",
                 title: "Transaction successful",
             });
+
+            setTimeout(() => {
+                router.push("/deposit");
+            }
+            , 3000);
+
+
         }
         if (searchParams.get("status") === "cancel") {
             fetchCollection();
@@ -149,6 +158,11 @@ const DepositArea = () => {
                 icon: "error",
                 title: "Transaction failed",
             });
+            // router.push("/deposit");
+            setTimeout(() => {
+                router.push("/deposit");
+            }
+            , 3000);
         }
 
         // const fetchCollection = async () => {
@@ -171,6 +185,7 @@ const DepositArea = () => {
             setAmount(value);
         }
     };
+    console.log("amount", amount);
 
     useEffect(() => {
         const walletAddress = localStorage.getItem("walletAddress");
@@ -226,10 +241,11 @@ const DepositArea = () => {
             process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
         );
         const body = {
-            amount: amount * price,
+            amount: amount,
             priorityFee: fee,
             cryptoCurrency: "KDA",
             address: address,
+            price: price,
             type: "deposit",
         };
         console.log("🚀 ~ handleSubmit ~ body", body);

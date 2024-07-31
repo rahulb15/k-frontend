@@ -597,6 +597,58 @@ export const launchpadApi = createApi({
             },
           }),
 
+          getTokenDetails: builder.mutation({
+            async queryFn(args) {
+                const { account } = args;
+                console.log("account", account);
+                const pactCode = `(free.lptest001.get-token-details ${JSON.stringify(account)})`;
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({
+                        creationTime: creationTime(),
+                        ttl: 28800,
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        gasPrice: 0.00000001,
+                        sender: account,
+                    })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                try {
+                    const response = await client.local(transaction, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (response.result.status === 'success') {
+                        return { data: response.result.data };
+                    } else {
+                        return { error: response.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }),
 });
@@ -613,4 +665,5 @@ export const {
     useReserveTokensMutation,
     useBalanceMutation,
     useTransferMutation,
+    useGetTokenDetailsMutation,
 } = launchpadApi;
