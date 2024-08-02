@@ -15,6 +15,7 @@ import authReducer from "src/features/authSlice";
 import launchpadReducer from "src/features/launchpadSlice";
 import searchReducer from "src/features/searchSlice";
 import { launchpadApi } from "src/services/launchpad.service";
+import { priorityPassApi } from "src/services/prioritypass.service";
 import { nftApi } from "src/services/nft.service";
 import balanceReducer from "src/features/balanceSlice";
 
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     balance: balanceReducer,
     [launchpadApi.reducerPath]: launchpadApi.reducer,
     [nftApi.reducerPath]: nftApi.reducer,
+    [priorityPassApi.reducerPath]: priorityPassApi.reducer,
 });
 
 const persistConfig = {
@@ -55,7 +57,12 @@ export const store = configureStore({
                     REGISTER,
                 ],
             },
-        }).concat(loggerMiddleware, launchpadApi.middleware, nftApi.middleware),
+        }).concat(
+            loggerMiddleware,
+            launchpadApi.middleware,
+            nftApi.middleware,
+            priorityPassApi.middleware
+        ),
 });
 
 export const persistor = persistStore(store);

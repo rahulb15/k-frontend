@@ -405,8 +405,8 @@ const Collection = ({
     return (
         <Anchor
             path={`/launchpad/kadena/${path}`}
-            className="rn-collection-inner-one"
-        >
+            className={`rn-collection-inner-one ${data?.collectionName === "Priority Pass" ? "priority-pass" : ""}`}
+            >
             <div className="collection-wrapper">
                 {image && (
                     <div className="collection-big-thumbnail">
@@ -418,18 +418,6 @@ const Collection = ({
                         />
                     </div>
                 )}
-                {/* <div className="collenction-small-thumbnail">
-                {thumbnails?.map((thumb) => (
-                    <div key={thumb?.src}>
-                        <Image
-                            src={thumb?.src}
-                            alt={thumb?.alt || "Nft_Profile"}
-                            width={164}
-                            height={110}
-                        />
-                    </div>
-                ))}
-            </div> */}
                 <div className="collection-deg">
                     <h6 className="title">{title}</h6>
                     <button className="btn btn-primary">Mint</button>
@@ -462,10 +450,12 @@ const Collection = ({
                         <span
                             style={{ fontWeight: "bold", marginLeft: "10px" }}
                         >
-                            {launchInfo.text}
+                            {/* {launchInfo.text} */}
+                            {data?.collectionName === "Priority Pass" ? "" : launchInfo.text}
                         </span>
                         <span style={{ fontWeight: "bold", marginLeft: "5px" }}>
-                            {launchInfo.time}
+                            {/* {launchInfo.time} */}
+                            {data?.collectionName === "Priority Pass" ? "" : launchInfo.time}
                         </span>
                     </div>
                 </div>

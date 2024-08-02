@@ -4,6 +4,7 @@ import CollectionDetailHeader from "@components/collection-detail-header";
 import NftListArea from "@components/nft-list";
 import SEO from "@components/seo";
 import CollectionDetailsArea from "@containers/collection-detail";
+import PriorityPassDetailsArea from "@containers/prioritypass-detail";
 import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
@@ -13,6 +14,7 @@ import collectionService from "src/services/collection.service";
 import productData from "../../../data/products.json";
 
 const CollectionDetails = ({ collection }) => {
+    console.log("🚀 ~ CollectionDetails ~ collection", collection);
     return (
         <Wrapper>
             <SEO pageTitle="Launchpad Details" />
@@ -22,7 +24,13 @@ const CollectionDetails = ({ collection }) => {
                     pageTitle={collection?.title}
                     data={collection?.data?.data}
                 />
-                <CollectionDetailsArea product={collection?.data?.data} />
+                {/* <CollectionDetailsArea product={collection?.data?.data} /> */}
+                {collection?.title === "Priority Pass" ? (
+                    <PriorityPassDetailsArea product={collection?.data?.data} />
+                ) : (
+                    <CollectionDetailsArea product={collection?.data?.data} />
+                )}
+
                 <NftListArea
                     data={{
                         section_title: {
