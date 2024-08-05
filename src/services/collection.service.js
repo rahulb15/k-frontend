@@ -192,6 +192,26 @@ const getLaunchCollectionByName = async (name) => {
     }
 };
 
+//getAllDeposits
+const getAllDeposits = async (page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `transaction/getAllDeposits`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 
 
@@ -206,5 +226,6 @@ export default {
     getAllCollections,
     getCollectionByName,
     getLaunchCollectionByName,
-    getAllLaunched
+    getAllLaunched,
+    getAllDeposits
 };

@@ -10,14 +10,26 @@ module.exports = {
         ignoreDuringBuilds: true,
     },
 
+    // images: {
+    //     domains: [
+    //         "res.cloudinary.com",
+    //         "www.coindesk.com",
+    //         "cointelegraph.com",
+    //         "bitcoinist.com",
+    //         "decrypt.co",
+    //         "ipfs.io"
+    //     ],
+    // },
     images: {
-        domains: [
-            "res.cloudinary.com",
-            "www.coindesk.com",
-            "cointelegraph.com",
-            "bitcoinist.com",
-            "decrypt.co",
-            "ipfs.io"
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: '**',
+            },
+            {
+                protocol: 'http',
+                hostname: '**',
+            },
         ],
     },
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {

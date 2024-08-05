@@ -9,6 +9,7 @@ import ProductBid from "@components/product-bid";
 import Button from "@ui/button";
 import { ImageType } from "@utils/types";
 import PlaceBidModal from "@components/modals/placebid-modal";
+import NftDetailModal from "./NftDetailModal";
 
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
@@ -36,6 +37,15 @@ const Nft = ({
 }) => {
     console.log("🚀 ~ file: index.jsx ~ line 13 ~ Nft ~ data", data);
     const [showBidModal, setShowBidModal] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+
+    const handleOpenModal = () => {
+        setShowDetailModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowDetailModal(false);
+    };
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
     };
@@ -49,8 +59,8 @@ const Nft = ({
                     placeBid && "with-placeBid"
                 )}
             >
-                <div className="card-thumbnail">
-                    {/* {image?.src && (
+                <div className="card-thumbnail" onClick={handleOpenModal}>
+                {/* {image?.src && (
                         <Anchor path={`/product/${slug}`}>
                             <Image
                                 src={image.src}
@@ -138,6 +148,11 @@ const Nft = ({
                 {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
                 {/* <ProductBid price={price} likeCount={likeCount} /> */}
             </div>
+            <NftDetailModal
+                open={showDetailModal}
+                onClose={handleCloseModal}
+                data={data}
+            />
         </>
     );
 };

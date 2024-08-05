@@ -192,7 +192,7 @@ export const priorityPassApi = createApi({
 
         reserveTokens: builder.mutation({
             async queryFn(args) {
-                const { minter, amount } = args;
+                const { minter, amount, creator, walletName } = args;
                 const passPrice = await getPassPrice();
                 console.log("Pass Price", passPrice);
                 console.log("Minter", minter);
@@ -208,6 +208,7 @@ export const priorityPassApi = createApi({
 
                 let txn;
                 if (account === admin) {
+                    console.log("Admin");
                     txn = Pact.builder
                         .execution(pactCode)
                         .addData("guard", guard)
@@ -228,6 +229,7 @@ export const priorityPassApi = createApi({
                         .setNetworkId(NETWORKID)
                         .createTransaction();
                 } else {
+                    console.log("Not Admin");
                     txn = Pact.builder
                         .execution(pactCode)
                         .addData("guard", guard)
@@ -274,6 +276,7 @@ export const priorityPassApi = createApi({
                     }
                     console.log("sign1");
                     const response = await signFunction(signedTx);
+                    console.log("response", response);
                     if (response.result.status == "success") {
                         return { data: response };
                     } else {

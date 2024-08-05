@@ -189,61 +189,11 @@ const PriorityPassDetailsArea = ({ space, className, product }) => {
                 // reseveTknColName: product.collectionName,
                 minter: account?.user?.walletAddress,
                 amount: parseInt(reservePrice),
+                creator: product.creatorWallet,
+                walletName: account?.user?.walletName,
                 // walletName: account?.user?.walletName,
             });
             console.log("Reserve Tokens Response:", response);
-
-            // {
-            //     data: {
-            //       gas: 42251,
-            //       result: { status: 'success', data: true },
-            //       reqKey: 'KCXU3jTWmmQmIc4xQa-_w1TFWlz-LADjTTRDW85sxHY',
-            //       logs: 'L1lnmLd3bzQ_fU0RSm9ZpEVYZbJuZuHVi4A5TkUEnvg',
-            //       events: [
-            //         {
-            //           params: [
-            //             'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069', 'k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616',
-            //             0.00042251
-            //           ],
-            //           name: 'TRANSFER',
-            //           module: { namespace: null, name: 'coin' },
-            //           moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-            //         },
-            //         {
-            //           params: [ 'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069' ],
-            //           name: 'MINT-NFT',
-            //           module: { namespace: 'free', name: 'lptest001' },
-            //           moduleHash: 'z4eKB4zFUKbHMt4msXtEfw6wPFEPqHMJz02ULTGy0qM'
-            //         },
-            //         {
-            //           params: [
-            //             'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069', 'k:d1d47937b0ec42efa859048d0fb5f51707639ddad991e58ae9efcff5f4ff9dbe',
-            //             1
-            //           ],
-            //           name: 'TRANSFER',
-            //           module: { namespace: null, name: 'coin' },
-            //           moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-            //         },
-            //         {
-            //           params: [
-            //             'monkeyaz8', 'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069',
-            //             { int: 1 }
-            //           ],
-            //           name: 'MINT_EVENT',
-            //           module: { namespace: 'free', name: 'lptest001' },
-            //           moduleHash: 'z4eKB4zFUKbHMt4msXtEfw6wPFEPqHMJz02ULTGy0qM'
-            //         }
-            //       ],
-            //       metaData: {
-            //         blockTime: 1721893894985698,
-            //         prevBlockHash: '4U4C1zmeS_UDVYbvyvn_oAD3CotALQwmA_rl9Jkd7Ts',
-            //         blockHash: 'IORjaxIdnFmCLkQSstT4tAZILZUWmVRsphGa8ZcOL3w',
-            //         blockHeight: 4496846
-            //       },
-            //       continuation: null,
-            //       txId: 6296780
-            //     }
-            //   }
 
             if (response.data.result.status === "success") {
                 const updateResponse = await collectionService.updateCollection(

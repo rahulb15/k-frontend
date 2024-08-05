@@ -334,53 +334,38 @@ span {
 }
 
 
-/* sliding ticker */
 .ticker-wrap {
     position: relative;
     overflow: hidden;
-    height: 60px;
+    height: 40px; /* Reduced height */
     color: #fff;
-    /* font-size: 20px; */
-    /* font-weight: 500; */
-    /* line-height: 50px; */
     text-transform: uppercase;
     white-space: nowrap;
-    /* animation: ticker 10s linear infinite; */
-  }
-  
-  .ticker-wrap:hover {
-    animation-play-state: paused;
-  }
-  
-  .ticker-wrap p {
-    text-decoration: none;
-  }
-  
-  .ticker-wrap p:hover {
-    text-decoration: underline;
-  }
-  
-  .ticker {
-    display: inline-block;
+    display: flex;
+    align-items: center; /* Center content vertically */
+}
+
+.ticker {
+    display: flex;
+    align-items: center; /* Center content vertically */
+}
+
+.ticker__content {
     padding-left: 100%;
-    animation: ticker 10s linear infinite;
-  }
-  
-  .close-ticker {
+    display: inline-block;
+}
+
+.close-ticker {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
-  }
-  
-  .close-ticker:hover {
-    text-decoration: underline;
+    z-index: 10;
+    padding: 5px;
+}
+
+.close-ticker:hover {
     color: #000000;
-  }
-  
-  @keyframes ticker {
-    0% {
-      transform: translate(0, 0);
-    }
-    100% {
-      transform: translate(-100%, 0);
-    }
-  }
+}
   
