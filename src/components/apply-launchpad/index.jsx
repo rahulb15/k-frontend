@@ -165,10 +165,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         const {
             target: { value },
         } = event;
-        setPolicy(
-            // On autofill we get a stringified value.
-            typeof value === "string" ? value.split(",") : value
-        );
+        setPolicy(typeof value === "string" ? value.split(",") : value);
     };
 
     const wallets = [
@@ -200,7 +197,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const collectionName = watch("collectionName");
     const creatorName = watch("creatorName");
     const creatorEmail = watch("creatorEmail");
-    const creatorWallet = watch("creatorWallet");
     const projectDescription = watch("projectDescription");
     const projectCategory = watch("projectCategory");
     const expectedLaunchDate = watch("expectedLaunchDate");
@@ -208,9 +204,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const mintPriceCurrency = watch("mintPriceCurrency");
     const royaltyPercentage = watch("royaltyPercentage");
     const mintStartDate = watch("mintStartDate");
-    const mintStartTime = watch("mintStartTime");
     const mintEndDate = watch("mintEndDate");
-    const mintEndTime = watch("mintEndTime");
     const tokenList = watch("tokenList");
     const royaltyAddress = watch("royaltyAddress");
     const allowFreeMints = watch("allowFreeMints");
