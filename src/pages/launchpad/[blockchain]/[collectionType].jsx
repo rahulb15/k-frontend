@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import CollectionDetailHeader from "@components/collection-detail-header";
+import LaunchpadCollectionDetailHeader from "@components/launchpad-collection-detail-header";
 import NftListArea from "@components/nft-list";
 import SEO from "@components/seo";
 import CollectionDetailsArea from "@containers/collection-detail";
@@ -20,7 +20,7 @@ const CollectionDetails = ({ collection }) => {
             <SEO pageTitle="Launchpad Details" />
             <Header />
             <main id="main-content" style={{ marginBottom: "100px" }}>
-                <CollectionDetailHeader
+                <LaunchpadCollectionDetailHeader
                     pageTitle={collection?.title}
                     data={collection?.data?.data}
                 />

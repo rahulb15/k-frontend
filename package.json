@@ -44,6 +44,7 @@
         "framer-motion-3d": "^11.1.9",
         "gray-matter": "^4.0.3",
         "helia": "^4.2.4",
+        "lightweight-charts": "^4.2.0",
         "lodash": "^4.17.21",
         "marked": "^4.0.12",
         "moment": "^2.30.1",
