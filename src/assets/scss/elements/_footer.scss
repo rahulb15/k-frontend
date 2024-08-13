@@ -859,36 +859,98 @@
 .chain-tabs li {
     margin-right: 10px;
 }
+
 .chain-tabs .filter-item {
     margin-left: auto; /* Pushes the filter item to the end */
 }
 
-.chain-tabs a {
-    color: #ffffff;
+.chain-tabs button {
+    // color: #ffffff;
+    background-color: transparent;
     text-decoration: none;
     padding: 8px 12px;
     border-radius: 6px;
+    border: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 0;
 }
 
-.chain-tabs li.active a {
+.chain-tabs li.active button {
     background-color: #333333;
 }
 
-.chain-tabs a:hover {
+.chain-tabs button:hover {
     background-color: #2a2a2a;
 }
 
-.chain-tabs li:first-child a {
+.chain-tabs li:first-child button {
     font-weight: bold;
 }
 
-.chain-tabs .centered-item {
+.special-btn {
+    background-color: #b89503;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 0;
+    color: #ffffff;
+}
+
+.special-btn::before {
+    content: "All Chains";
+    display: block;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #b89503;
+    border-radius: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.special-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, #ff6b6b, #f7d794, #f3a683, #cf6a87);
+    background-size: 400%;
+    animation: rotate-gradient 3s linear infinite;
+    z-index: 1;
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+   
+}
+
+.special-btn:hover::after {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+@keyframes rotate-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* Responsive adjustments */

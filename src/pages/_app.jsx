@@ -15,6 +15,10 @@ import sal from "sal.js";
 import { setSearchFocus } from "src/features/searchSlice"; // Make sure to import this
 import { Providers } from "src/providers";
 import { persistor, store } from "src/store/store";
+import { INSTANCES, DEFAULT_INSTANCE } from "@utils/api/OnChainRefs";
+import useSettings from "src/hooks/setting_hook";
+console.log(INSTANCES)
+console.log(DEFAULT_INSTANCE)
 import "sweetalert2/src/sweetalert2.scss";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/feather.css";
@@ -24,6 +28,14 @@ import "../assets/scss/style.scss";
 import "../components/search/styles.css";
 import "../containers/wallet-button/styles.css";
 const AppContent = ({ Component, pageProps }) => {
+    const { data, isLoading, pactError, setInstance, validate, cleanImageCache } = useSettings();
+    useEffect(() => {
+        console.log(DEFAULT_INSTANCE);
+        if(DEFAULT_INSTANCE.name){
+            validate();
+        }
+    }, [DEFAULT_INSTANCE]);
+
     const router = useRouter();
     const dispatch = useDispatch();
 

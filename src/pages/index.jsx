@@ -8,6 +8,7 @@ import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";
 import HomeHeroArea from "@containers/home-hero";
+import LaunchpadChainHeader from "@components/launchpad-chain-header";
 
 // Demo data
 import TrendingArea from "@containers/trending";
@@ -75,6 +76,7 @@ const Home = () => {
         <Wrapper>
             <SEO pageTitle="Home" />
             <Header />
+            <LaunchpadChainHeader />
             <main id="main-content">
                 <HomeHeroArea data={content} />
                 <CreatorArea

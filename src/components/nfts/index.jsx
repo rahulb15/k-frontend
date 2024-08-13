@@ -34,10 +34,12 @@ const Nft = ({
     placeBid,
     data,
     disableShareDropdown,
+    sellable,
 }) => {
     console.log("🚀 ~ file: index.jsx ~ line 13 ~ Nft ~ data", data);
     const [showBidModal, setShowBidModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     const handleOpenModal = () => {
         setShowDetailModal(true);
@@ -52,12 +54,14 @@ const Nft = ({
     console.log("imge", image);
     return (
         <>
-            <div
+              <div
                 className={clsx(
                     "product-style-one",
                     !overlay && "no-overlay",
                     placeBid && "with-placeBid"
                 )}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="card-thumbnail" onClick={handleOpenModal}>
                 {/* {image?.src && (
@@ -118,7 +122,13 @@ const Nft = ({
                     )} */}
 
                    
-                    
+{data?.isRevealed && isHovered && (
+                        <div className="sell-button-overlay">
+                            <Button onClick={() => console.log("Sell clicked")} size="small">
+                                Sell
+                            </Button>
+                        </div>
+                    )}
 
                 </div>
                 <div className="product-share-wrapper">
@@ -148,11 +158,18 @@ const Nft = ({
                 {/* <span className="latest-bid">Highest bid {latestBid}</span> */}
                 {/* <ProductBid price={price} likeCount={likeCount} /> */}
             </div>
-            <NftDetailModal
+            {/* <NftDetailModal
                 open={showDetailModal}
                 onClose={handleCloseModal}
                 data={data}
-            />
+            /> */}
+            {showDetailModal && (
+                <NftDetailModal
+                    open={showDetailModal}
+                    onClose={handleCloseModal}
+                    data={data}
+                />
+            )}
         </>
     );
 };

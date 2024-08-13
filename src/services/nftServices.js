@@ -47,8 +47,43 @@ const updateRevealedNFTs = async (data) => {
     }
 };
 
+const onSale = async (data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`${url}/nft/onSale`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+// getAllmarketPlaceNfts ?pageNo=1&limit=10&search= post api
+const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(`${url}nft/marketPlaceNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    }
+    catch (error) {
+        return error.response.data;
+    }
+}
+
+
+
+
 export default {
     createNFT,
     updateNFT,
     updateRevealedNFTs,
+    onSale,
+    getAllmarketPlaceNfts
 };

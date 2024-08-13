@@ -197,6 +197,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const collectionName = watch("collectionName");
     const creatorName = watch("creatorName");
     const creatorEmail = watch("creatorEmail");
+    const creatorWallet = watch("creatorWallet");
     const projectDescription = watch("projectDescription");
     const projectCategory = watch("projectCategory");
     const expectedLaunchDate = watch("expectedLaunchDate");
@@ -205,6 +206,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const royaltyPercentage = watch("royaltyPercentage");
     const mintStartDate = watch("mintStartDate");
     const mintEndDate = watch("mintEndDate");
+    const mintStartTime = watch("mintStartTime");
+    const mintEndTime = watch("mintEndTime");
     const tokenList = watch("tokenList");
     const royaltyAddress = watch("royaltyAddress");
     const allowFreeMints = watch("allowFreeMints");
