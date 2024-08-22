@@ -18,12 +18,14 @@ import { launchpadApi } from "src/services/launchpad.service";
 import { priorityPassApi } from "src/services/prioritypass.service";
 import { nftApi } from "src/services/nft.service";
 import balanceReducer from "src/features/balanceSlice";
+import cartReducer from "src/features/cartSlice";
 
 const rootReducer = combineReducers({
     auth: authReducer,
     search: searchReducer,
     launchpad: launchpadReducer,
     balance: balanceReducer,
+    cart: cartReducer,
     [launchpadApi.reducerPath]: launchpadApi.reducer,
     [nftApi.reducerPath]: nftApi.reducer,
     [priorityPassApi.reducerPath]: priorityPassApi.reducer,

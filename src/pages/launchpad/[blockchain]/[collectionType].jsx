@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+import React, { useState, useEffect } from "react";
 import LaunchpadCollectionDetailHeader from "@components/launchpad-collection-detail-header";
 import NftListArea from "@components/nft-list";
 import SEO from "@components/seo";
@@ -9,12 +10,46 @@ import Footer from "@layout/footer/footer-03";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import PropTypes from "prop-types";
-import React from "react";
 import collectionService from "src/services/collection.service";
-import productData from "../../../data/products.json";
+import nftServices from "src/services/nftServices";
+
 
 const CollectionDetails = ({ collection }) => {
     console.log("🚀 ~ CollectionDetails ~ collection", collection);
+    const [nfts, setNfts] = useState([]);
+    console.log(nfts, "nfts");
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [pageNo, setPageNo] = useState(1);
+      const [limit, setLimit] = useState(10);
+
+
+    useEffect(() => {
+        const fetchNfts = async () => {
+            if (collection?.title) {
+                try {
+                    const response = await nftServices.getNftsMyCollectionName(
+                          {
+                              collectionName: collection.title,
+                          },
+                          pageNo,
+                          limit
+                      );
+
+                      console.log(response.data, "response");
+                      
+
+                    setNfts(response.data.nfts);
+                    setLoading(false);
+                } catch (err) {
+                    setError(err.message);
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchNfts();
+    }, [collection?.title]);
     return (
         <Wrapper>
             <SEO pageTitle="Launchpad Details" />
@@ -31,15 +66,22 @@ const CollectionDetails = ({ collection }) => {
                     <CollectionDetailsArea product={collection?.data?.data} />
                 )}
 
-                <NftListArea
-                    data={{
-                        section_title: {
-                            title: "Explore Product",
-                        },
-                        products: productData,
-                    }}
-                    collection={collection?.data?.data}
-                />
+{loading ? (
+                      <p>Loading NFTs...</p>
+                  ) : error ? (
+                      <p>Error: {error}</p>
+                  ) : (
+                      <NftListArea
+                          data={{
+                              section_title: {
+                                  title: "Explore NFTs",
+                              },
+                              products: nfts,
+                          }}
+                          collection={collection}
+                          collectionName={collection.title}
+                      />
+                  )}
             </main>
             <Footer />
         </Wrapper>

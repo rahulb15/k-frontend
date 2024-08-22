@@ -1,28 +1,25 @@
 import { useEffect, useState, useCallback } from "react";
-import PropTypes from "prop-types";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import SectionTitle from "@components/section-title/layout-02";
 import Product from "@components/product/layout-01";
 import FilterButtons from "@components/filter-buttons";
 import nftServices from "src/services/nftServices";
 
-const ExploreProductArea = ({ className, space, data }) => {
+const ExploreProductArea = () => {
     const [pageNo, setPageNo] = useState(1);
-    const [limit, setLimit] = useState(1);
+    const [limit, setLimit] = useState(10);
     const [nfts, setNfts] = useState([]);
-    console.log("nfts", nfts);
     const [totalNfts, setTotalNfts] = useState(0);
     const [loading, setLoading] = useState(false);
     const [allLoaded, setAllLoaded] = useState(false);
-    const [search, setSearch] = useState("");
+    const [category, setCategory] = useState("All");
 
     const fetchNfts = useCallback(async () => {
         if (loading || allLoaded) return;
 
         try {
             setLoading(true);
-            const res = await nftServices.getAllmarketPlaceNfts({}, pageNo, limit, search);
+            const res = await nftServices.getAllmarketPlaceNfts({ category: category === "All" ? "" : category }, pageNo, limit);
             if (res.status === 'success') {
                 setNfts(prevNfts => [...prevNfts, ...res.data.nfts]);
                 setTotalNfts(res.data.total);
@@ -36,7 +33,7 @@ const ExploreProductArea = ({ className, space, data }) => {
         } finally {
             setLoading(false);
         }
-    }, [pageNo, limit, search, loading, allLoaded, nfts.length]);
+    }, [pageNo, limit, category, loading, allLoaded, nfts.length]);
 
     useEffect(() => {
         fetchNfts();
@@ -45,7 +42,6 @@ const ExploreProductArea = ({ className, space, data }) => {
     const loadMore = () => {
         if (!allLoaded) {
             setPageNo(prevPageNo => prevPageNo + 1);
-            setLimit(10);
         }
     };
 
@@ -54,74 +50,77 @@ const ExploreProductArea = ({ className, space, data }) => {
     const filterHandler = (filterKey) => {
         setNfts([]);
         setPageNo(1);
-        setLimit(1);
         setAllLoaded(false);
-        setSearch(filterKey === "All" ? "" : filterKey);
+        setCategory(filterKey);
     };
 
     return (
-        <div className={clsx("rn-product-area masonary-wrapper-activation", space === 1 && "rn-section-gapTop", className)}>
-            <div className="container">
-                <div className="row align-items-center mb--60">
-                    <div className="col-lg-4">
-                        {data?.section_title && (
-                            <SectionTitle className="mb--0" disableAnimation {...data.section_title} />
-                        )}
-                    </div>
-                    <div className="col-lg-8 d-flex flex-wrap justify-content-end">
-                        <div className="justify-content-end">
+        <div className="explore-product-area-wrapper">
+            <div className="explore-product-area">
+                <div className="container">
+                    <div className="row align-items-center mb--60">
+                        <div className="col-lg-12 d-flex justify-content-end">
                             <FilterButtons buttons={filterCategories} filterHandler={filterHandler} />
                         </div>
                     </div>
-                </div>
-                <div className="col-lg-12">
-                    <motion.div layout className="isotope-list item-5">
-                        {nfts.map((nft) => (
-                            <motion.div key={nft._id} className={clsx("grid-item")} layout>
-                                                            {console.log(nft)}
-
-                                <Product
-                                    title={nft.collectionName}
-                                    slug={nft.tokenId}
-                                    price={nft.nftPrice}
-                                    likeCount={nft.likes}
-                                    image={nft.tokenImage}
-                                    authors={[{ name: nft.creatorName }]}
-                                    bitCount={nft.bidInfo.length}
-                                    nft={nft}
-                                />
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </div>
-                {!allLoaded && (
-                    <div className="row">
-                        <div className="col-lg-12 text-center">
-                            <button
-                                onClick={loadMore}
-                                className="btn btn-primary mt--30"
-                                disabled={loading}
-                            >
-                                {loading ? 'Loading...' : 'Load More'}
-                            </button>
-                        </div>
+                    <div className="col-lg-12">
+                        <motion.div layout className="isotope-list item-5">
+                            {nfts.map((nft) => (
+                                <motion.div key={nft._id} className={clsx("grid-item")} layout>
+                                    <Product
+                                        title={nft.collectionName}
+                                        slug={nft.tokenId}
+                                        price={nft.nftPrice}
+                                        likeCount={nft.likes}
+                                        image={nft.tokenImage}
+                                        authors={[{ name: nft.creatorName }]}
+                                        bitCount={nft.bidInfo.length}
+                                        nft={nft}
+                                    />
+                                </motion.div>
+                            ))}
+                        </motion.div>
                     </div>
-                )}
+                    {!allLoaded && (
+                        <div className="row">
+                            <div className="col-lg-12 text-center">
+                                <button
+                                    onClick={loadMore}
+                                    className="btn btn-primary mt--30"
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Loading...' : 'Load More'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
+            <style jsx>{`
+                .explore-product-area-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
+                }
+                .explore-product-area {
+                    padding: 40px;
+                    border-radius: 5px;
+                    border: 1px solid #686e5e;
+                    margin-top: 30px;
+                    background-color: transparent;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    backdrop-filter: blur(5px);
+                    width: 96%;
+                    max-width: 3200px;
+                }
+                @media (max-width: 768px) {
+                    .explore-product-area {
+                        width: 95%;
+                    }
+                }
+            `}</style>
         </div>
     );
-};
-
-ExploreProductArea.propTypes = {
-    className: PropTypes.string,
-    space: PropTypes.oneOf([1, 2]),
-    data: PropTypes.shape({
-        section_title: PropTypes.object,
-    }),
-};
-
-ExploreProductArea.defaultProps = {
-    space: 1,
 };
 
 export default ExploreProductArea;

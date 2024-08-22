@@ -43,11 +43,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { setBalance, setLoading, setError } from "src/features/balanceSlice";
 import { useBalanceMutation } from "src/services/launchpad.service";
 import BalanceDropdown from "@components/BalanceDropdown";
+import CartDropdown from "./CartDropdown";
+import { addToCart,removeToCart ,removeSingleIteams,emptycartIteam} from 'src/features/cartSlice';
 const MouseParticles = dynamic(() => import("react-mouse-particles"), {
     ssr: false,
 });
 
 const Header = ({ className }) => {
+    const {carts} = useSelector((state)=>state.cart);
+    console.log(carts)
     const sticky = useSticky();
     const dispatch = useDispatch();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
@@ -187,14 +191,9 @@ const Header = ({ className }) => {
 
                             {/* //cart icon */}
                             <div className="setting-option rn-icon-list">
-                                <div className="icon-box">
-                                    <Anchor
-                                        path={"/cart"}
-                                        className="cart-link"
-                                    >
-                                        <i className="feather-shopping-cart" />
-                                    </Anchor>
-                                </div>
+                            <div className="setting-option rn-icon-list">
+                                <CartDropdown />
+                            </div>
                             </div>
 
                             <div className="setting-option header-btn">

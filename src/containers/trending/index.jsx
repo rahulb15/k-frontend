@@ -1,57 +1,101 @@
-/* eslint-disable */
+import React, { useState, useEffect, useCallback } from "react";
 import Anchor from "@ui/anchor";
 import Button from "@ui/button";
 import NiceSelect from "@ui/nice-select";
-import { IDType, ImageType } from "@utils/types";
-import clsx from "clsx";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
 import Nav from "react-bootstrap/Nav";
+import TabContent from "react-bootstrap/TabContent";
+import TabContainer from "react-bootstrap/TabContainer";
+import TabPane from "react-bootstrap/TabPane";
+import collectionService from "src/services/collection.service";
+import { debounce } from 'lodash';
 
-const POSTS_PER_PAGE = 31;
+const TrendingArea = ({ className, space }) => {
+    const [collections, setCollections] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    console.log(itemsPerPage, "itemsPerPage");
+    const [totalItems, setTotalItems] = useState(0);
+    const [search, setSearch] = useState("");
+    const [timeRange, setTimeRange] = useState("1 day");
 
-const TabContent = dynamic(() => import("react-bootstrap/TabContent"), {
-    ssr: false,
-});
-const TabContainer = dynamic(() => import("react-bootstrap/TabContainer"), {
-    ssr: false,
-});
-const TabPane = dynamic(() => import("react-bootstrap/TabPane"), {
-    ssr: false,
-});
-
-const TrendingArea = ({ className, space, data }) => {
-    const [ranking, setRanking] = useState([]);
-    // const [currentPage, setCurrentPage] = useState(1);
-    // const [current, setCurrent] = useState("1 day");
-    // const [sellers, setSellers] = useState([]);
-    // const changeHandler = (item) => {
-    //     setCurrent(item.value);
-    // };
-    // const numberOfPages = Math.ceil(data.ranking.length / POSTS_PER_PAGE);
-    // const paginationHandler = (page) => {
-    //     setCurrentPage(page);
-    //     window.scrollTo({ top: 0, behavior: "smooth" });
-    // };
-
-    const rankingHandler = useCallback(() => {
-        const start = 0 * POSTS_PER_PAGE;
-        setRanking(data.ranking.slice(start, start + POSTS_PER_PAGE));
-    }, [data.ranking]);
+    const getCollections = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await collectionService.getAllMarketplaceCollections(
+                currentPage,
+                itemsPerPage,
+                search
+            );
+            setCollections(response.data.data.collections);
+            setTotalItems(response.data.pagination.totalItems);
+            setTotalPages(response.data.pagination.totalPages);
+        } catch (error) {
+            console.error("Error fetching collections:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, itemsPerPage, search]);
 
     useEffect(() => {
-        rankingHandler();
-    }, [rankingHandler]);
+        getCollections();
+    }, [getCollections]);
+
+
+    const debouncedSearch = useCallback(
+        debounce((value) => {
+          setSearch(value);
+          setCurrentPage(1);
+          getCollections();
+        }, 300),
+        [getCollections]
+      );
+      
+      const handleSearchChange = (e) => {
+        debouncedSearch(e.target.value);
+      };
+
+    const handleTimeRangeChange = (value) => {
+        setTimeRange(value);
+        setCurrentPage(1);
+    };
+
+    // const handleSearchChange = (e) => {
+    //     setSearch(e.target.value);
+    //     setCurrentPage(1);
+    // };
+
+    const handleItemsPerPageChange = (value) => {
+        console.log(value, "value");
+        setItemsPerPage(parseInt(value.value, 10));
+        setCurrentPage(1);
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+    const itemsPerPageOptions = [
+        { value: "10", text: "10" },
+        { value: "25", text: "25" },
+        { value: "50", text: "50" },
+        { value: "100", text: "100" },
+    ];
+
+    if (totalItems > 100) {
+        itemsPerPageOptions.push({
+            value: totalItems.toString(),
+            text: "Show All",
+        });
+    }
+
 
     return (
         <div
-            className={clsx(
-                "rn-upcoming-area",
-                space === 1 && "rn-section-gapTop",
-                className
-            )}
+            className={`rn-upcoming-area mt-5
+         ${space === 1 ? "rn-section-gapTop" : ""} ${className || ""}`}
         >
             <div className="container">
                 <div className="row">
@@ -68,14 +112,7 @@ const TrendingArea = ({ className, space, data }) => {
                                     >
                                         Top
                                     </Nav.Link>
-
-                                    <div
-                                        className="shortby-default text-start text-sm-end"
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "flex-end",
-                                        }}
-                                    >
+                                    <div className="shortby-default text-start text-sm-end">
                                         <NiceSelect
                                             options={[
                                                 {
@@ -83,40 +120,47 @@ const TrendingArea = ({ className, space, data }) => {
                                                     text: "1 day",
                                                 },
                                                 {
-                                                    value: "7 Day's",
-                                                    text: "7 Day's",
+                                                    value: "7 days",
+                                                    text: "7 days",
                                                 },
                                                 {
-                                                    value: "15 Day's",
-                                                    text: "15 Day's",
+                                                    value: "30 days",
+                                                    text: "30 days",
                                                 },
                                                 {
-                                                    value: "30 Day's",
-                                                    text: "30 Day's",
+                                                    value: "All time",
+                                                    text: "All time",
                                                 },
                                             ]}
                                             defaultCurrent={0}
-                                            name="sellerSort"
-                                            // onChange={changeHandler}
+                                            name="timeRange"
+                                            onChange={handleTimeRangeChange}
                                         />
                                     </div>
-                                    <div className="shortby-default text-start text-sm-end ml--30">
-                                        <Button
-                                            color="primary-alta"
-                                            size="medium"
-                                            className="mr--30 bid-btn"
-                                        >
-                                            View All
-                                        </Button>
+                                    <div className="search-box">
+                                        <input
+                                            type="text"
+                                            placeholder="Search collections"
+                                            value={search}
+                                            onChange={handleSearchChange}
+                                        />
+                                    </div>
+                                    <div className="items-per-page">
+                                        <NiceSelect
+                                            options={itemsPerPageOptions}
+                                            defaultCurrent={0}
+                                            name="itemsPerPage"
+                                            onChange={handleItemsPerPageChange}
+                                        />
                                     </div>
                                 </div>
                             </Nav>
                             <TabContent>
                                 <TabPane
                                     eventKey="nav-home"
-                                    className="lg-product_tab-pane lg-product-col-2"
+                                    className="lg-product_tab-pane"
                                 >
-                                    <div className="lg-product-wrapper colum-2 two-colum-parent-product col-lg-6">
+                                    <div className="lg-product-wrapper">
                                         <table className="table upcoming-projects">
                                             <thead>
                                                 <tr>
@@ -129,18 +173,28 @@ const TrendingArea = ({ className, space, data }) => {
                                                     <th>
                                                         <span>Volume</span>
                                                     </th>
-
+                                                    <th>
+                                                        <span>24h %</span>
+                                                    </th>
+                                                    <th>
+                                                        <span>7d %</span>
+                                                    </th>
                                                     <th>
                                                         <span>Floor Price</span>
+                                                    </th>
+                                                    <th>
+                                                        <span>Owners</span>
+                                                    </th>
+                                                    <th>
+                                                        <span>Items</span>
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="ranking">
-                                                {ranking
-                                                    ?.slice(0, 7)
-                                                    .map((item, index) => (
+                                                {collections.map(
+                                                    (item, index) => (
                                                         <tr
-                                                            key={item.id}
+                                                            key={item._id}
                                                             className={
                                                                 index % 2 === 0
                                                                     ? "color-light"
@@ -149,172 +203,92 @@ const TrendingArea = ({ className, space, data }) => {
                                                         >
                                                             <td>
                                                                 <span>
-                                                                    {index + 1}.
+                                                                    {(currentPage -
+                                                                        1) *
+                                                                        itemsPerPage +
+                                                                        index +
+                                                                        1}
                                                                 </span>
                                                             </td>
                                                             <td>
                                                                 <div className="product-wrapper d-flex align-items-center">
-                                                                    {item
-                                                                        ?.product
-                                                                        ?.image
-                                                                        ?.src && (
-                                                                        <Anchor
-                                                                            path={
+                                                                    <Anchor
+                                                                        path={`/collections/kadena/${item.collectionName}`}
+                                                                        className="thumbnail"
+                                                                    >
+                                                                        <Image
+                                                                            src={
                                                                                 item
-                                                                                    .product
-                                                                                    .slug
+                                                                                    .firstTokenData
+                                                                                    ?.thumbnail ||
+                                                                                "/images/placeholder.png"
                                                                             }
-                                                                            className="thumbnail"
-                                                                        >
-                                                                            <Image
-                                                                                src={
-                                                                                    item
-                                                                                        .product
-                                                                                        .image
-                                                                                        .src
-                                                                                }
-                                                                                alt="Nft_Profile"
-                                                                                width={
-                                                                                    56
-                                                                                }
-                                                                                height={
-                                                                                    56
-                                                                                }
-                                                                            />
-                                                                        </Anchor>
-                                                                    )}
-
+                                                                            alt={
+                                                                                item.collectionName
+                                                                            }
+                                                                            width={
+                                                                                56
+                                                                            }
+                                                                            height={
+                                                                                56
+                                                                            }
+                                                                        />
+                                                                    </Anchor>
                                                                     <span>
                                                                         {
-                                                                            item
-                                                                                .product
-                                                                                .title
+                                                                            item.collectionName
                                                                         }
                                                                     </span>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <span>
-                                                                    {
-                                                                        item.volume
-                                                                    }
+                                                                    {item.totalSupply *
+                                                                        (item.reservePrice ||
+                                                                            0)}{" "}
+                                                                    KDA
                                                                 </span>
                                                             </td>
-
+                                                            <td>
+                                                                <span>+0%</span>
+                                                            </td>
+                                                            <td>
+                                                                <span>+0%</span>
+                                                            </td>
                                                             <td>
                                                                 <span>
-                                                                    {
-                                                                        item.floor_price
-                                                                    }
+                                                                    {item.reservePrice ||
+                                                                        0}{" "}
+                                                                    KDA
                                                                 </span>
                                                             </td>
-                                                        </tr>
-                                                    ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div className="lg-product-wrapper colum-2 two-colum-parent-product col-lg-6">
-                                        <table className="table upcoming-projects">
-                                            <thead>
-                                                <tr>
-                                                    <th>
-                                                        <span>Rank</span>
-                                                    </th>
-                                                    <th>
-                                                        <span>Collection</span>
-                                                    </th>
-                                                    <th>
-                                                        <span>Volume</span>
-                                                    </th>
-
-                                                    <th>
-                                                        <span>Floor Price</span>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="ranking">
-                                                {ranking
-                                                    ?.slice(7, 14)
-                                                    .map((item, index) => (
-                                                        <tr
-                                                            key={item.id}
-                                                            className={
-                                                                index % 2 === 0
-                                                                    ? "color-light"
-                                                                    : ""
-                                                            }
-                                                        >
                                                             <td>
                                                                 <span>
-                                                                    {index + 1}.
+                                                                    {item.tokens
+                                                                        ?.length ||
+                                                                        0}
                                                                 </span>
-                                                            </td>
-                                                            <td>
-                                                                <div className="product-wrapper d-flex align-items-center">
-                                                                    {item
-                                                                        ?.product
-                                                                        ?.image
-                                                                        ?.src && (
-                                                                        <Anchor
-                                                                            path={
-                                                                                item
-                                                                                    .product
-                                                                                    .slug
-                                                                            }
-                                                                            className="thumbnail"
-                                                                        >
-                                                                            <Image
-                                                                                src={
-                                                                                    item
-                                                                                        .product
-                                                                                        .image
-                                                                                        .src
-                                                                                }
-                                                                                alt="Nft_Profile"
-                                                                                width={
-                                                                                    56
-                                                                                }
-                                                                                height={
-                                                                                    56
-                                                                                }
-                                                                            />
-                                                                        </Anchor>
-                                                                    )}
-
-                                                                    <span>
-                                                                        {
-                                                                            item
-                                                                                .product
-                                                                                .title
-                                                                        }
-                                                                    </span>
-                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <span>
                                                                     {
-                                                                        item.volume
-                                                                    }
-                                                                </span>
-                                                            </td>
-
-                                                            <td>
-                                                                <span>
-                                                                    {
-                                                                        item.floor_price
+                                                                        item.totalSupply
                                                                     }
                                                                 </span>
                                                             </td>
                                                         </tr>
-                                                    ))}
+                                                    )
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>
                                 </TabPane>
                                 <TabPane
                                     eventKey="nav-profile"
-                                    className="lg-product_tab-pane lg-product-col-2"
-                                ></TabPane>
+                                    className="lg-product_tab-pane"
+                                >
+                                    {/* You can add content for the "Top" tab here */}
+                                </TabPane>
                             </TabContent>
                         </TabContainer>
                     </div>
@@ -322,38 +296,6 @@ const TrendingArea = ({ className, space, data }) => {
             </div>
         </div>
     );
-};
-
-TrendingArea.propTypes = {
-    className: PropTypes.string,
-    space: PropTypes.oneOf([1]),
-    data: PropTypes.shape({
-        ranking: PropTypes.arrayOf(
-            PropTypes.shape({
-                id: IDType,
-                product: PropTypes.shape({
-                    title: PropTypes.string,
-                    slug: PropTypes.string,
-                    image: ImageType,
-                }),
-                volume: PropTypes.string,
-                "24h%": PropTypes.shape({
-                    charge: PropTypes.string,
-                    status: PropTypes.oneOf(["-", "+"]),
-                }),
-                "7d%": PropTypes.shape({
-                    charge: PropTypes.string,
-                    status: PropTypes.oneOf(["-", "+"]),
-                }),
-                floor_price: PropTypes.string,
-                owners: PropTypes.string,
-                items: PropTypes.string,
-            })
-        ),
-    }),
-};
-TrendingArea.defaultProps = {
-    space: 1,
 };
 
 export default TrendingArea;

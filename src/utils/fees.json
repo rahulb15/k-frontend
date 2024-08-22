@@ -1,12 +1,12 @@
 {
   "testnet04":
     {
-      "marketplace-name":"Marmalade-NG Explorer",
-      "marketplace-account": "k:2e04bc04a9cf96701a806110242aee08a1692437413bead299fffb4a5b2e4bb6",
+      "marketplace-name": "Kryptomerch.io",
+      "marketplace-account": "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf",
       "currency": {"refSpec":[{"namespace":null,"name":"fungible-v2"}],"refName":{"namespace":null,"name":"coin"}},
-      "min-fee": 0.0001,
-      "fee-rate": 0.025,
-      "max-fee": 10.0,
+      "min-fee": 1.0,
+      "fee-rate": 0.1,
+      "max-fee": 10000.0,
       "shared-rate": 0.0
     },
   "mainnet01": null
