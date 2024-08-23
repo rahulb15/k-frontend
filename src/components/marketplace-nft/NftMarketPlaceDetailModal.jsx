@@ -1087,26 +1087,74 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             Cancel Sale
                                         </Button>
                                     ) : (
-                                        <Button
-                                            variant="contained"
-                                            style={{
-                                                fontSize: 16,
-                                                padding: "8px 16px",
-                                                borderRadius: 2,
-                                                fontWeight: "bold",
-                                                textTransform: "none",
-                                                width: "150px",
-                                                color: "black",
-                                                backgroundColor: "#fae944",
-                                                borderRadius: "5px",
-                                                border: "1px solid #fae944",
-                                                boxShadow:
-                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                            }}
-                                            onClick={handleSell}
-                                        >
-                                            Sell
-                                        </Button>
+                                        // <Button
+                                        //     variant="contained"
+                                        //     style={{
+                                        //         fontSize: 16,
+                                        //         padding: "8px 16px",
+                                        //         borderRadius: 2,
+                                        //         fontWeight: "bold",
+                                        //         textTransform: "none",
+                                        //         width: "150px",
+                                        //         color: "black",
+                                        //         backgroundColor: "#fae944",
+                                        //         borderRadius: "5px",
+                                        //         border: "1px solid #fae944",
+                                        //         boxShadow:
+                                        //             "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                        //     }}
+                                        //     onClick={handleSell}
+                                        // >
+                                        //     Sell
+                                        // </Button>
+
+                                        <>
+                                        {data?.onMarketplace && data?.onSale ? (
+                                            <Button
+                                                variant="contained"
+                                                style={{
+                                                    fontSize: 16,
+                                                    padding: "8px 16px",
+                                                    borderRadius: 2,
+                                                    fontWeight: "bold",
+                                                    textTransform: "none",
+                                                    width: "150px",
+                                                    color: "black",
+                                                    backgroundColor: "#fae944",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #fae944",
+                                                    boxShadow:
+                                                        "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                }}
+                                                onClick={handleCancelSale}
+                                            >
+                                              Buy Now
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                style={{
+                                                    fontSize: 16,
+                                                    padding: "8px 16px",
+                                                    borderRadius: 2,
+                                                    fontWeight: "bold",
+                                                    textTransform: "none",
+                                                    width: "150px",
+                                                    color: "black",
+                                                    backgroundColor: "#fae944",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #fae944",
+                                                    boxShadow:
+                                                        "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                }}
+                                                onClick={handleSell}
+                                            >
+                                                Sell
+                                            </Button>
+                                        )
+                                    }
+
+                                    </>
                                     )}
                                 </Box>
                             </Box>
