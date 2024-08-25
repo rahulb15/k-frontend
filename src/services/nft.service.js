@@ -31,6 +31,13 @@ export const nftApi = createApi({
                 params: { pageNo, limit, search },
             }),
         }),
+        getOwnedNfts: builder.query({
+            query: ({ pageNo, limit, search }) => ({
+                url: "/nft/ownedNfts",
+                body: { pageNo, limit, search },
+                method: "POST",
+            }),
+        }),
         ownerNFTs: builder.query({
             query: (body) => ({
                 url: "/nft/owned",
@@ -41,5 +48,10 @@ export const nftApi = createApi({
     }),
 });
 
-export const { useCreateNFTMutation, useGetNFTByIdQuery, useGetNFTsQuery, useOwnerNFTsQuery } =
-    nftApi;
+export const {
+    useCreateNFTMutation,
+    useGetNFTByIdQuery,
+    useGetNFTsQuery,
+    useGetOwnedNftsQuery,
+    useOwnerNFTsQuery,
+} = nftApi;

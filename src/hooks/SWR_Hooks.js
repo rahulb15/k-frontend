@@ -2,6 +2,13 @@ import {m_client} from "../utils/api/chainweb_marmalade_ng"
 import useSWR from 'swr';
 import { mutate } from "swr"
 import useSWRImmutable from 'swr/immutable'
+import fees from "@utils/fees.json";
+import Decimal from "decimal.js";
+
+const ZERO = Decimal("0");
+const ONE = Decimal("1");
+const HUNDRED = Decimal("100");
+const to_percent = (x) => x.mul(HUNDRED).toFixed(1) + "%";
 
 export function useModuleHashes(enabled)
 {
@@ -253,3 +260,25 @@ export function useAccountBalances(account)
                                {fallbackData:[],refreshInterval: 180*1000})
   return {balances:data, error}
 }
+
+export function useFee(token_id) {
+  const { policies } = useTokenPolicies(token_id);
+  return policies && policies.includes("MARKETPLACE")
+      ? fees[m_client.network]
+      : undefined;
+}
+
+export function useRoyaltyRate(token_id) {
+  const { policies } = useTokenPolicies(token_id);
+  const has_cst_royalty = policies.includes("ROYALTY");
+  const has_adj_royalty = policies.includes("ADJUSTABLE-ROYALTY");
+  const has_royalty = has_cst_royalty || has_adj_royalty;
+
+  const { royalty } = useRoyalty(
+      has_royalty ? token_id : null,
+      has_adj_royalty
+  );
+
+  return royalty ? royalty.rate : ZERO;
+}
+

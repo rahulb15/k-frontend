@@ -77,6 +77,31 @@ const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
     }
 }
 
+// //   getOwnSaleNfts: builder.query({
+//     query: ({ pageNo, limit, search }) => ({
+//         url: "/nft/ownSaleNfts",
+//         body: { pageNo, limit, search },
+//         method: "POST",
+//     }),
+// }),
+
+const getOwnSaleNfts = async (data, pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(`${url}nft/ownSaleNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    }
+    catch (error) {
+        return error.response.data;
+    }
+}
+
+
+
 
 // getNftsMyCollectionName paginating post
 const getNftsMyCollectionName = async (data, pageNo, limit) => {
@@ -105,5 +130,6 @@ export default {
     updateRevealedNFTs,
     onSale,
     getAllmarketPlaceNfts,
-    getNftsMyCollectionName
+    getNftsMyCollectionName,
+    getOwnSaleNfts
 };

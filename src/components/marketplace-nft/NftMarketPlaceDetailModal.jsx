@@ -20,6 +20,7 @@ import Image from "next/image";
 import FullScreenImage from "./FullScreenImage";
 import {
     useTokenPolicies,
+    useSalesForToken,
     useTokenBalance,
     useTokenSupply,
     usePrecision,
@@ -65,7 +66,6 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-
 const StyledDateTimePicker = styled(DateTimePicker)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
         borderRadius: theme.shape.borderRadius,
@@ -102,6 +102,26 @@ const HUNDRED = Decimal("100");
 const to_percent = (x) => x.mul(HUNDRED).toFixed(1) + "%";
 
 const dec = (x) => ({ decimal: x.toString() });
+const make_trx = (sale, buyer, buyer_guard) =>
+    Pact.builder
+        .continuation({ pactId: sale["sale-id"], step: 1, rollback: false })
+        .setMeta({ sender: buyer, chainId: m_client.chain, gasLimit: 10000 })
+        .setNetworkId(m_client.network)
+        .addData("buyer", buyer)
+        .addData("buyer-guard", buyer_guard)
+        .addSigner(buyer_guard.keys[0], (withCapability) => [
+            withCapability("coin.GAS"),
+        ])
+        .addSigner(buyer_guard.keys[0], (withCapability) => [
+            withCapability(
+                "coin.TRANSFER",
+                buyer,
+                sale["escrow-account"],
+                dec(sale.price)
+            ),
+        ])
+        .setNonce(make_nonce)
+        .createTransaction();
 
 const make_trx_fixed = (
     token_id,
@@ -573,6 +593,8 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     const [showFullImage, setShowFullImage] = useState(false);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const { policies } = useTokenPolicies(data.tokenId);
+    const { sales } = useSalesForToken(data.tokenId);
+    console.log("sales", sales);
     const [userData, setUserData] = useState(null);
     console.log("userData", userData);
     const [selectedSale, _setSelectedSale] = useState(null);
@@ -591,6 +613,8 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     const [showSaleOptions, setShowSaleOptions] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
     const [qrSize, setQrSize] = useState({ width: 500, height: 500 });
+    const [buyTrx, setBuyTrx] = useState(null);
+    const [showBuyOptions, setShowBuyOptions] = useState(false);
 
     // Add this useEffect to dynamically set the QR size based on the image container
     useEffect(() => {
@@ -623,6 +647,19 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
             setSelected(default_sale(policies));
         }
     }, [userData]);
+
+    useEffect(() => {
+        setWallet(
+            accountuser?.user?.walletName
+                ? accountuser?.user?.walletName === "Ecko Wallet"
+                    ? "Ecko"
+                    : accountuser?.user?.walletName === "Chainweaver"
+                    ? "ChainWeaver_Desktop"
+                    : "Other"
+                : "Other"
+        );
+        setAccount(accountuser?.user?.walletAddress);
+    }, [accountuser]);
 
     const fee = useFee(data.tokenId);
 
@@ -717,6 +754,21 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
 
     const toggleFullScreen = () => {
         setIsFullScreen(!isFullScreen);
+    };
+
+    const handleBuy = () => {
+        console.log("Buy");
+        console.log("sales", sales);
+        console.log("userData", userData);
+        setSaleType("Fixed-Sale");
+        setShowBuyOptions(true);
+        const transaction =
+            sales[0] && userData?.account && userData?.guard && userData?.key
+                ? make_trx(sales[0], userData.account, userData.guard)
+                : null;
+
+        console.log("transaction", transaction);
+        setBuyTrx(transaction);
     };
 
     if (!open) return null;
@@ -969,7 +1021,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             }}
                                         >
                                             <FlipCameraAndroidIcon />
-                                            </IconButton>
+                                        </IconButton>
                                     </Box>
                                 </Box>
                             </ReactCardFlip>
@@ -994,22 +1046,34 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     <Typography
                                         variant="body1"
                                         paragraph
-                                        sx={{ fontSize: 16,display: "flex", alignItems: "center" }}
+                                        sx={{
+                                            fontSize: 16,
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
                                     >
                                         Creator:{" "}
                                         {/* k:c9078691a009cca61b9ba2f34a4ebff59b166c87a6b638eb9ed514109ecd43c8 */}
-                                        <strong style={{ marginLeft: "5px" }}
-                                        >{data?.creator.slice(0, 10)}...{data?.creator.slice(-10)}</strong>
+                                        <strong style={{ marginLeft: "5px" }}>
+                                            {data?.creator.slice(0, 10)}...
+                                            {data?.creator.slice(-10)}
+                                        </strong>
                                         <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginLeft: "5px",
-                            marginTop: "10px",
-                        }}
-                    >
-                        <ContentCopyIcon onClick={() => navigator.clipboard.writeText(data?.creator)} />
-                    </div>
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginLeft: "5px",
+                                                marginTop: "10px",
+                                            }}
+                                        >
+                                            <ContentCopyIcon
+                                                onClick={() =>
+                                                    navigator.clipboard.writeText(
+                                                        data?.creator
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                     </Typography>
                                     <Typography
                                         variant="body1"
@@ -1063,11 +1127,9 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         </Button>
                                     )} */}
 
-                                    {/* //cancel button also */}
-                                    {sellable && showSaleOptions ? (
+                                    {data?.onMarketplace && data?.onSale ? (
                                         <Button
-                                            variant="outlined"
-                                            color="primary"
+                                            variant="contained"
                                             style={{
                                                 fontSize: 16,
                                                 padding: "8px 16px",
@@ -1082,79 +1144,12 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                 boxShadow:
                                                     "0 4px 10px rgba(0, 0, 0, 0.1)",
                                             }}
-                                            onClick={handleCancelSale}
+                                            onClick={handleBuy}
                                         >
-                                            Cancel Sale
+                                            Buy Now
                                         </Button>
                                     ) : (
-                                        // <Button
-                                        //     variant="contained"
-                                        //     style={{
-                                        //         fontSize: 16,
-                                        //         padding: "8px 16px",
-                                        //         borderRadius: 2,
-                                        //         fontWeight: "bold",
-                                        //         textTransform: "none",
-                                        //         width: "150px",
-                                        //         color: "black",
-                                        //         backgroundColor: "#fae944",
-                                        //         borderRadius: "5px",
-                                        //         border: "1px solid #fae944",
-                                        //         boxShadow:
-                                        //             "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                        //     }}
-                                        //     onClick={handleSell}
-                                        // >
-                                        //     Sell
-                                        // </Button>
-
-                                        <>
-                                        {data?.onMarketplace && data?.onSale ? (
-                                            <Button
-                                                variant="contained"
-                                                style={{
-                                                    fontSize: 16,
-                                                    padding: "8px 16px",
-                                                    borderRadius: 2,
-                                                    fontWeight: "bold",
-                                                    textTransform: "none",
-                                                    width: "150px",
-                                                    color: "black",
-                                                    backgroundColor: "#fae944",
-                                                    borderRadius: "5px",
-                                                    border: "1px solid #fae944",
-                                                    boxShadow:
-                                                        "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                                }}
-                                                onClick={handleCancelSale}
-                                            >
-                                              Buy Now
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="contained"
-                                                style={{
-                                                    fontSize: 16,
-                                                    padding: "8px 16px",
-                                                    borderRadius: 2,
-                                                    fontWeight: "bold",
-                                                    textTransform: "none",
-                                                    width: "150px",
-                                                    color: "black",
-                                                    backgroundColor: "#fae944",
-                                                    borderRadius: "5px",
-                                                    border: "1px solid #fae944",
-                                                    boxShadow:
-                                                        "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                                }}
-                                                onClick={handleSell}
-                                            >
-                                                Sell
-                                            </Button>
-                                        )
-                                    }
-
-                                    </>
+                                        <></>
                                     )}
                                 </Box>
                             </Box>
@@ -1298,7 +1293,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     </motion.div>
                                 )}
 
-                                {showSaleOptions && (
+                                {/* {showSaleOptions && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
@@ -1307,21 +1302,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         <Typography variant="h5" gutterBottom>
                                             Choose Sale Type
                                         </Typography>
-                                        {/* <FormControl component="fieldset"> */}
-                                        {/* <RadioGroup
-                                                aria-label="sale-type"
-                                                name="sale-type"
-                                                value={saleType}
-                                                onChange={handleSaleTypeChange}
-                                            >
-                                                <FormControlLabel
-                                                    value="Fixed-Sale"
-                                                    control={<Radio />}
-                                                    label="Fixed Price"
-                                                />
-                                            </RadioGroup> */}
-
-                                        {/* //i want chip style not radio */}
+                                    
 
                                         <Box
                                             sx={{
@@ -1369,19 +1350,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             </Box>
                                         </Box>
 
-                                        {/* </FormControl> */}
-
-                                        {/* {saleType === "fixed" && (
-                                            <Form>
-                                                <Form.Field>
-                                                    <label>Price</label>
-                                                    <input
-                                                        type="number"
-                                                        placeholder="Enter price"
-                                                    />
-                                                </Form.Field>
-                                            </Form>
-                                        )} */}
+                                 
                                         {console.log(
                                             "selectedSale",
                                             selectedSale
@@ -1420,44 +1389,42 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                 </>
                                             )}
 
-                                        {/* <Box sx={{ mt: 2 }}>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                sx={{ mr: 2 }}
-                                            >
-                                                Confirm Sale
-                                            </Button>
-                                            <Button
-                                                variant="outlined"
-                                                onClick={handleCancelSale}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </Box> */}
                                     </motion.div>
+                                )} */}
+
+                                {showBuyOptions && (
+                                      <motion.div
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      exit={{ opacity: 0 }}
+                                  >
+                                      <Typography variant="h5" gutterBottom>
+                                            Confirm Purchase
+                                      </Typography>
+                                      <TransactionManager
+                                          trx={buyTrx}
+                                          wallet={userData?.wallet}
+                                          data={data}
+                                        //   type={type}
+                                          onClose={onClose}
+                                          onConfirm={() => {
+                                              clear_sales();
+                                              // Additional actions after successful cancellation
+                                              console.log(
+                                                  "Sale cancelled successfully"
+                                              );
+                                              // You might want to update the UI or fetch updated data here
+                                          }}
+                                      />
+                                  </motion.div>
                                 )}
+
+
+
+
                             </AnimatePresence>
 
-                            {/* <Form>
-                                <Form.Field
-                                    error={!balance || balance.eq(ZERO)}
-                                >
-                                    <label>Account balance</label>
-                                    <input
-                                        placeholder="BidAmount"
-                                        value={`${(
-                                            balance ?? Decimal("0.0")
-                                        ).toFixed(precision)} / ${
-                                            supply
-                                                ? supply.toFixed(precision)
-                                                : ""
-                                        }`}
-                                        readOnly
-                                        disabled
-                                    />
-                                </Form.Field>
-                            </Form> */}
+                            
                         </Box>
                     </Box>
 

@@ -276,8 +276,8 @@ function TransactionResult({ result, hash }) {
         );
 }
 
-function TransactionManager({ trx, wallet, onConfirm, data, onClose }) {
-    console.log(trx, wallet);
+function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
+    console.log(type);
     const [localResult, setLocalResult] = useState(null);
     console.log(localResult);
     const [localError, setLocalError] = useState(false);
@@ -359,26 +359,50 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose }) {
                             tokenId: data.tokenId,
                         };
                         console.log(body);
-
-                        const response = await nftServices.onSale(body);
-                        console.log(response);
-                        if (response.status === "success") {
-                            onClose();
-                            Swal.fire({
-                                title: "Success",
-                                text: "NFT is on sale",
-                                icon: "success",
-                                confirmButtonText: "Ok",
-                            });
-                        } else {
+                        if(type === 'sell'){
+                            const response = await nftServices.onSale(body);
                             console.log(response);
-                            Swal.fire({
-                                title: "Error",
-                                text: "NFT is not on sale",
-                                icon: "error",
-                                confirmButtonText: "Ok",
-                            });
+                            if (response.status === "success") {
+                                onClose();
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "NFT is on sale",
+                                    icon: "success",
+                                    confirmButtonText: "Ok",
+                                });
+                            } else {
+                                console.log(response);
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "NFT is not on sale",
+                                    icon: "error",
+                                    confirmButtonText: "Ok",
+                                });
+                            }
                         }
+                        if(type === 'close'){
+                            // const response = await nftServices.closeSale(body);
+                            // console.log(response);
+                            // if (response.status === "success") {
+                                onClose();
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "NFT is not on sale",
+                                    icon: "success",
+                                    confirmButtonText: "Ok",
+                                });
+                            // } else {
+                            //     console.log(response);
+                            //     Swal.fire({
+                            //         title: "Error",
+                            //         text: "NFT is on sale",
+                            //         icon: "error",
+                            //         confirmButtonText: "Ok",
+                            //     });
+                            // }
+                        }
+
+                       
                         setStatusResult(x.result);
                         if (onConfirm) onConfirm();
                     });

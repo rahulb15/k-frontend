@@ -25,6 +25,7 @@ import {
     usePrecision,
     useRoyalty,
     clear_sales,
+    useSalesForToken,
 } from "src/hooks/SWR_Hooks";
 import {
     Grid,
@@ -50,6 +51,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import {
     compute_marketplace_fees,
     pretty_price,
+    is_no_timeout,
 } from "@utils/marmalade_common";
 import Link from "next/link";
 import { Pact } from "@kadena/client";
@@ -583,6 +585,31 @@ const NftDetailModal = ({ open, onClose, data }) => {
     const [keyError, setKeyError] = useState(false);
     const [saleType, setSaleType] = useState(null);
     const [showSaleOptions, setShowSaleOptions] = useState(false);
+    const { sales } = useSalesForToken(data.tokenId);
+    const [canEnd, setCanEnd] = useState(false);
+    const [closeSaleTrx, setCloseSaleTrx] = useState(null);
+    const [showCloseSaleOptions, setShowCloseSaleOptions] = useState(false);
+    const [buyerGuard, setBuyerGuard] = useState(null);
+    const [type, setType] = useState("");
+    console.log("buyerGuard", buyerGuard);
+
+    useEffect(() => {
+        if (sales && sales.length > 0) {
+            const can_end =
+                sales[0].timeout &&
+                (is_no_timeout(sales[0].timeout) ||
+                    sales[0].timeout <= new Date());
+            console.log("can_end", can_end);
+            setCanEnd(can_end);
+        }
+
+        if (sales[0]?.["current-buyer"])
+            m_client
+                .local_pact(
+                    `(${m_client.ledger}.account-guard "${sales[0]["token-id"]}" "${sales[0]["current-buyer"]}")`
+                )
+                .then(setBuyerGuard);
+    }, [sales]);
 
     const setSelected = (x) => {
         _setSelected(x);
@@ -652,10 +679,24 @@ const NftDetailModal = ({ open, onClose, data }) => {
         else setUserData(null);
     }, [wallet, account, guard]);
 
+    useEffect(() => {
+        setWallet(
+            accountuser?.user?.walletName
+                ? accountuser?.user?.walletName === "Ecko Wallet"
+                    ? "Ecko"
+                    : accountuser?.user?.walletName === "Chainweaver"
+                    ? "ChainWeaver_Desktop"
+                    : "Other"
+                : "Other"
+        );
+        setAccount(accountuser?.user?.walletAddress);
+    }, [accountuser]);
+
     const handleSell = (e) => {
         console.log("Sell");
         e.preventDefault();
         setShowSaleOptions(true);
+        setType("sell");
         setWallet(
             accountuser?.user?.walletName
                 ? accountuser?.user?.walletName === "Ecko Wallet"
@@ -671,6 +712,139 @@ const NftDetailModal = ({ open, onClose, data }) => {
     const handleCancelSale = () => {
         setShowSaleOptions(false);
         setSaleType(null);
+    };
+
+    const make_trx_withdraw_timed_out = (sale, gas_payer, user_guard) =>
+        Pact.builder
+            .continuation({ pactId: sale["sale-id"], step: 0, rollback: true })
+            .setMeta({
+                sender: gas_payer,
+                chainId: m_client.chain,
+                gasLimit: 3500,
+            })
+            .setNetworkId(m_client.network)
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability("coin.GAS"),
+            ])
+            .setNonce(make_nonce)
+            .createTransaction();
+
+    const make_trx_withdraw_forced_fixed = (sale, gas_payer, user_guard) =>
+        Pact.builder
+            .continuation({ pactId: sale["sale-id"], step: 0, rollback: true })
+            .setMeta({
+                sender: gas_payer,
+                chainId: m_client.chain,
+                gasLimit: 3500,
+            })
+            .setNetworkId(m_client.network)
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability("coin.GAS"),
+            ])
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability(
+                    `${m_client.policy_fixed_sale}.FORCE-WITHDRAW`,
+                    sale["sale-id"]
+                ),
+            ])
+            .setNonce(make_nonce)
+            .createTransaction();
+
+    const make_trx_withdraw_forced_dutch = (sale, gas_payer, user_guard) =>
+        Pact.builder
+            .continuation({ pactId: sale["sale-id"], step: 0, rollback: true })
+            .setMeta({
+                sender: gas_payer,
+                chainId: m_client.chain,
+                gasLimit: 3500,
+            })
+            .setNetworkId(m_client.network)
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability("coin.GAS"),
+            ])
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability(
+                    `${m_client.policy_dutch_auction_sale}.FORCE-WITHDRAW`,
+                    sale["sale-id"]
+                ),
+            ])
+            .setNonce(make_nonce)
+            .createTransaction();
+
+    const make_trx_end_auction = (
+        sale,
+        gas_payer,
+        user_guard,
+        buyer,
+        buyer_guard
+    ) =>
+        Pact.builder
+            .continuation({ pactId: sale["sale-id"], step: 1, rollback: false })
+            .setMeta({
+                sender: gas_payer,
+                chainId: m_client.chain,
+                gasLimit: 4000,
+            })
+            .setNetworkId(m_client.network)
+            .addData("buyer-guard", buyer_guard)
+            .addData("buyer", buyer)
+            .addSigner(user_guard.keys[0], (withCapability) => [
+                withCapability("coin.GAS"),
+            ])
+            .setNonce(make_nonce)
+            .createTransaction();
+
+    function get_transaction_builder(sale_type, sale) {
+        switch (sale_type) {
+            case "f":
+                return is_no_timeout(sale.timeout)
+                    ? make_trx_withdraw_forced_fixed
+                    : make_trx_withdraw_timed_out;
+            case "d":
+                return is_no_timeout(sale.timeout)
+                    ? make_trx_withdraw_forced_dutch
+                    : make_trx_withdraw_timed_out;
+            case "a":
+                return sale?.["current-buyer"]
+                    ? make_trx_end_auction
+                    : make_trx_withdraw_timed_out;
+            default:
+                return null;
+        }
+    }
+
+    const handleCloseSale = () => {
+        console.log("user data", userData);
+        if (!canEnd) {
+            console.log("Cannot end the sale at this time.");
+            return;
+        }
+
+        /* Choose the right transaction */
+        const make_trx = get_transaction_builder(sales[0].type, sales[0]);
+        console.log("make_trx", make_trx);
+
+        /* Here we only use sale?.['sale-id'] as a dependency, to be sure the transaction is not re-generated when the sale object is updated by SWR */
+        const transaction =
+            sales[0] &&
+            userData?.account &&
+            userData?.guard &&
+            userData?.key &&
+            make_trx
+                ? make_trx(
+                      sales[0],
+                      userData.account,
+                      userData.guard,
+                      sales[0]?.["current-buyer"],
+                      buyerGuard
+                  )
+                : null;
+
+        console.log(transaction, userData?.wallet, "txnnn");
+        setType("close");
+        setCloseSaleTrx(transaction);
+
+        setShowCloseSaleOptions(true);
     };
 
     const handleSaleTypeChange = (event) => {
@@ -914,30 +1088,81 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                             }}
                                             onClick={handleCancelSale}
                                         >
-                                            Cancel Sale
+                                            Back
                                         </Button>
                                     ) : (
-                                        <Button
-                                            variant="contained"
-                                            style={{
-                                                fontSize: 16,
-                                                padding: "8px 16px",
-                                                borderRadius: 2,
-                                                fontWeight: "bold",
-                                                textTransform: "none",
-                                                width: "150px",
-                                                color: "black",
-                                                backgroundColor: "#fae944",
-                                                borderRadius: "5px",
-                                                border: "1px solid #fae944",
-                                                boxShadow:
-                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                            }}
-                                            onClick={handleSell}
-                                        >
-                                            Sell
-                                        </Button>
+                                        // <Button
+                                        //     variant="contained"
+                                        //     style={{
+                                        //         fontSize: 16,
+                                        //         padding: "8px 16px",
+                                        //         borderRadius: 2,
+                                        //         fontWeight: "bold",
+                                        //         textTransform: "none",
+                                        //         width: "150px",
+                                        //         color: "black",
+                                        //         backgroundColor: "#fae944",
+                                        //         borderRadius: "5px",
+                                        //         border: "1px solid #fae944",
+                                        //         boxShadow:
+                                        //             "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                        //     }}
+                                        //     onClick={handleSell}
+                                        // >
+                                        //     Sell
+                                        // </Button>
+
+                                        <>
+                                            {data.onSale ? (
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    style={{
+                                                        fontSize: 16,
+                                                        padding: "8px 16px",
+                                                        borderRadius: 2,
+                                                        fontWeight: "bold",
+                                                        textTransform: "none",
+                                                        width: "150px",
+                                                        color: "black",
+                                                        backgroundColor:
+                                                            "#fae944",
+                                                        borderRadius: "5px",
+                                                        border: "1px solid #fae944",
+                                                        boxShadow:
+                                                            "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                    }}
+                                                    onClick={handleCloseSale}
+                                                >
+                                                    Close Sale
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    style={{
+                                                        fontSize: 16,
+                                                        padding: "8px 16px",
+                                                        borderRadius: 2,
+                                                        fontWeight: "bold",
+                                                        textTransform: "none",
+                                                        width: "150px",
+                                                        color: "black",
+                                                        backgroundColor:
+                                                            "#fae944",
+                                                        borderRadius: "5px",
+                                                        border: "1px solid #fae944",
+                                                        boxShadow:
+                                                            "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                    }}
+                                                    onClick={handleSell}
+                                                >
+                                                    Sell
+                                                </Button>
+                                            )}
+                                        </>
                                     )}
+
+                                    {/* {sales.map( x=> <SaleRows sale={x} key={x["sale-id"]} precision={precision} />)} */}
                                 </Box>
                             </Box>
 
@@ -1195,6 +1420,7 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                                         wallet={
                                                             userData?.wallet
                                                         }
+                                                        type={type}
                                                         onConfirm={clear_sales}
                                                         data={data}
                                                         onClose={onClose}
@@ -1217,6 +1443,34 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                                 Cancel
                                             </Button>
                                         </Box> */}
+                                    </motion.div>
+                                )}
+
+                                {showCloseSaleOptions && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    >
+                                        <Typography variant="h5" gutterBottom>
+                                            Are you sure you want to close the
+                                            sale?
+                                        </Typography>
+                                        <TransactionManager
+                                            trx={closeSaleTrx}
+                                            wallet={userData?.wallet}
+                                            data={data}
+                                            type={type}
+                                            onClose={onClose}
+                                            onConfirm={() => {
+                                                clear_sales();
+                                                // Additional actions after successful cancellation
+                                                console.log(
+                                                    "Sale cancelled successfully"
+                                                );
+                                                // You might want to update the UI or fetch updated data here
+                                            }}
+                                        />
                                     </motion.div>
                                 )}
                             </AnimatePresence>
