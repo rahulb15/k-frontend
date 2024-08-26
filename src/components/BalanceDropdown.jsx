@@ -109,7 +109,7 @@ const BalanceDropdown = ({ balance }) => {
                         <motion.button
                             onClick={() => router.push("/deposit")}
                             style={{
-                                backgroundColor: "#007bff",
+                                backgroundColor: "#b89503",
                                 color: "white",
                                 border: "none",
                                 padding:
@@ -122,7 +122,7 @@ const BalanceDropdown = ({ balance }) => {
                                 width: "100%",
                             }}
                             whileHover={{
-                                backgroundColor: "#0056b3",
+                                backgroundColor: "#e8c221",
                                 scale: 1.05,
                             }}
                             whileTap={{ scale: 0.95 }}

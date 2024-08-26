@@ -65,7 +65,7 @@ import { QRCode } from "react-qrcode-logo";
 import QrCodeIcon from "@mui/icons-material/QrCode";
 import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-
+import NftImageContainer from "./NftImageContainer";
 const StyledDateTimePicker = styled(DateTimePicker)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
         borderRadius: theme.shape.borderRadius,
@@ -869,7 +869,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                 flipDirection="horizontal"
                             >
                                 {/* Front side - Image */}
-                                <Box
+                                {/* <Box
                                     id="nft-image-container"
                                     sx={{
                                         position: "relative",
@@ -938,7 +938,14 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             <QrCodeIcon />
                                         </IconButton>
                                     </Box>
-                                </Box>
+                                </Box> */}
+
+                                <NftImageContainer
+                                    data={data}
+                                    handleImageClick={handleImageClick}
+                                    setIsFlipped={setIsFlipped}
+                                    isFlipped={isFlipped}
+                                />
 
                                 {/* Back side - QR Code */}
                                 <Box
@@ -1393,38 +1400,32 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                 )} */}
 
                                 {showBuyOptions && (
-                                      <motion.div
-                                      initial={{ opacity: 0 }}
-                                      animate={{ opacity: 1 }}
-                                      exit={{ opacity: 0 }}
-                                  >
-                                      <Typography variant="h5" gutterBottom>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    >
+                                        <Typography variant="h5" gutterBottom>
                                             Confirm Purchase
-                                      </Typography>
-                                      <TransactionManager
-                                          trx={buyTrx}
-                                          wallet={userData?.wallet}
-                                          data={data}
-                                        //   type={type}
-                                          onClose={onClose}
-                                          onConfirm={() => {
-                                              clear_sales();
-                                              // Additional actions after successful cancellation
-                                              console.log(
-                                                  "Sale cancelled successfully"
-                                              );
-                                              // You might want to update the UI or fetch updated data here
-                                          }}
-                                      />
-                                  </motion.div>
+                                        </Typography>
+                                        <TransactionManager
+                                            trx={buyTrx}
+                                            wallet={userData?.wallet}
+                                            data={data}
+                                            //   type={type}
+                                            onClose={onClose}
+                                            onConfirm={() => {
+                                                clear_sales();
+                                                // Additional actions after successful cancellation
+                                                console.log(
+                                                    "Sale cancelled successfully"
+                                                );
+                                                // You might want to update the UI or fetch updated data here
+                                            }}
+                                        />
+                                    </motion.div>
                                 )}
-
-
-
-
                             </AnimatePresence>
-
-                            
                         </Box>
                     </Box>
 
