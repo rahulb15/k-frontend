@@ -30,7 +30,7 @@ const TopCollectionTableArea = ({ className, space }) => {
                 search
             );
             setCollections(response.data.data.collections);
-            setTotalItems(response.data.pagination.totalItems);
+            setTotalItems(response?.data?.pagination?.totalItems);
             setTotalPages(response.data.pagination.totalPages);
         } catch (error) {
             console.error("Error fetching collections:", error);
@@ -86,7 +86,7 @@ const TopCollectionTableArea = ({ className, space }) => {
 
     if (totalItems > 100) {
         itemsPerPageOptions.push({
-            value: totalItems.toString(),
+            value: totalItems?.toString(),
             text: "Show All",
         });
     }

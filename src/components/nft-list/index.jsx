@@ -38,7 +38,7 @@ const NftListArea = ({ className, space, data }) => {
 
   const handleSliderChange = (values) => {
     const newValue = Math.round(values[0] * products.length / 100);
-    const currentItemsInCart = carts.length;
+    const currentItemsInCart = carts?.length;
 
     if (newValue > currentItemsInCart) {
       // Add items to cart
@@ -105,7 +105,7 @@ const NftListArea = ({ className, space, data }) => {
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
         <Typography variant="h6" sx={{ color: '#a9b729c9' }}>
-          {carts.length} item{carts.length !== 1 ? 's' : ''} in cart
+          {carts?.length} item{carts?.length !== 1 ? 's' : ''} in cart
         </Typography>
       </Box>
     </Box>

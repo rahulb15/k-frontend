@@ -68,7 +68,24 @@ const MenuProps = {
     },
 };
 
-const policies = ["COLLECTION", "INSTANT-MINT", "MARKETPLACE", "FIXED-SALE"];
+const policies = [
+    "COLLECTION",
+    "INSTANT-MINT",
+    "MARKETPLACE",
+    "FIXED-SALE",
+    "AUCTION-SALE",
+    "BLACKLIST",
+    "DISABLE-BURN",
+    "DISABLE-TRANSFER",
+    "DISABLE-SALE",
+    "DUTCH-AUCTION-SALE",
+    "EXTRA-POLICIES",
+    "FIXED-ISSUANCE",
+    "GUARDS",
+    "NON-FUNGIBLE",
+    "ROYALTY",
+    "TRUSTED-CUSTODY",
+];
 
 function getStyles(name, personName, theme) {
     return {

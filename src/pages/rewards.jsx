@@ -132,7 +132,7 @@ const RewardsPage = () => {
                 <div className="cta-section">
                     <h2>Start Earning Today!</h2>
                     <p>
-                        Join our golden rewards program and unlock exclusive
+                        Join ourrewards program and unlock exclusive
                         benefits.
                     </p>
                     <button className="cta-button">Get Started</button>

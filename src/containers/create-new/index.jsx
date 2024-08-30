@@ -88,13 +88,7 @@ const CreateNewArea = ({ className, space }) => {
 
     return (
         <>
-            <div
-                className={clsx(
-                    "create-area",
-                    space === 1 && "rn-section-gapTop",
-                    className
-                )}
-            >
+          
                 <form action="#" onSubmit={handleSubmit(onSubmit)}>
                     <div className="container">
                         <div className="row g-5">
@@ -391,7 +385,7 @@ const CreateNewArea = ({ className, space }) => {
                         </div>
                     </div>
                 </form>
-            </div>
+            
 <CreateCollectionModal
                 open={showCollectionModal}
                 handleClose={handleCollectionModal}

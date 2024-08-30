@@ -89,6 +89,17 @@ export function make_nonce() {
     return "ng_expl:" + Array.from(a, (x) => x.toString(16)).join("");
 }
 
+const auction_next_price = (sale) =>
+    sale
+        ? sale["current-price"].eq("0.0")
+            ? sale["start-price"]
+            : sale["current-price"]
+                  .mul(sale["increment-ratio"])
+                  .toDecimalPlaces(PRICE_DIGITS, Decimal.ROUND_UP)
+        : null;
+
+const Price = ({ value, curr }) => <> {pretty_price(value, curr)} </>;
+
 const coin_fungible = {
     refSpec: [{ namespace: null, name: "fungible-v2" }],
     refName: { namespace: null, name: "coin" },
@@ -118,6 +129,30 @@ const make_trx = (sale, buyer, buyer_guard) =>
                 buyer,
                 sale["escrow-account"],
                 dec(sale.price)
+            ),
+        ])
+        .setNonce(make_nonce)
+        .createTransaction();
+
+const make_bid_trx = (sale, buyer, buyer_guard, price) =>
+    Pact.builder
+        .execution(
+            `(${m_client.policy_auction_sale}.place-bid "${
+                sale["sale-id"]
+            }" "${buyer}" (read-msg "bg") ${price.toFixed(12)})`
+        )
+        .setMeta({ sender: buyer, chainId: m_client.chain, gasLimit: 10000 })
+        .setNetworkId(m_client.network)
+        .addData("bg", buyer_guard)
+        .addSigner(buyer_guard.keys[0], (withCapability) => [
+            withCapability("coin.GAS"),
+        ])
+        .addSigner(buyer_guard.keys[0], (withCapability) => [
+            withCapability(
+                "coin.TRANSFER",
+                buyer,
+                sale["escrow-account"],
+                dec(price)
             ),
         ])
         .setNonce(make_nonce)
@@ -425,6 +460,7 @@ function DecimalPriceField({ name, onChange, disabled, error }) {
         </div>
     );
 }
+const PRICE_DIGITS = 2
 
 function NoTimeoutDatePicker({ value, onChange, disabled }) {
     const is_no_timeout = value == null;
@@ -614,7 +650,11 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [qrSize, setQrSize] = useState({ width: 500, height: 500 });
     const [buyTrx, setBuyTrx] = useState(null);
+    const [bidAmount, setBidAmount] = useState("");
+    const [amountError, setAmountError] = useState(false);
+    const [bidTrx, setBidTrx] = useState(null);
     const [showBuyOptions, setShowBuyOptions] = useState(false);
+    const [showBidOptions, setShowBidOptions] = useState(false);
 
     // Add this useEffect to dynamically set the QR size based on the image container
     useEffect(() => {
@@ -771,6 +811,49 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
         setBuyTrx(transaction);
     };
 
+    const handleBid = () => {
+        console.log("Bid");
+        setSaleType("Auction-Sale");
+        setShowBidOptions(true);
+        //   const transaction = useMemo(() => (sale && userData?.account && userData?.guard && userData?.key && !amountError)
+        //   // eslint-disable-next-line react-hooks/exhaustive-deps
+        //                                   ?make_bid_trx(sale, userData.account, userData.guard, Decimal(bidAmount)):null, [sale?.['sale-id'], userData, bidAmount, amountError])
+
+        const transaction =
+            sales[0] && userData?.account && userData?.guard && userData?.key
+                ? make_bid_trx(
+                      sales[0],
+                      userData.account,
+                      userData.guard,
+                      Decimal(4)
+                  )
+                : null;
+        console.log("transaction", transaction);
+        setBidTrx(transaction);
+    };
+
+    function EndOfSaleMessage({ sale }) {
+        if (sale.timeout > warning_date())
+            return (
+                <Message
+                    color="red"
+                    header="Warning => Auction will end in a long time"
+                    list={[
+                        sale.timeout.toString(),
+                        "Your funds may be locked until that date",
+                    ]}
+                />
+            );
+        else
+            return (
+                <Message
+                    color="violet"
+                    header="Auction End"
+                    list={[sale.timeout.toString()]}
+                />
+            );
+    }
+
     if (!open) return null;
 
     return (
@@ -822,6 +905,20 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     color="textSecondary"
                                 >
                                     Token ID: {data.tokenId}
+                                </Typography>
+                                {/* rarityRank */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
+                                    Rarity Rank: {data?.rarityRank}
+                                </Typography>
+                                {/* rarityScore */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
+                                    Rarity Score: {data?.rarityScore}
                                 </Typography>
                             </div>
                             <Box
@@ -1158,6 +1255,31 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     ) : (
                                         <></>
                                     )}
+
+                                    {data?.onMarketplace && data?.onAuction ? (
+                                        <Button
+                                            variant="contained"
+                                            style={{
+                                                fontSize: 16,
+                                                padding: "8px 16px",
+                                                borderRadius: 2,
+                                                fontWeight: "bold",
+                                                textTransform: "none",
+                                                width: "150px",
+                                                color: "black",
+                                                backgroundColor: "#fae944",
+                                                borderRadius: "5px",
+                                                border: "1px solid #fae944",
+                                                boxShadow:
+                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                            }}
+                                            onClick={handleBid}
+                                        >
+                                            Bid
+                                        </Button>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </Box>
                             </Box>
 
@@ -1300,6 +1422,30 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     </motion.div>
                                 )}
 
+                                {sales && sales.length > 0 && (
+                                    <>
+                                        {showBidOptions && (
+                                            <>
+                                                <label>
+                                                    Bid amount: Min:{" "}
+                                                    <Price
+                                                        value={auction_next_price(
+                                                            sales[0]
+                                                        )}
+                                                        curr={
+                                                            sales[0]?.currency
+                                                        }
+                                                    />{" "}
+                                                </label>
+
+                                                <EndOfSaleMessage
+                                                    sale={sales[0]}
+                                                />
+                                            </>
+                                        )}
+                                    </>
+                                )}
+
                                 {/* {showSaleOptions && (
                                     <motion.div
                                         initial={{ opacity: 0 }}
@@ -1410,6 +1556,33 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         </Typography>
                                         <TransactionManager
                                             trx={buyTrx}
+                                            wallet={userData?.wallet}
+                                            data={data}
+                                            //   type={type}
+                                            onClose={onClose}
+                                            onConfirm={() => {
+                                                clear_sales();
+                                                // Additional actions after successful cancellation
+                                                console.log(
+                                                    "Sale cancelled successfully"
+                                                );
+                                                // You might want to update the UI or fetch updated data here
+                                            }}
+                                        />
+                                    </motion.div>
+                                )}
+
+                                {showBidOptions && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    >
+                                        <Typography variant="h5" gutterBottom>
+                                            Confirm Bid
+                                        </Typography>
+                                        <TransactionManager
+                                            trx={bidTrx}
                                             wallet={userData?.wallet}
                                             data={data}
                                             //   type={type}

@@ -19,6 +19,7 @@ import { priorityPassApi } from "src/services/prioritypass.service";
 import { nftApi } from "src/services/nft.service";
 import balanceReducer from "src/features/balanceSlice";
 import cartReducer from "src/features/cartSlice";
+import notificationReducer from "src/features/notificationSlice";
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
     launchpad: launchpadReducer,
     balance: balanceReducer,
     cart: cartReducer,
+    notification: notificationReducer,
     [launchpadApi.reducerPath]: launchpadApi.reducer,
     [nftApi.reducerPath]: nftApi.reducer,
     [priorityPassApi.reducerPath]: priorityPassApi.reducer,

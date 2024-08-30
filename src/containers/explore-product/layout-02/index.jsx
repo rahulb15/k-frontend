@@ -7,7 +7,7 @@ import nftServices from "src/services/nftServices";
 
 const ExploreProductArea = () => {
     const [pageNo, setPageNo] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(50);
     const [nfts, setNfts] = useState([]);
     const [totalNfts, setTotalNfts] = useState(0);
     const [loading, setLoading] = useState(false);

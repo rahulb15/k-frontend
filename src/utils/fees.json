@@ -7,7 +7,7 @@
       "min-fee": 1.0,
       "fee-rate": 0.1,
       "max-fee": 10000.0,
-      "shared-rate": 0.0
+      "shared-rate": 0.5
     },
   "mainnet01": null
 }

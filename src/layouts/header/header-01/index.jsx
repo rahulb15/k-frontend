@@ -44,14 +44,26 @@ import { setBalance, setLoading, setError } from "src/features/balanceSlice";
 import { useBalanceMutation } from "src/services/launchpad.service";
 import BalanceDropdown from "@components/BalanceDropdown";
 import CartDropdown from "./CartDropdown";
-import { addToCart,removeToCart ,removeSingleIteams,emptycartIteam} from 'src/features/cartSlice';
+import NotificationDropdown from "./NotificationDropdown";
+import useWebSocket from "./useWebSocket";
+import {
+    addToCart,
+    removeToCart,
+    removeSingleIteams,
+    emptycartIteam,
+} from "src/features/cartSlice";
 const MouseParticles = dynamic(() => import("react-mouse-particles"), {
     ssr: false,
 });
 
 const Header = ({ className }) => {
-    const {carts} = useSelector((state)=>state.cart);
-    console.log(carts)
+    const { carts } = useSelector((state) => state.cart);
+    // const notifications = useSelector(
+    //     (state) => state.notification.notifications
+    // );
+    // console.log(notifications, "notifications");
+    const [showNotifications, setShowNotifications] = useState(false);
+    console.log(carts);
     const sticky = useSticky();
     const dispatch = useDispatch();
     const { offcanvas, offcanvasHandler } = useOffcanvas();
@@ -60,11 +72,23 @@ const Header = ({ className }) => {
         useBalanceMutation();
     const account = useAccountContext();
     console.log(account, "account");
+    const { notifications } = useWebSocket(account?.user?._id);
+    console.log(notifications, "notifications");
+
+
     const [isDropDownEnabled, setIsDropDownEnabled] = useState(false);
     const router = useRouter();
     const { disconnect } = useWalletConnectClient();
     const balance = useSelector((state) => state.balance.value);
     console.log(balance, "balance");
+
+    useEffect(() => {
+        // dispatch(fetchNotifications());
+    }, [dispatch]);
+
+    const toggleNotifications = () => {
+        setShowNotifications(!showNotifications);
+    };
 
     const logout = async () => {
         const response = await userService.logout();
@@ -182,18 +206,30 @@ const Header = ({ className }) => {
 
                             <div className="setting-option rn-icon-list notification-badge">
                                 <div className="icon-box">
-                                    <Anchor path={headerData.activity_link}>
+                                    <button onClick={toggleNotifications}>
                                         <i className="feather-bell" />
-                                        <span className="badge">6</span>
-                                    </Anchor>
+                                        {notifications.length > 0 && (
+                                            <span className="badge">
+                                                {notifications.length}
+                                            </span>
+                                        )}
+                                    </button>
                                 </div>
+                                {showNotifications && (
+                                    <NotificationDropdown
+                                        notifications={notifications}
+                                        onViewAll={() =>
+                                            router.push("/notifications")
+                                        }
+                                    />
+                                )}
                             </div>
 
                             {/* //cart icon */}
                             <div className="setting-option rn-icon-list">
-                            <div className="setting-option rn-icon-list">
-                                <CartDropdown />
-                            </div>
+                                <div className="setting-option rn-icon-list">
+                                    <CartDropdown />
+                                </div>
                             </div>
 
                             <div className="setting-option header-btn">

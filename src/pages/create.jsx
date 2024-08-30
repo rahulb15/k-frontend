@@ -4,6 +4,7 @@ import Header from "@layout/header/header-01";
 import Footer from "@layout/footer/footer-03";
 import Breadcrumb from "@components/breadcrumb";
 import CreateNewArea from "@containers/create-new";
+import CreateArea from "@containers/create";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -11,11 +12,11 @@ export async function getStaticProps() {
 
 const Home = () => (
     <Wrapper>
-        <SEO pageTitle="Create New" />
+        <SEO pageTitle="Create" />
         <Header />
         <main id="main-content" style={{ marginBottom: "200px" }}>
-            <Breadcrumb pageTitle="Create New NFT" />
-            <CreateNewArea />
+            <Breadcrumb pageTitle="Create" />
+            <CreateArea />
         </main>
         <Footer />
     </Wrapper>

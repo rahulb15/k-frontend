@@ -13,6 +13,10 @@ import {
     FormControlLabel,
     Popover,
     Paper,
+    TextField,
+    Select,
+    MenuItem,
+    InputLabel,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CloseIcon from "@mui/icons-material/Close";
@@ -356,6 +360,48 @@ function FixedPriceNet({ sale_data, token_id, fee }) {
     ) : null;
 }
 
+function DutchAuctionPriceNet({ sale_data, token_id, fee }) {
+    console.log("sale_data", sale_data);
+    const royalty_rate = useRoyaltyRate(token_id);
+    const gross = sale_data
+        ? [sale_data.start_price, sale_data.end_price]
+        : [ZERO, ZERO];
+
+    const mplace_fee = gross.map((x) => compute_marketplace_fees(x, fee));
+    const gross_after_mplace = mplace_fee.map((f, i) => gross[i].sub(f));
+
+    const royalty = gross_after_mplace.map((g) => royalty_rate.mul(g));
+    const total = royalty.map((f, i) => gross_after_mplace[i].sub(f));
+
+    const details = (
+        <FeeDetailsModal
+            headers={["Max", "Min"]}
+            gross={gross.map((x) => pretty_price(x, "coin"))}
+            fees={[
+                ["Marketplace"].concat(
+                    mplace_fee.map((x) => "- " + pretty_price(x, "coin"))
+                ),
+                ["Royalty"].concat(
+                    royalty.map((x) => "- " + pretty_price(x, "coin"))
+                ),
+            ]}
+            total={total.map((x) => pretty_price(x, "coin"))}
+        />
+    );
+
+    if (!sale_data) return null;
+
+    return (
+        <Box sx={{ mt: 2, p: 2, bgcolor: "info.light", borderRadius: 1 }}>
+            <Typography variant="body1">
+                You will receive between {pretty_price(total[1], "coin")} and{" "}
+                {pretty_price(total[0], "coin")}
+            </Typography>
+            {details}
+        </Box>
+    );
+}
+
 function DecimalPriceField({ name, onChange, disabled, error }) {
     const [isError, setIsError] = useState(true);
     const setValue = (x) => {
@@ -538,6 +584,8 @@ function FixedPriceSellForm({ disabled, onChange }) {
         }
     };
 
+    console.log("toDate", toDate);
+
     return (
         <>
             {/* <FixedPriceHelpModal /> */}
@@ -562,6 +610,219 @@ function FixedPriceSellForm({ disabled, onChange }) {
         </>
     );
 }
+const base_date_2 = () => new Date(Date.now() + 4200 * 1000);
+
+function DutchAuctionSellForm({ disabled, onChange }) {
+    const [startingPrice, setStartingPrice] = useState(null);
+    const [endPrice, setEndPrice] = useState(null);
+    const [endSlopeDate, _setEndOfSlopeDate] = useState(base_date());
+    const [toDate, _setToDate] = useState(base_date_2());
+
+    const setEndOfSlopeDate = (x) => {
+        _setEndOfSlopeDate(x);
+        if (startingPrice && endPrice) {
+            onChange({
+                start_price: startingPrice,
+                end_price: endPrice,
+                end_date: x,
+                tout: toDate,
+            });
+        }
+    };
+
+    console.log("endSlopeDate", endSlopeDate);
+
+    const setToDate = (x) => {
+        _setToDate(x);
+        if (startingPrice && endPrice) {
+            onChange({
+                start_price: startingPrice,
+                end_price: endPrice,
+                end_date: endSlopeDate,
+                tout: x,
+            });
+        }
+    };
+    console.log("toDate", toDate);
+
+    const price_error = endPrice && startingPrice && startingPrice.lt(endPrice);
+    const date_error = toDate != null && toDate < endSlopeDate;
+
+    useEffect(() => {
+        if (
+            startingPrice &&
+            endPrice &&
+            endPrice.lt(startingPrice) &&
+            (toDate == null || toDate >= endSlopeDate)
+        )
+            onChange({
+                start_price: startingPrice,
+                end_price: endPrice,
+                end_date: endSlopeDate,
+                tout: toDate,
+            });
+    }, [endPrice, startingPrice, endSlopeDate, toDate, onChange]);
+
+    return (
+        <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+                <DecimalPriceField
+                    name="Starting price"
+                    disabled={disabled}
+                    onChange={setStartingPrice}
+                    error={price_error}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <DecimalPriceField
+                    name="End of slope price"
+                    disabled={disabled}
+                    onChange={setEndPrice}
+                    error={price_error}
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" gutterBottom>
+                    End of Slope Date
+                </Typography>
+                <DatePicker
+                    showTimeSelect
+                    selected={endSlopeDate}
+                    onChange={(date) => setEndOfSlopeDate(date)}
+                    dateFormat="Pp"
+                />
+            </Grid>
+            <Grid item xs={12} md={6}>
+                <NoTimeoutDatePicker
+                    value={toDate}
+                    onChange={setToDate}
+                    disabled={disabled}
+                />
+            </Grid>
+            <Grid item xs={12}>
+                <DateWarningMessage date={toDate} />
+            </Grid>
+        </Grid>
+    );
+}
+
+const INCREMENT_OPTIONS = [
+    { text: "10%", value: "1.1" },
+    { text: "20%", value: "1.2" },
+    { text: "50%", value: "1.5" },
+    { text: "100%", value: "2.0" },
+];
+
+const DEFAULT_OPTION = INCREMENT_OPTIONS[0].value;
+
+function AuctionSellForm({ disabled, onChange }) {
+    const [startingPrice, _setStartingPrice] = useState(null);
+    const [increment, setIncrement] = useState(DEFAULT_OPTION);
+    const [toDate, _setToDate] = useState(base_date());
+    console.log("toDate", toDate);
+
+    const setStartingPrice = (x) => {
+        _setStartingPrice(x);
+        if (x) {
+            onChange({
+                start_price: x,
+                increment: new Decimal(increment),
+                tout: toDate,
+            });
+        }
+    };
+
+    const setToDate = (x) => {
+        _setToDate(x);
+        if (startingPrice) {
+            onChange({
+                start_price: startingPrice,
+                increment: new Decimal(increment),
+                tout: x,
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (startingPrice) {
+            onChange({
+                start_price: startingPrice,
+                increment: new Decimal(increment),
+                tout: toDate,
+            });
+        }
+    }, [increment]);
+
+    return (
+        <Box>
+            {/* <AuctionHelpModal /> */}
+            <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                    <DecimalPriceField
+                        name="Starting price"
+                        disabled={disabled}
+                        onChange={setStartingPrice}
+                    />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <FormControl fullWidth disabled={disabled}>
+                        <InputLabel>Minimum increment between bids</InputLabel>
+                        <Select
+                            value={increment}
+                            onChange={(e) => setIncrement(e.target.value)}
+                            label="Minimum increment between bids"
+                        >
+                            {INCREMENT_OPTIONS.map((option) => (
+                                <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                >
+                                    {option.text}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            showTimeSelect
+                            selected={toDate}
+                            onChange={(date) => setToDate(date)}
+                            dateFormat="Pp"
+                        />
+                    </LocalizationProvider>
+                </Grid>
+            </Grid>
+            <DateWarningMessage date={toDate} />
+        </Box>
+    );
+}
+
+function AuctionPriceNet({sale_data, token_id, fee})
+{
+  const royalty_rate = useRoyaltyRate(token_id);
+  const gross = sale_data?.start_price??ZERO;
+  const mplace_fee = compute_marketplace_fees(gross, fee);
+  const gross_after_mplace = gross.sub(mplace_fee);
+  const royalty = royalty_rate.mul(gross_after_mplace);
+  const total = gross_after_mplace.sub(royalty);
+
+  const mplace_fee_rate = fee?Decimal(fee["fee-rate"]):ZERO;
+  const mplace_fee_max = fee?Decimal(fee["max-fee"]):ZERO;
+
+  const mplace_string = fee?`- X * ${to_percent(mplace_fee_rate)} (Max : ${pretty_price(mplace_fee_max, "coin")})`:pretty_price(ZERO,"coin");
+
+  const details = <FeeDetailsModal headers={["Start price", "End price"]}
+                                   gross={[pretty_price(gross, "coin"), "X" ]}
+                                   fees={[["MarketPlace", "- " + pretty_price(mplace_fee, "coin"), mplace_string],
+                                          ["Royalty", "- " + pretty_price(royalty, "coin"), "- X * " + to_percent(royalty_rate.mul(ONE.sub(mplace_fee_rate)))]]}
+                                   total={[pretty_price(total, "coin"), "X * " + to_percent(ONE.sub(royalty_rate).mul(ONE.sub(mplace_fee_rate)))]}/>
+
+  return sale_data? <Message icon="info" header={`You will receive at least ${pretty_price(total, "coin")}`}
+                             content={details} />:""
+}
+
 
 const NftDetailModal = ({ open, onClose, data }) => {
     console.log("data", data);
@@ -617,6 +878,7 @@ const NftDetailModal = ({ open, onClose, data }) => {
     };
 
     useEffect(() => {
+        console.log("policies", policies);
         if (policies && userData?.account) {
             console.log("default_sale", default_sale(policies));
             setSelected(default_sale(policies));
@@ -626,9 +888,12 @@ const NftDetailModal = ({ open, onClose, data }) => {
     const fee = useFee(data.tokenId);
 
     const setSelectedSale = (x) => {
+        console.log("x", x);
         _setSelectedSale(x);
         setDataNew(null);
     };
+
+    console.log("dataNew", dataNew);
 
     const trx = useMemo(
         () =>
@@ -850,6 +1115,7 @@ const NftDetailModal = ({ open, onClose, data }) => {
     const handleSaleTypeChange = (event) => {
         console.log("event.target.value", event.target.value);
         setSaleType(event.target.value);
+        setSelected(event.target.value);
     };
 
     const handleImageClick = () => {
@@ -915,6 +1181,20 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                     color="textSecondary"
                                 >
                                     Token ID: {data.tokenId}
+                                </Typography>
+                                {/* rarityRank */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
+                                    Rarity Rank: {data?.rarityRank}
+                                </Typography>
+                                {/* rarityScore */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
+                                    Rarity Score: {data?.rarityScore}
                                 </Typography>
                             </div>
                             <Box
@@ -1330,7 +1610,7 @@ const NftDetailModal = ({ open, onClose, data }) => {
 
                                         {/* //i want chip style not radio */}
 
-                                        <Box
+                                        {/* <Box
                                             sx={{
                                                 display: "grid",
                                                 gridTemplateColumns:
@@ -1374,6 +1654,140 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                                     {"Fixed Price"}
                                                 </Typography>
                                             </Box>
+                                        </Box> */}
+
+                                        {/* has_fixed, has_auction, has_dutch */}
+                                        <Box
+                                            sx={{
+                                                display: "grid",
+                                                gridTemplateColumns:
+                                                    "repeat(auto-fill, minmax(150px, 1fr))",
+                                                gap: 2,
+                                                mt: 2,
+                                            }}
+                                        >
+                                            {has_fixed(policies) && (
+                                                <Box
+                                                    sx={{
+                                                        backgroundColor:
+                                                            "#f0f0f0",
+                                                        borderRadius: 2,
+                                                        padding: 2,
+                                                        textAlign: "center",
+                                                        transition:
+                                                            "transform 0.2s, box-shadow 0.2s",
+                                                        "&:hover": {
+                                                            transform:
+                                                                "translateY(-5px)",
+                                                            boxShadow:
+                                                                "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                        },
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={() => {
+                                                        const event = {
+                                                            target: {
+                                                                value: "FIXED-SALE",
+                                                            },
+                                                        };
+                                                        handleSaleTypeChange(
+                                                            event
+                                                        );
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{
+                                                            fontWeight: "bold",
+                                                            fontSize: "1rem",
+                                                        }}
+                                                    >
+                                                        {"Fixed Price"}
+                                                    </Typography>
+                                                </Box>
+                                            )}
+
+                                            {has_auction(policies) && (
+                                                <Box
+                                                    sx={{
+                                                        backgroundColor:
+                                                            "#f0f0f0",
+                                                        borderRadius: 2,
+                                                        padding: 2,
+                                                        textAlign: "center",
+                                                        transition:
+                                                            "transform 0.2s, box-shadow 0.2s",
+                                                        "&:hover": {
+                                                            transform:
+                                                                "translateY(-5px)",
+                                                            boxShadow:
+                                                                "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                        },
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={() => {
+                                                        const event = {
+                                                            target: {
+                                                                value: "AUCTION-SALE",
+                                                            },
+                                                        };
+                                                        handleSaleTypeChange(
+                                                            event
+                                                        );
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{
+                                                            fontWeight: "bold",
+                                                            fontSize: "1rem",
+                                                        }}
+                                                    >
+                                                        {"Auction"}
+                                                    </Typography>
+                                                </Box>
+                                            )}
+
+                                            {has_dutch_auction(policies) && (
+                                                <Box
+                                                    sx={{
+                                                        backgroundColor:
+                                                            "#f0f0f0",
+                                                        borderRadius: 2,
+                                                        padding: 2,
+                                                        textAlign: "center",
+                                                        transition:
+                                                            "transform 0.2s, box-shadow 0.2s",
+                                                        "&:hover": {
+                                                            transform:
+                                                                "translateY(-5px)",
+                                                            boxShadow:
+                                                                "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                        },
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={() => {
+                                                        const event = {
+                                                            target: {
+                                                                value: "DUTCH-AUCTION-SALE",
+                                                            },
+                                                        };
+                                                        handleSaleTypeChange(
+                                                            event
+                                                        );
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{
+                                                            fontWeight: "bold",
+                                                            fontSize: "1rem",
+                                                        }}
+                                                    >
+                                                        {"Dutch Auction"}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                         </Box>
 
                                         {/* </FormControl> */}
@@ -1393,28 +1807,73 @@ const NftDetailModal = ({ open, onClose, data }) => {
                                             "selectedSale",
                                             selectedSale
                                         )}
-                                        {saleType === "Fixed-Sale" &&
-                                            selectedSale == "FIXED-SALE" && (
-                                                <>
-                                                    {has_balance && (
-                                                        <>
-                                                            <FixedPriceSellForm
-                                                                onChange={
-                                                                    setDataNew
-                                                                }
-                                                            />
-                                                            <FixedPriceNet
-                                                                sale_data={
-                                                                    dataNew
-                                                                }
-                                                                token_id={
-                                                                    data?.tokenId
-                                                                }
-                                                                fee={fee}
-                                                            />
-                                                        </>
-                                                    )}
+                                        {console.log("saleType", saleType)}
+                                        {console.log("selected", selected)}
+                                        {selectedSale == "FIXED-SALE" && (
+                                            <>
+                                                {has_balance && (
+                                                    <>
+                                                        <FixedPriceSellForm
+                                                            onChange={
+                                                                setDataNew
+                                                            }
+                                                        />
+                                                        <FixedPriceNet
+                                                            sale_data={dataNew}
+                                                            token_id={
+                                                                data?.tokenId
+                                                            }
+                                                            fee={fee}
+                                                        />
+                                                    </>
+                                                )}
 
+                                                <TransactionManager
+                                                    trx={trx}
+                                                    wallet={userData?.wallet}
+                                                    type={type}
+                                                    onConfirm={clear_sales}
+                                                    data={data}
+                                                    onClose={onClose}
+                                                />
+                                            </>
+                                        )}
+                                        {selectedSale == "DUTCH-AUCTION-SALE" &&
+                                            has_balance && (
+                                                <>
+                                                    <DutchAuctionSellForm
+                                                        onChange={setDataNew}
+                                                    />
+                                                    <DutchAuctionPriceNet
+                                                        sale_data={dataNew}
+                                                        token_id={data?.tokenId}
+                                                        fee={fee}
+                                                    />
+                                                    <TransactionManager
+                                                        trx={trx}
+                                                        wallet={
+                                                            userData?.wallet
+                                                        }
+                                                        type={type}
+                                                        onConfirm={clear_sales}
+                                                        data={data}
+                                                        onClose={onClose}
+                                                    />
+                                                </>
+                                            )}
+
+                                        {selectedSale == "AUCTION-SALE" &&
+                                            has_balance && (
+                                                <>
+                                                    {" "}
+                                                    <AuctionSellForm
+                                                        onChange={setDataNew}
+                                                    />
+                                                    <AuctionPriceNet
+                                                        sale_data={dataNew}
+                                                        token_id={data?.tokenId}
+                                                        fee={fee}
+                                                    />
                                                     <TransactionManager
                                                         trx={trx}
                                                         wallet={
