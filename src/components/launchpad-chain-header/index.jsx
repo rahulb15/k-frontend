@@ -150,6 +150,18 @@ const LaunchpadChainHeader = ({ className, space, state, filterHandler }) => (
                                     </button>
                                 </Tooltip>
                             </li>
+                            <li>
+                                <Tooltip title="Bitcoin" arrow placement="top">
+                                    <button>
+                                        <Image
+                                            src="/wallet/bitcoin-symbol.png"
+                                            alt="Bitcoin"
+                                            width={20}
+                                            height={20}
+                                        />
+                                    </button>
+                                </Tooltip>
+                            </li>
                             <li className="filter-item">
                                 {state && (
                                     <FilterButton
