@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import styles from './CreateNFTPage.module.css';
 import CreateNewArea from '@containers/create-new';
-import CreateCollectionArea from '@containers/create-collection';
+import MarketplaceCreateCollectionWrapper from '@containers/collection-create-marketplace';
 import Breadcrumb from "@components/breadcrumb";
 
 const CreateNFTPage = () => {
@@ -55,23 +55,13 @@ const CreateNFTPage = () => {
 
   const renderCreateSingleNFTView = () => (
     <div className={styles.createContainer}>
-      <Breadcrumb 
-        pageTitle="Create Single NFT" 
-        currentPage="Create Single NFT"
-        onClick={() => setCurrentView('main')}
-      />
       <CreateNewArea />
     </div>
   );
 
   const renderCreateCollectionView = () => (
     <div className={styles.createContainer}>
-      <Breadcrumb 
-        pageTitle="Create Collection" 
-        currentPage="Create Collection"
-        onClick={() => setCurrentView('main')}
-      />
-      <CreateCollectionArea />
+      <MarketplaceCreateCollectionWrapper />
     </div>
   );
 

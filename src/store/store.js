@@ -15,6 +15,7 @@ import authReducer from "src/features/authSlice";
 import launchpadReducer from "src/features/launchpadSlice";
 import searchReducer from "src/features/searchSlice";
 import { launchpadApi } from "src/services/launchpad.service";
+import { marketplaceApi } from "src/services/marketplace.service";
 import { priorityPassApi } from "src/services/prioritypass.service";
 import { nftApi } from "src/services/nft.service";
 import balanceReducer from "src/features/balanceSlice";
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     cart: cartReducer,
     notification: notificationReducer,
     [launchpadApi.reducerPath]: launchpadApi.reducer,
+    [marketplaceApi.reducerPath]: marketplaceApi.reducer,
     [nftApi.reducerPath]: nftApi.reducer,
     [priorityPassApi.reducerPath]: priorityPassApi.reducer,
 });
@@ -64,6 +66,7 @@ export const store = configureStore({
         }).concat(
             loggerMiddleware,
             launchpadApi.middleware,
+            marketplaceApi.middleware,
             nftApi.middleware,
             priorityPassApi.middleware
         ),
