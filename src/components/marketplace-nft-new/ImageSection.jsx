@@ -118,7 +118,8 @@ const ImageSection = ({ data }) => {
             }}
           >
             <QRCode
-              value={`http://localhost:3000/nft/${data.tokenId}`}
+              // value={`http://localhost:3000/nft/${data.tokenId}`}
+              value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/nft/${data.tokenId}`}
               size={Math.min(qrSize.width, qrSize.height) * 0.7}
               qrStyle="dots"
               eyeRadius={8}

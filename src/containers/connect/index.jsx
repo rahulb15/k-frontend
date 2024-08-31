@@ -346,7 +346,10 @@ const ConnectArea = ({ className, space }) => {
     const googleLoginClick = () => {
         //api call https://api.example.com/auth/google
 
-        const googleLoginUrl = "http://localhost:5000/auth/google";
+        const url = `${process.env.NEXT_PUBLIC_BASE_URL.replace('/api/v1/', '')}/auth/google`;
+
+        // const googleLoginUrl = "http://localhost:5000/auth/google";
+        const googleLoginUrl = `${url}/auth/google`;
 
         window.location.href = googleLoginUrl;
     };
