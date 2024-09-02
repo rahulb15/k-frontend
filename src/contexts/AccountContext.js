@@ -45,25 +45,28 @@ export const AccountProvider = (props) => {
         }
     };
 
-
-
     const authWalletConnect = async (walletAddress) => {
         setWalletAddressContect(walletAddress);
         localStorage.setItem("walletAddress", walletAddress);
         initializeUser();
     };
 
+    const clearCookie = (cookieName) => {
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    };
+
     const logoutWalletConnect = async () => {
+        clearCookie("connect.sid");
+        sessionStorage.clear();
         setWalletAddressContect("");
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("token");
     };
 
- // useEffect to check if local storage has wallet address
- useEffect(() => {
-   
-    initializeUser();
-}, []);
+    // useEffect to check if local storage has wallet address
+    useEffect(() => {
+        initializeUser();
+    }, []);
 
     const setVerifiedAccount = async (accountName) => {
         try {

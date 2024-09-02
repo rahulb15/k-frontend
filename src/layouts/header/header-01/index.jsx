@@ -119,18 +119,18 @@ const Header = ({ className }) => {
         fetchBalance();
     }, [account.walletAddressContect, balanceMutation, dispatch]);
 
-    // const getUser = async () => {
-    //     const response = await userService.getUserInit();
-    //     console.log(response, "response");
-    //     if (response?.data?.status === "success") {
-    //         localStorage.setItem("token", response?.data?.token);
-    //         await account.authWalletConnect(response?.data?.data.walletAddress);
-    //     }
-    // };
+    const getUser = async () => {
+        const response = await userService.getUserInit();
+        console.log(response, "response");
+        if (response?.data?.status === "success") {
+            localStorage.setItem("token", response?.data?.token);
+            await account.authWalletConnect(response?.data?.data.walletAddress);
+        }
+    };
 
-    // useEffect(() => {
-    //     getUser();
-    // }, []);
+    useEffect(() => {
+        getUser();
+    }, []);
 
     console.log(account, "account");
 

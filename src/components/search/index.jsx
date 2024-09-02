@@ -159,7 +159,7 @@ const SearchBar = () => {
             if (query.length > 0) {
                 setIsLoading(true);
                 try {
-                    const url = `${process.env.NEXT_PUBLIC_BASE_URL}api/v1/elastic/flexible-search?q=${query}`;
+                    const url = `${process.env.NEXT_PUBLIC_BASE_URL}elastic/flexible-search?q=${query}`;
                     const response = await axios.get(
                         // `http://localhost:5000/api/v1/elastic/flexible-search?q=${query}`
                         url

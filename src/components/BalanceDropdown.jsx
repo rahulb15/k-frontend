@@ -51,9 +51,10 @@ const BalanceDropdown = ({ balance }) => {
                     data-tooltip-id="balance-tooltip"
                     data-tooltip-content={`Your current balance is ${parseFloat(
                         balance
-                    ).toFixed(2)} KDA`}
+                    ).toFixed(2) === "NaN" ? "0.00" : parseFloat(balance).toFixed(2)
+                }`}
                 >
-                    {parseFloat(balance).toFixed(2)} KDA
+                    {parseFloat(balance).toFixed(2) === "NaN" ? "0.00" : parseFloat(balance).toFixed(2)}
                     <motion.span
                         animate={{ rotate: isOpen ? 180 : 0 }}
                         transition={{ duration: 0.3 }}
@@ -104,7 +105,7 @@ const BalanceDropdown = ({ balance }) => {
                                 marginBottom: "20px",
                             }}
                         >
-                            {parseFloat(balance).toFixed(2)} KDA
+                            {parseFloat(balance).toFixed(2) === "NaN" ? "0.00" : parseFloat(balance).toFixed(2)}
                         </p>
                         <motion.button
                             onClick={() => router.push("/deposit")}

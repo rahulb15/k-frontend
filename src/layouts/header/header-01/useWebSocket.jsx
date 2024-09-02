@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import io from 'socket.io-client';
 
 const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace('/api/v1/', '');
+console.log('SOCKET_SERVER_URL:', SOCKET_SERVER_URL);
 // console.log('process.env.NEXT_PUBLIC_SOCKET_SERVER_URL:', process.env.NEXT_PUBLIC_BASE_URL.replace('/api/v1/', ''));
 
 const useSocketIO = (userId) => {
