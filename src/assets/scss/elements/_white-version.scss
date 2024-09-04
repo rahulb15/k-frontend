@@ -173,6 +173,28 @@ html[data-theme="light"] body {
     .upload-variant-title-wrapper p span,
     .rbt-single-widget.widget_recent_entries .inner a,
     .upcoming-projects tr th span,
+    .create-container {
+        background-color: var(--color-body-white);
+    }
+    .create-button {
+        background-color: var(--color-white);
+        color: var(--color-dark);
+    }
+    .create-learn-more {
+        color: var(--color-primary);
+    }
+    .create-overlay {
+        background-color: var(--color-overlay);
+    }
+    .create-caption {
+        color: var(--color-light-body);
+    }
+    .create-content-container {
+        background-color: var(--color-white);
+    }
+    .create-title {
+        color: var(--color-dark);
+    }
     .change-pass-wrapper input {
         color: var(--color-light-heading);
     }

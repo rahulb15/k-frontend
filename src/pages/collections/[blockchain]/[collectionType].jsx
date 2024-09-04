@@ -49,7 +49,7 @@ const TVChartContainer = dynamic(
           const fetchNfts = async () => {
               if (collection?.title) {
                   try {
-                      const response = await nftServices.getNftsMyCollectionName(
+                      const response = await nftServices.getNftsMyCollectionNameMarket(
                             {
                                 collectionName: collection.title,
                             },

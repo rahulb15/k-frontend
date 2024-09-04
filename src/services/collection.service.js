@@ -117,6 +117,26 @@ const uploadImage = async (formData,name) => {
     }
 };
 
+//uploadImage
+const uploadImageById = async (formData) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + "launch-collection/upload-image-data",
+            formData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 
 //get all collections
 const getAllCollections = async () => {
@@ -242,6 +262,28 @@ const getAllDeposits = async (page, limit, search) => {
     }
 }
 
+// getCreatedCollections                     const response = await collectionService.getCreatedCollections(account.user.walletAddress, pageNo, limit, search);
+
+const getCreatedCollections = async ( page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/getCreatedCollections`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 
 
 
@@ -253,10 +295,12 @@ export default {
     createCheckoutSession,
     checkTransaction,
     uploadImage,
+    uploadImageById,
     getAllCollections,
     getCollectionByName,
     getLaunchCollectionByName,
     getAllLaunched,
     getAllDeposits,
-    getAllMarketplaceCollections
+    getAllMarketplaceCollections,
+    getCreatedCollections
 };

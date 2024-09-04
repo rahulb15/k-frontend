@@ -15,7 +15,7 @@ const Home = () => (
         <SEO pageTitle="Create" />
         <Header />
         <main id="main-content" style={{ marginBottom: "200px" }}>
-            <Breadcrumb pageTitle="Create" />
+            {/* <Breadcrumb pageTitle="Create" /> */}
             <CreateArea />
         </main>
         <Footer />

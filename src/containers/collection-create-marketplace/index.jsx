@@ -20,7 +20,10 @@ import { useRouter } from "next/router";
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { Box } from "@mui/material";
-
+import collectionService from "src/services/collection.service";
+import { useAccountContext } from "src/contexts";
+import { IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -35,10 +38,22 @@ const MenuProps = {
 };
 
 const policies = [
-    "COLLECTION", "INSTANT-MINT", "MARKETPLACE", "FIXED-SALE", "AUCTION-SALE",
-    "BLACKLIST", "DISABLE-BURN", "DISABLE-TRANSFER", "DISABLE-SALE",
-    "DUTCH-AUCTION-SALE", "EXTRA-POLICIES", "FIXED-ISSUANCE", "GUARDS",
-    "NON-FUNGIBLE", "ROYALTY", "TRUSTED-CUSTODY",
+    "COLLECTION",
+    "INSTANT-MINT",
+    "MARKETPLACE",
+    "FIXED-SALE",
+    "AUCTION-SALE",
+    "BLACKLIST",
+    "DISABLE-BURN",
+    "DISABLE-TRANSFER",
+    "DISABLE-SALE",
+    "DUTCH-AUCTION-SALE",
+    "EXTRA-POLICIES",
+    "FIXED-ISSUANCE",
+    "GUARDS",
+    "NON-FUNGIBLE",
+    "ROYALTY",
+    "TRUSTED-CUSTODY",
 ];
 
 function getStyles(name, personName, theme) {
@@ -50,28 +65,49 @@ function getStyles(name, personName, theme) {
     };
 }
 
-const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
+const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const theme = useTheme();
     const router = useRouter();
     const dispatch = useDispatch();
-    const [launchCollection, { isLoading, isError, error }] = useLaunchCollectionMutation();
-    const [selectedImage, setSelectedImage] = useState();
-    const [selectedBannerImage, setSelectedBannerImage] = useState();
+    const [launchCollection, { isLoading, isError, error }] =
+        useLaunchCollectionMutation();
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedBannerImage, setSelectedBannerImage] = useState(null);
     const [hasImageError, setHasImageError] = useState(false);
     const [imageCoverLoading, setImageCoverLoading] = useState(false);
     const [imageBannerLoading, setImageBannerLoading] = useState(false);
+    const [tokenCount, setTokenCount] = useState(0);
     const [policy, setPolicy] = useState([]);
+    const account = useAccountContext();
+    console.log("Account:", account);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
-        watch,
         setValue,
+        watch,
     } = useForm({
         mode: "onChange",
     });
+    const tokenList = watch("tokenList");
+
+    useEffect(() => {
+        console.log("Account:", account?.user?.walletAddress);
+        if (account?.user?.walletAddress) {
+            setValue("creatorWallet", account.user.walletAddress);
+        }
+    }, [account, setValue]);
+    useEffect(() => {
+        if (tokenList) {
+            const count = tokenList
+                .split(",")
+                .filter((token) => token.trim() !== "").length;
+            setTokenCount(count);
+            setValue("totalSupply", count);
+        }
+    }, [tokenList, setValue]);
 
     const handlePolicyChange = (event) => {
         const {
@@ -80,15 +116,61 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
         setPolicy(typeof value === "string" ? value.split(",") : value);
     };
 
-    const imageChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setSelectedImage(e.target.files[0]);
+    const uploadImage = async (name, file) => {
+        if (name === "coverImage") setImageCoverLoading(true);
+        if (name === "profileImage") setImageBannerLoading(true);
+
+        try {
+            const formData = new FormData();
+            formData.append(name, file);
+            const response = await collectionService.uploadImageById(formData);
+            console.log("Image Upload Response:", response.data);
+
+            if (response?.data?.status === "success") {
+                const imageUrl =
+                    response.data.data.collectionCoverImage ||
+                    response.data.data.collectionBannerImage;
+                console.log("Image URL:", imageUrl);
+
+                if (name === "coverImage") {
+                    setSelectedImage(imageUrl); // Use the server URL
+                    setImageCoverLoading(false);
+                }
+                if (name === "profileImage") {
+                    setSelectedBannerImage(imageUrl); // Use the server URL
+                    setImageBannerLoading(false);
+                }
+            } else {
+                toast.error("Image Upload Failed");
+                setImageCoverLoading(false);
+                setImageBannerLoading(false);
+            }
+        } catch (error) {
+            console.log("Image Upload Error:", error);
+            setImageCoverLoading(false);
+            setImageBannerLoading(false);
+        } finally {
+            // Reset the file input to allow re-uploading the same file
+            document.getElementById(
+                name === "coverImage" ? "coverFile" : "bannerFile"
+            ).value = null;
         }
     };
 
-    const imageBannerChange = (e) => {
+    console.log("Selected Image:", selectedImage);
+    console.log("Selected Banner Image:", selectedBannerImage);
+
+    const handleCoverImageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
-            setSelectedBannerImage(e.target.files[0]);
+            const file = e.target.files[0];
+            uploadImage("coverImage", file);
+        }
+    };
+
+    const handleBannerImageChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            uploadImage("profileImage", file);
         }
     };
 
@@ -98,10 +180,16 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
             return;
         }
 
-        const mintStartDate = moment(`${data.mintStartDate} ${data.mintStartTime}`).utc().format("YYYY-MM-DDTHH:mm:ss");
+        const mintStartDate = moment(
+            `${data.mintStartDate} ${data.mintStartTime}`
+        )
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
         const formattedStartDate = `time "${mintStartDate}Z"`;
 
-        const mintEndDate = moment(`${data.mintEndDate} ${data.mintEndTime}`).utc().format("YYYY-MM-DDTHH:mm:ss");
+        const mintEndDate = moment(`${data.mintEndDate} ${data.mintEndTime}`)
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
         const formattedEndDate = `time "${mintEndDate}Z"`;
 
         const collectionData = {
@@ -111,12 +199,14 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
             collectionRequestDescription: data.projectDescription,
             collectionRequestCategory: data.projectCategory.toUpperCase(),
             collectionRequestSupply: data.totalSupply,
-            collectionRequestUriList: data.tokenList.split(',').map(token => token.replace(/"/g, '').trim()),
+            collectionRequestUriList: data.tokenList
+                .split(",")
+                .map((token) => token.replace(/"/g, "").trim()),
             collectionRequestMintPrice: data.mintPrice,
             collectionRequestRoyalityPerc: data.royaltyPercentage,
             collectionRequestRoyalityAddress: data.royaltyAddress,
-            collectionRequestCoverImgUrl: URL.createObjectURL(selectedImage),
-            collectionRequestBannerImgUrl: URL.createObjectURL(selectedBannerImage),
+            collectionRequestCoverImgUrl: selectedImage,
+            collectionRequestBannerImgUrl: selectedBannerImage,
             collectionRequestStartDate: formattedStartDate,
             collectionRequesEndDate: formattedEndDate,
             collectionRequestEnableFreeMint: data.allowFreeMints,
@@ -124,22 +214,88 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
             collectionRequestEnablePresale: data.enablePresale,
             collectionRequestEnableAirdrop: data.enableAirdrop,
             collectionRequestPolicy: policy.join(" "),
-            walletName: "CW",
+            walletName: account?.user?.walletName,
         };
-        console.log("Collection Data:", collectionData);
 
         try {
+            console.log(policy);
+
             const result = await launchCollection(collectionData).unwrap();
             if (result.result.status === "success") {
                 Swal.fire({
                     title: "Success",
-                    text: "Collection Created Successfully",
+                    text: "Collection Synced Successfully with the blockchain",
                     icon: "success",
                     confirmButtonText: "Cool",
-                }).then((result) => {
+                }).then(async (result) => {
                     if (result.isConfirmed) {
-                        reset();
-                        router.push("/");
+                        const body = {
+                            collectionName: data.collectionName,
+                            creatorName: account?.user?.name,
+                            creatorEmail: account?.user?.email,
+                            creatorWallet: data.creatorWallet,
+                            projectDescription: data.projectDescription,
+                            projectCategory: data.projectCategory.toUpperCase(),
+                            expectedLaunchDate: mintStartDate,
+                            // contractType: formData.contractType,
+                            totalSupply: data.totalSupply,
+                            collectionCoverImage: selectedImage,
+                            collectionBannerImage: selectedBannerImage,
+                            mintPrice: data.mintPrice,
+                            royaltyPercentage: data.royaltyPercentage,
+                            mintStartDate: mintStartDate,
+                            mintStartTime: formattedStartDate,
+                            mintEndDate: mintEndDate,
+                            mintEndTime: formattedEndDate,
+                            allowFreeMints: data.allowFreeMints,
+                            enableWhitelist: data.enableWhitelist,
+                            enablePresale: data.enablePresale,
+                            enableAirdrop: data.enableAirdrop,
+                            royaltyAddress: data.royaltyAddress,
+                            policy: policy,
+                            collectionType: "marketplace",
+                            collectionId: Math.floor(Math.random() * 1000000),
+                            tokenList: data.tokenList
+                                .split(",")
+                                .map((token) => token.replace(/"/g, "").trim()),
+                        };
+
+                        console.log(
+                            "🚀 ~ createCollectionRequest ~ body",
+                            body
+                        );
+
+                        const response =
+                            await collectionService.launchCollection(body);
+                        console.log(
+                            "🚀 ~ createCollectionRequest ~ response",
+                            response
+                        );
+                        if (response?.data?.status === "success") {
+                            Swal.fire({
+                                title: "Success",
+                                text: "Collection Created Successfully",
+                                icon: "success",
+                                confirmButtonText: "Cool",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    reset();
+                                    router.push("/");
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error",
+                                text:
+                                    response?.data?.message ||
+                                    "An error occurred while creating the collection",
+                                icon: "error",
+                                confirmButtonText: "Ok",
+                            });
+                        }
+
+                        // reset();
+                        // router.push("/");
                     }
                 });
             }
@@ -147,7 +303,9 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
             console.log("Launch Collection Error:", err);
             Swal.fire({
                 title: "Error",
-                text: err.message || "An error occurred while creating the collection",
+                text:
+                    err.message ||
+                    "An error occurred while creating the collection",
                 icon: "error",
                 confirmButtonText: "Ok",
             });
@@ -155,15 +313,35 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
     };
 
     return (
-        <div className={`create-area ${space === 1 && "rn-section-gapTop"} ${className}`}>
+        <div
+            className={`create-area ${
+                space === 1 && "rn-section-gapTop"
+            } ${className}`}
+        >
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="container">
+                    <IconButton
+                        onClick={onBack}
+                        style={{
+                            backgroundColor: "#b99603",
+                            color: "#fff",
+                            marginBottom: "20px",
+                            width: "fit-content",
+                            padding: "10px",
+                        }}
+                    >
+                        <ArrowBackIcon />
+                    </IconButton>
                     <div className="row g-5">
                         <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
                             <div className="upload-area">
                                 <div className="upload-formate mb--30">
-                                    <h6 className="title">Upload Collection Cover Image</h6>
-                                    <p className="formate">Drag or choose your image to upload</p>
+                                    <h6 className="title">
+                                        Upload Collection Cover Image
+                                    </h6>
+                                    <p className="formate">
+                                        Drag or choose your image to upload
+                                    </p>
                                 </div>
                                 <div className="brows-file-wrapper">
                                     <input
@@ -171,61 +349,95 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                         id="coverFile"
                                         type="file"
                                         className="inputfile"
-                                        onChange={imageChange}
+                                        onChange={handleCoverImageChange}
                                     />
                                     {selectedImage && (
                                         <img
                                             id="createCoverImage"
-                                            src={URL.createObjectURL(selectedImage)}
+                                            src={selectedImage}
                                             alt=""
                                             data-black-overlay="6"
                                         />
                                     )}
-                                    <label htmlFor="coverFile" title="No File Chosen">
+                                    <label
+                                        htmlFor="coverFile"
+                                        title="No File Chosen"
+                                    >
                                         {imageCoverLoading ? (
-                                            <MutatingDots color="#fff" size={30} speed={1} />
+                                            <MutatingDots
+                                                color="#fff"
+                                                size={30}
+                                                speed={1}
+                                            />
                                         ) : (
                                             <i className="feather-upload" />
                                         )}
-                                        <span className="text-center">Choose a Cover Image</span>
-                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                                        <span className="text-center">
+                                            Choose a Cover Image
+                                        </span>
+                                        <p className="text-center mt--10">
+                                            PNG, GIF, JPEG, JPG. Max 1Gb.
+                                        </p>
                                     </label>
                                 </div>
-                                {hasImageError && !selectedImage && <ErrorText>Cover Image is required</ErrorText>}
+                                {hasImageError && !selectedImage && (
+                                    <ErrorText>
+                                        Cover Image is required
+                                    </ErrorText>
+                                )}
                             </div>
 
                             <div className="upload-area mt--50">
                                 <div className="upload-formate mb--30">
-                                    <h6 className="title">Upload Collection Banner Image</h6>
-                                    <p className="formate">Drag or choose your image to upload</p>
+                                    <h6 className="title">
+                                        Upload Collection Banner Image
+                                    </h6>
+                                    <p className="formate">
+                                        Drag or choose your image to upload
+                                    </p>
                                 </div>
-                                <div className="brows-file-wrapper">
+                                <div className="                                brows-file-wrapper">
                                     <input
                                         name="bannerFile"
                                         id="bannerFile"
                                         type="file"
                                         className="inputfile"
-                                        onChange={imageBannerChange}
+                                        onChange={handleBannerImageChange}
                                     />
                                     {selectedBannerImage && (
                                         <img
                                             id="createBannerImage"
-                                            src={URL.createObjectURL(selectedBannerImage)}
+                                            src={selectedBannerImage}
                                             alt=""
                                             data-black-overlay="6"
                                         />
                                     )}
-                                    <label htmlFor="bannerFile" title="No File Chosen">
+                                    <label
+                                        htmlFor="bannerFile"
+                                        title="No File Chosen"
+                                    >
                                         {imageBannerLoading ? (
-                                            <MutatingDots color="#fff" size={30} speed={1} />
+                                            <MutatingDots
+                                                color="#fff"
+                                                size={30}
+                                                speed={1}
+                                            />
                                         ) : (
                                             <i className="feather-upload" />
                                         )}
-                                        <span className="text-center">Choose a Banner Image</span>
-                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                                        <span className="text-center">
+                                            Choose a Banner Image
+                                        </span>
+                                        <p className="text-center mt--10">
+                                            PNG, GIF, JPEG, JPG. Max 1Gb.
+                                        </p>
                                     </label>
                                 </div>
-                                {hasImageError && !selectedBannerImage && <ErrorText>Banner Image is required</ErrorText>}
+                                {hasImageError && !selectedBannerImage && (
+                                    <ErrorText>
+                                        Banner Image is required
+                                    </ErrorText>
+                                )}
                             </div>
                         </div>
 
@@ -234,175 +446,387 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="collectionName" className="form-label">Collection Name</label>
+                                            <label
+                                                htmlFor="collectionName"
+                                                className="form-label"
+                                            >
+                                                Collection Name
+                                            </label>
                                             <input
                                                 id="collectionName"
                                                 placeholder="e. g. `Digital Awesome Game`"
-                                                {...register("collectionName", { required: "Collection Name is required" })}
+                                                {...register("collectionName", {
+                                                    required:
+                                                        "Collection Name is required",
+                                                })}
                                             />
-                                            {errors.collectionName && <ErrorText>{errors.collectionName.message}</ErrorText>}
+                                            {errors.collectionName && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.collectionName
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="creatorWallet" className="form-label">Creator Wallet Address</label>
+                                            <label
+                                                htmlFor="creatorWallet"
+                                                className="form-label"
+                                            >
+                                                Creator Wallet Address
+                                            </label>
                                             <input
                                                 id="creatorWallet"
                                                 placeholder="e. g. `k:0x1234567890`"
                                                 {...register("creatorWallet", {
                                                     pattern: {
                                                         value: /^k:/,
-                                                        message: "Please enter a valid wallet address",
+                                                        message:
+                                                            "Please enter a valid wallet address",
                                                     },
-                                                    required: "Wallet Address is required",
+                                                    required:
+                                                        "Wallet Address is required",
                                                 })}
+                                                disabled={
+                                                    !!account?.user?.wallet
+                                                }
                                             />
-                                            {errors.creatorWallet && <ErrorText>{errors.creatorWallet.message}</ErrorText>}
+                                            {errors.creatorWallet && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.creatorWallet
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="projectDescription" className="form-label">Description</label>
+                                            <label
+                                                htmlFor="projectDescription"
+                                                className="form-label"
+                                            >
+                                                Description
+                                            </label>
                                             <textarea
                                                 id="projectDescription"
                                                 rows="3"
                                                 placeholder="e. g. `This is a digital awesome game`"
-                                                {...register("projectDescription", { required: "Description is required" })}
+                                                {...register(
+                                                    "projectDescription",
+                                                    {
+                                                        required:
+                                                            "Description is required",
+                                                    }
+                                                )}
                                             />
-                                            {errors.projectDescription && <ErrorText>{errors.projectDescription.message}</ErrorText>}
+                                            {errors.projectDescription && (
+                                                <ErrorText>
+                                                    {
+                                                        errors
+                                                            .projectDescription
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="projectCategory" className="form-label">Project Category</label>
+                                            <label
+                                                htmlFor="projectCategory"
+                                                className="form-label"
+                                            >
+                                                Project Category
+                                            </label>
                                             <select
                                                 id="projectCategory"
-                                                {...register("projectCategory", { required: "Project Category is required" })}
+                                                style={{
+                                                    padding: "10px",
+                                                    borderRadius: "5px",
+                                                    border: "1px solid #363545",
+                                                    marginBottom: "10px",
+                                                    height: "50px",
+                                                    backgroundColor: "#f7f7f7",
+                                                }}
+                                                {...register(
+                                                    "projectCategory",
+                                                    {
+                                                        required:
+                                                            "Project Category is required",
+                                                    }
+                                                )}
                                             >
-                                                <option value="">Select a category</option>
-                                                <option value="art">Art & Collectibles</option>
-                                                <option value="photography">Photography</option>
-                                                <option value="gaming">Gaming</option>
-                                                <option value="music">Music & Audio</option>
-                                                <option value="virtual">Virtual Real Estate</option>
-                                                <option value="fashion">Fashion & Accessories</option>
-                                                <option value="sports">Sports</option>
-                                                <option value="utility">Utility & Memberships</option>
-                                                <option value="domains">Domains & Virtual Assets</option>
-                                                <option value="real">Real World Assets</option>
+                                                <option value="">
+                                                    Select a category
+                                                </option>
+                                                <option value="art">
+                                                    Art & Collectibles
+                                                </option>
+                                                <option value="photography">
+                                                    Photography
+                                                </option>
+                                                <option value="gaming">
+                                                    Gaming
+                                                </option>
+                                                <option value="music">
+                                                    Music & Audio
+                                                </option>
+                                                <option value="virtual">
+                                                    Virtual Real Estate
+                                                </option>
+                                                <option value="fashion">
+                                                    Fashion & Accessories
+                                                </option>
+                                                <option value="sports">
+                                                    Sports
+                                                </option>
+                                                <option value="utility">
+                                                    Utility & Memberships
+                                                </option>
+                                                <option value="domains">
+                                                    Domains & Virtual Assets
+                                                </option>
+                                                <option value="real">
+                                                    Real World Assets
+                                                </option>
                                             </select>
-                                            {errors.projectCategory && <ErrorText>{errors.projectCategory.message}</ErrorText>}
+                                            {errors.projectCategory && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.projectCategory
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="totalSupply" className="form-label">Total Supply</label>
+                                            <label
+                                                htmlFor="totalSupply"
+                                                className="form-label"
+                                            >
+                                                Total Supply
+                                            </label>
                                             <input
                                                 id="totalSupply"
                                                 type="number"
-                                                {...register("totalSupply", {
-                                                    required: "Total Supply is required",
-                                                    min: { value: 1, message: "Total supply must be at least 1" }
-                                                })}
+                                                {...register("totalSupply")}
+                                                disabled
                                             />
-                                            {errors.totalSupply && <ErrorText>{errors.totalSupply.message}</ErrorText>}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="mintPrice" className="form-label">Mint Price</label>
+                                            <label
+                                                htmlFor="mintPrice"
+                                                className="form-label"
+                                            >
+                                                Mint Price
+                                            </label>
                                             <input
                                                 id="mintPrice"
                                                 type="number"
                                                 step="0.000000000000000001"
                                                 {...register("mintPrice", {
-                                                    required: "Mint Price is required",
-                                                    min: { value: 0, message: "Mint price must be non-negative" }
+                                                    required:
+                                                        "Mint Price is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message:
+                                                            "Mint price must be non-negative",
+                                                    },
                                                 })}
                                             />
-                                            {errors.mintPrice && <ErrorText>{errors.mintPrice.message}</ErrorText>}
+                                            {errors.mintPrice && (
+                                                <ErrorText>
+                                                    {errors.mintPrice.message}
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="royaltyPercentage" className="form-label">Royalty Percentage</label>
+                                            <label
+                                                htmlFor="royaltyPercentage"
+                                                className="form-label"
+                                            >
+                                                Royalty Percentage
+                                            </label>
                                             <input
                                                 id="royaltyPercentage"
                                                 type="number"
                                                 step="0.01"
-                                                {...register("royaltyPercentage", {
-                                                    required: "Royalty Percentage is required",
-                                                    min: { value: 0, message: "Royalty percentage must be non-negative" },
-                                                    max: { value: 100, message: "Royalty percentage must be 100 or less" }
-                                                })}
+                                                {...register(
+                                                    "royaltyPercentage",
+                                                    {
+                                                        required:
+                                                            "Royalty Percentage is required",
+                                                        min: {
+                                                            value: 0,
+                                                            message:
+                                                                "Royalty percentage must be non-negative",
+                                                        },
+                                                        max: {
+                                                            value: 100,
+                                                            message:
+                                                                "Royalty percentage must be 100 or less",
+                                                        },
+                                                    }
+                                                )}
                                             />
-                                            {errors.royaltyPercentage && <ErrorText>{errors.royaltyPercentage.message}</ErrorText>}
+                                            {errors.royaltyPercentage && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.royaltyPercentage
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="royaltyAddress" className="form-label">Royalty Address</label>
+                                            <label
+                                                htmlFor="royaltyAddress"
+                                                className="form-label"
+                                            >
+                                                Royalty Address
+                                            </label>
                                             <input
                                                 id="royaltyAddress"
                                                 placeholder="e. g. `k:0x1234567890`"
                                                 {...register("royaltyAddress", {
                                                     pattern: {
                                                         value: /^k:/,
-                                                        message: "Please enter a valid wallet address",
+                                                        message:
+                                                            "Please enter a valid wallet address",
                                                     },
-                                                    required: "Royalty Address is required",
+                                                    required:
+                                                        "Royalty Address is required",
                                                 })}
                                             />
-                                            {errors.royaltyAddress && <ErrorText>{errors.royaltyAddress.message}</ErrorText>}
+                                            {errors.royaltyAddress && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.royaltyAddress
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="mintStartDate" className="form-label">Mint Start Date</label>
+                                            <label
+                                                htmlFor="mintStartDate"
+                                                className="form-label"
+                                            >
+                                                Mint Start Date
+                                            </label>
                                             <input
                                                 id="mintStartDate"
                                                 type="date"
-                                                {...register("mintStartDate", { required: "Mint Start Date is required" })}
+                                                {...register("mintStartDate", {
+                                                    required:
+                                                        "Mint Start Date is required",
+                                                })}
                                             />
-                                            {errors.mintStartDate && <ErrorText>{errors.mintStartDate.message}</ErrorText>}
+                                            {errors.mintStartDate && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintStartDate
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="mintStartTime" className="form-label">Mint Start Time</label>
+                                            <label
+                                                htmlFor="mintStartTime"
+                                                className="form-label"
+                                            >
+                                                Mint Start Time
+                                            </label>
                                             <input
                                                 id="mintStartTime"
                                                 type="time"
-                                                {...register("mintStartTime", { required: "Mint Start Time is required" })}
+                                                {...register("mintStartTime", {
+                                                    required:
+                                                        "Mint Start Time is required",
+                                                })}
                                             />
-                                            {errors.mintStartTime && <ErrorText>{errors.mintStartTime.message}</ErrorText>}
+                                            {errors.mintStartTime && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.mintStartTime
+                                                            .message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="mintEndDate" className="form-label">Mint End Date</label>
+                                            <label
+                                                htmlFor="mintEndDate"
+                                                className="form-label"
+                                            >
+                                                Mint End Date
+                                            </label>
                                             <input
                                                 id="mintEndDate"
                                                 type="date"
-                                                {...register("mintEndDate", { required: "Mint End Date is required" })}
+                                                {...register("mintEndDate", {
+                                                    required:
+                                                        "Mint End Date is required",
+                                                })}
                                             />
-                                            {errors.mintEndDate && <ErrorText>{errors.mintEndDate.message}</ErrorText>}
+                                            {errors.mintEndDate && (
+                                                <ErrorText>
+                                                    {errors.mintEndDate.message}
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="mintEndTime" className="form-label">Mint End Time</label>
+                                            <label
+                                                htmlFor="mintEndTime"
+                                                className="form-label"
+                                            >
+                                                Mint End Time
+                                            </label>
                                             <input
                                                 id="mintEndTime"
                                                 type="time"
-                                                {...register("mintEndTime", { required: "Mint End Time is required" })}
+                                                {...register("mintEndTime", {
+                                                    required:
+                                                        "Mint End Time is required",
+                                                })}
                                             />
-                                            {errors.mintEndTime && <ErrorText>{errors.mintEndTime.message}</ErrorText>}
+                                            {errors.mintEndTime && (
+                                                <ErrorText>
+                                                    {errors.mintEndTime.message}
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="tokenList" className="form-label">Token List</label>
+                                            <label
+                                                htmlFor="tokenList"
+                                                className="form-label"
+                                            >
+                                                Token List
+                                            </label>
                                             <textarea
                                                 id="tokenList"
                                                 rows="3"
@@ -410,29 +834,58 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                 {...register("tokenList", {
                                                     pattern: {
                                                         value: /^("[^"]*"(,"[^"]*")*)?$/,
-                                                        message: "Please enter a valid token list",
+                                                        message:
+                                                            "Please enter a valid token list",
                                                     },
-                                                    required: "Token List is required",
+                                                    required:
+                                                        "Token List is required",
                                                 })}
                                             />
-                                            {errors.tokenList && <ErrorText>{errors.tokenList.message}</ErrorText>}
+                                            {errors.tokenList && (
+                                                <ErrorText>
+                                                    {errors.tokenList.message}
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
-                                            <label htmlFor="policy" className="form-label">Policy</label>
+                                            <label
+                                                htmlFor="policy"
+                                                className="form-label"
+                                            >
+                                                Policy
+                                            </label>
                                             <Select
-                                                labelId="demo-multiple-chip-label"
-                                                id="demo-multiple-chip"
+                                                labelId="policy-multiple-chip-label"
+                                                id="policy-multiple-chip"
+                                                className={
+                                                    styles["form-select"]
+                                                }
                                                 multiple
                                                 value={policy}
                                                 onChange={handlePolicyChange}
-                                                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                                input={
+                                                    <OutlinedInput id="select-multiple-chip" />
+                                                }
                                                 renderValue={(selected) => (
-                                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                        {selected.map((value) => (
-                                                            <Chip key={value} label={value} />
-                                                        ))}
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: 0.5,
+                                                        }}
+                                                    >
+                                                        {selected.map(
+                                                            (value) => (
+                                                                <Chip
+                                                                    key={value}
+                                                                    label={
+                                                                        value
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
                                                     </Box>
                                                 )}
                                                 MenuProps={MenuProps}
@@ -441,7 +894,11 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                     <MenuItem
                                                         key={name}
                                                         value={name}
-                                                        style={getStyles(name, policy, theme)}
+                                                        style={getStyles(
+                                                            name,
+                                                            policy,
+                                                            theme
+                                                        )}
                                                     >
                                                         {name}
                                                     </MenuItem>
@@ -457,7 +914,10 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                 id="allowFreeMints"
                                                 {...register("allowFreeMints")}
                                             />
-                                            <label className="rn-check-box-label" htmlFor="allowFreeMints">
+                                            <label
+                                                className="rn-check-box-label"
+                                                htmlFor="allowFreeMints"
+                                            >
                                                 Allow Free Mints
                                             </label>
                                         </div>
@@ -470,7 +930,10 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                 id="enableWhitelist"
                                                 {...register("enableWhitelist")}
                                             />
-                                            <label className="rn-check-box-label" htmlFor="enableWhitelist">
+                                            <label
+                                                className="rn-check-box-label"
+                                                htmlFor="enableWhitelist"
+                                            >
                                                 Enable Whitelist
                                             </label>
                                         </div>
@@ -483,7 +946,10 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                 id="enablePresale"
                                                 {...register("enablePresale")}
                                             />
-                                            <label className="rn-check-box-label" htmlFor="enablePresale">
+                                            <label
+                                                className="rn-check-box-label"
+                                                htmlFor="enablePresale"
+                                            >
                                                 Enable Presale
                                             </label>
                                         </div>
@@ -496,7 +962,10 @@ const MarketplaceCreateCollectionWrapper = ({ className, space }) => {
                                                 id="enableAirdrop"
                                                 {...register("enableAirdrop")}
                                             />
-                                            <label className="rn-check-box-label" htmlFor="enableAirdrop">
+                                            <label
+                                                className="rn-check-box-label"
+                                                htmlFor="enableAirdrop"
+                                            >
                                                 Enable Airdrop
                                             </label>
                                         </div>

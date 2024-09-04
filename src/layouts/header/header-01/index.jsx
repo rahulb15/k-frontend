@@ -45,7 +45,7 @@ import { useBalanceMutation } from "src/services/launchpad.service";
 import BalanceDropdown from "@components/BalanceDropdown";
 import CartDropdown from "./CartDropdown";
 import NotificationDropdown from "./NotificationDropdown";
-import useWebSocket from "./useWebSocket";
+import useSocketIO from './useWebSocket';
 import {
     addToCart,
     removeToCart,
@@ -72,7 +72,8 @@ const Header = ({ className }) => {
         useBalanceMutation();
     const account = useAccountContext();
     console.log(account, "account");
-    const { notifications } = useWebSocket(account?.user?._id);
+    const { notifications, isConnected } = useSocketIO(account?.user?._id);
+
     console.log(notifications, "notifications");
 
 

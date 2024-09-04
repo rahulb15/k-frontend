@@ -32,6 +32,21 @@ const updateNFT = async (data) => {
     }
 };
 
+// updateNFT
+const updateMyNFT = async (data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`${url}/nft/updatemynft`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
 // post updateRevealedNFTs
 const updateRevealedNFTs = async (data) => {
     try {
@@ -65,17 +80,20 @@ const onSale = async (data) => {
 const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.post(`${url}nft/marketPlaceNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.post(
+            `${url}nft/marketPlaceNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         return response.data;
-    }
-    catch (error) {
+    } catch (error) {
         return error.response.data;
     }
-}
+};
 
 // //   getOwnSaleNfts: builder.query({
 //     query: ({ pageNo, limit, search }) => ({
@@ -88,48 +106,66 @@ const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
 const getOwnSaleNfts = async (data, pageNo, limit, search) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.post(`${url}nft/ownSaleNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.post(
+            `${url}nft/ownSaleNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         return response.data;
-    }
-    catch (error) {
+    } catch (error) {
         return error.response.data;
     }
-}
-
-
-
+};
 
 // getNftsMyCollectionName paginating post
 const getNftsMyCollectionName = async (data, pageNo, limit) => {
     try {
         const token = localStorage.getItem("token");
-        const response = await axios.post(`${url}nft/collectionNfts?pageNo=${pageNo}&limit=${limit}`, data, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.post(
+            `${url}nft/collectionNfts?pageNo=${pageNo}&limit=${limit}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         return response.data;
-    }
-    catch (error) {
+    } catch (error) {
         return error.response.data;
     }
-}
+};
 
-
-
-
-
+const getNftsMyCollectionNameMarket = async (data, pageNo, limit) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${url}nft/collectionNftsMarket?pageNo=${pageNo}&limit=${limit}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
 
 export default {
     createNFT,
     updateNFT,
+    updateMyNFT,
     updateRevealedNFTs,
     onSale,
     getAllmarketPlaceNfts,
     getNftsMyCollectionName,
-    getOwnSaleNfts
+    getNftsMyCollectionNameMarket,
+    getOwnSaleNfts,
 };

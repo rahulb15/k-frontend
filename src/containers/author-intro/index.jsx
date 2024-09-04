@@ -134,7 +134,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
 
                                     <div className="rn-author-info-content">
                                         <h4 className="title">
-                                            <Image
+                                            {/* <Image
                                                 src="/auth-images/verified.png"
                                                 alt="Verified"
                                                 style={{
@@ -142,7 +142,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
                                                 }}
                                                 width={20}
                                                 height={20}
-                                            />
+                                            /> */}
 
                                             {user?.name}
                                         </h4>

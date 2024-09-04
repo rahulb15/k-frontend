@@ -15,6 +15,9 @@ import { FaChevronDown, FaChevronUp, FaLink } from "react-icons/fa";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import Foote from "@layout/footer/footer-01";
+import ChatBot from "@containers/chatbot";
+import { useAccountContext } from "src/contexts";
+
 // Styled component for the button with gradient border
 const GradientBorderButton = styled(motion.div)`
     position: relative;
@@ -65,6 +68,8 @@ const MouseParticles = dynamic(() => import("react-mouse-particles"), {
 });
 const Footer = () => {
     const router = useRouter();
+    const account = useAccountContext();
+    console.log(account, "account");
     const [prices, setPrices] = useState({ solana: 0, kda: 0 });
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
@@ -114,8 +119,21 @@ const Footer = () => {
         { key: "Ctrl + L", description: "Launchpad" },
         { key: "Ctrl + H", description: "Home" },
         { key: "Ctrl + P", description: "Profile" },
-        // Add more shortcuts as needed
+        { key: "Ctrl + Shift + S", description: "Focus search" },
+        { key: "Esc", description: "Close search" },
+        { key: "Ctrl + Shift + E", description: "Open settings/preferences" },
+        { key: "Ctrl + Alt + N", description: "Open notifications" },
+        { key: "Ctrl + Shift + P", description: "Toggle theme" },
+        { key: "Ctrl + Shift + D", description: "Go to dashboard" },
+        { key: "Ctrl + Alt + M", description: "Open messages" },
+        { key: "Ctrl + Alt + O", description: "Open orders" },
+        { key: "Ctrl + Shift + F", description: "Focus search bar" },
+        { key: "Alt + Shift + H", description: "Open help" },
+        { key: "Alt + Shift + I", description: "Open dev tools or inspection mode" },
+        { key: "Ctrl + Shift + U", description: "Open user profile" },
+        { key: "Ctrl + Alt + S", description: "Save data" },
     ];
+    
 
     const handleBackward = () => {
         router.back();
@@ -159,6 +177,7 @@ const Footer = () => {
                                 <ColorSwitcher />
                             </div>
                         </div>
+                        
                         <div className="setting-option">
                             {/* //chain icon and chain NEXT_PUBLIC_KDA_CHAIN_ID */}
                             <motion.div
@@ -201,6 +220,12 @@ const Footer = () => {
 
 
                             </motion.div>
+                        </div>
+                        <div
+                            className="setting-option"
+                            onClick={toggleSettings}
+                        >
+                            <IoSettings />
                         </div>
                     </div>
                     <div className="footer-section middle">
@@ -248,12 +273,15 @@ const Footer = () => {
                         <div className="setting-option" onClick={handleForward}>
                             <FaArrowRight />
                         </div>
-                        <div
+                        {/* <div
                             className="setting-option"
                             onClick={toggleSettings}
                         >
-                            <IoSettings />
-                        </div>
+                            do chat bot here
+                        </div> */}
+                         <div className="setting-option">
+        <ChatBot userId = {account?.user?._id} />
+    </div>
                         <div
                             className="setting-option"
                             onClick={toggleShortcuts}

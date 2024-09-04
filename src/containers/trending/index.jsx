@@ -9,6 +9,7 @@ import TabContainer from "react-bootstrap/TabContainer";
 import TabPane from "react-bootstrap/TabPane";
 import collectionService from "src/services/collection.service";
 import { debounce } from 'lodash';
+import SectionTitle from "@components/section-title/layout-02";
 
 const TrendingArea = ({ className, space }) => {
     const [collections, setCollections] = useState([]);
@@ -97,7 +98,18 @@ const TrendingArea = ({ className, space }) => {
             className={`rn-upcoming-area mt-5
          ${space === 1 ? "rn-section-gapTop" : ""} ${className || ""}`}
         >
+            
             <div className="container">
+            <div className="col-lg-6 col-md-6 col-sm-6 col-12 mb--50 mt--50">
+                        
+                        <SectionTitle
+                            title="Trending Collections"
+                            className="mb--0"
+                            disableAnimation
+                        />
+                    
+                </div>
+           
                 <div className="row">
                     <div className="col-12">
                         <TabContainer defaultActiveKey="nav-home">

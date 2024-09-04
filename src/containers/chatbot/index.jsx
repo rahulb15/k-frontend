@@ -1,151 +1,81 @@
-/* eslint-disable */
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import claudeService from "src/services/claude.service";
-import { motion } from "framer-motion";
-const ChatBotArea = () => {
-    const [chatbotOpen, setChatbotOpen] = useState(false);
-    const [chats, setChats] = useState([]);
-    const [message, setMessage] = useState("");
+import React, { useState, useEffect, useRef } from "react";
+import DOMPurify from "dompurify";
+import { Scrollbars } from "react-custom-scrollbars-2";
+import useSocketIO from "../../layouts/header/header-01/useWebSocket";
 
-    const chatbotHandler = () => {
-        setChatbotOpen(!chatbotOpen);
-    };
+const ChatBot = ({ userId }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [inputMessage, setInputMessage] = useState("");
+    const scrollbarsRef = useRef(null);
 
-    const sendChatbotMessage = async (message) => {
-        const response = await claudeService.chat({
-            message,
-        });
-        console.log(response, "response");
-        // {
-        //     data: {
-        //       status: 'created',
-        //       message: 'Created',
-        //       description:
-        //         'The request has succeeded and a new resource has been created as a result.',
-        //       data: {
-        //         id: 'msg_01LkNx1zZiSvNdukYH2SkV44',
-        //         type: 'message',
-        //         role: 'assistant',
-        //         model: 'claude-3-opus-20240229',
-        //         stop_sequence: null,
-        //         usage: { input_tokens: 463, output_tokens: 46 },
-        //         content: [
-        //           {
-        //             type: 'text',
-        //             text:
-        //               'Hello! Welcome to our NFT marketplace platform. I\'m Claude, your AI assistant. I\'m here to help you navigate the platform and answer any questions you may have.\n' +
-        //               '\n' +
-        //               'How can I assist you today?'
-        //           }
-        //         ],
-        //         stop_reason: 'end_turn'
-        //       }
-
-        if (response?.data?.status === "created") {
-            setChats([...chats, response.data.data.content[0].text]);
-            setMessage("");
-        }
-    };
-
-    const initChatbot = async () => {
-        const response = await claudeService.clauderequest({
-            message: "Hello",
-        });
-        console.log(response, "response");
-        if (response?.data?.status === "created") {
-            setChats([...chats, response.data.data.content[0].text]);
-        }
-    };
+    const { isConnected, chatMessages, sendMessage } = useSocketIO(userId);
+    console.log(isConnected, chatMessages, sendMessage);
 
     useEffect(() => {
-        if (chatbotOpen) {
-            initChatbot();
-        } else {
-            setChats([]);
+        if (scrollbarsRef.current) {
+            scrollbarsRef.current.scrollToBottom();
         }
-    }, [chatbotOpen]);
+    }, [chatMessages]);
+
+    const toggleChat = () => setIsOpen(!isOpen);
 
     const handleSendMessage = (e) => {
         e.preventDefault();
-        sendChatbotMessage(message);
+        if (inputMessage.trim() === "") return;
+
+        sendMessage("chat_message", { 
+            senderId: userId, 
+            recipientId: 'AI', 
+            message: inputMessage,
+            timestamp: new Date().toISOString()
+        });
+
+        setInputMessage("");
     };
 
     return (
-        <>
-            <div className="chatbot__icon">
-                {/* <button onClick={chatbotHandler}>
-                    <Image
-                        src="/chatbot/chat-bot.png"
-                        alt="Chatbot"
-                        width={80}
-                        height={80}
-                    />
-                </button> */}
-                <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={chatbotHandler}
-                >
-                    <Image
-                        src="/chatbot/bot.png"
-                        alt="Chatbot"
-                        width={80}
-                        height={80}
-                    />
-                </motion.button>
-                
+        <div className="chatbot-container">
+            {!isOpen && (
+                <button onClick={toggleChat} className="chatbot-toggle" aria-label="Open chat">
+                    💬
+                </button>
+            )}
 
-
-            </div>
-            {chatbotOpen && (
-                <div className="chatbot__overlay">
-                    <div className="chatbot__wrapper">
-                        <div className="chatbot__header">
-                            <h3>Chatbot</h3>
-                            <button
-                                onClick={chatbotHandler}
-                                className="chatbot__close"
-                            >
-                                &times;
-                            </button>
-                        </div>
-                        <div className="chatbot__body">
-                            {/* <div className="chatbot__body--message">
-                                <p>
-                                    Hello! I am a chatbot. How can I help you
-                                    today?
-                                </p>
-                            </div> */}
-                            {chats.map((chat, index) => (
-                                <div
-                                    key={index}
-                                    className="chatbot__body--message"
-                                >
-                                    <p>{chat}</p>
-                                </div>
-                            ))}
-
-                            <div className="chatbot__body--input">
-                                <input
-                                    type="text"
-                                    placeholder="Type your message here..."
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                />
-                                <button
-                                    onClick={handleSendMessage}
-                                    disabled={!message}
-                                >
-                                    Send
-                                </button>
-                            </div>
-                        </div>
+            {isOpen && (
+                <div className="chatbot-window">
+                    <div className="chatbot-header">
+                        <h3>ChatBot</h3>
+                        <button onClick={toggleChat} className="chatbot-close" aria-label="Close chat">
+                            ✖
+                        </button>
                     </div>
+
+                    <Scrollbars ref={scrollbarsRef} autoHide autoHideTimeout={1000} autoHideDuration={200} className="chatbot-messages">
+                        {chatMessages.map((message, index) => (
+                            <div key={index} className={`message ${message.senderId === userId ? "user-message" : "bot-message"}`}>
+                                <div className="message-content" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(message.message)}} />
+                                <span className="message-timestamp">{new Date(message.timestamp).toLocaleTimeString()}</span>
+                            </div>
+                        ))}
+                    </Scrollbars>
+
+                    <form onSubmit={handleSendMessage} className="chatbot-input-form">
+                        <input
+                            type="text"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            placeholder="Type a message..."
+                            className="chatbot-input"
+                            aria-label="Type a message"
+                        />
+                        <button type="submit" className="chatbot-send" aria-label="Send message">
+                            ➤
+                        </button>
+                    </form>
                 </div>
             )}
-        </>
+        </div>
     );
 };
 
-export default ChatBotArea;
+export default ChatBot;

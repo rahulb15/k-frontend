@@ -133,6 +133,7 @@ import Product from "@components/product/layout-01";
 import FilterButtons from "@components/filter-buttons";
 import nftServices from "src/services/nftServices";
 import useDebounce from "../../../hooks/useDebounce";
+import SectionTitle from "@components/section-title/layout-02";
 
 const ExploreProductArea = () => {
     const [pageNo, setPageNo] = useState(1);
@@ -203,6 +204,15 @@ const ExploreProductArea = () => {
         <div className="explore-product-area-wrapper">
             <div className="explore-product-area">
                 <div className="container">
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12 mb--20 mt--80">
+                        
+                        <SectionTitle
+                            title="Explore NFTs"
+                            className="mb--0"
+                            disableAnimation
+                        />
+                    
+                </div>
                     <div className="row align-items-center mb--60">
                         <div className="col-lg-12 d-flex justify-content-end">
                             <FilterButtons buttons={filterCategories} filterHandler={filterHandler} />
@@ -241,7 +251,7 @@ const ExploreProductArea = () => {
                     )}
                 </div>
             </div>
-            <style jsx>{`
+            {/* <style jsx>{`
                 .explore-product-area-wrapper {
                     display: flex;
                     justify-content: center;
@@ -263,7 +273,7 @@ const ExploreProductArea = () => {
                         width: 95%;
                     }
                 }
-            `}</style>
+            `}</style> */}
         </div>
     );
 };

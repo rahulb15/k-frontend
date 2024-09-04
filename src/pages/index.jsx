@@ -86,12 +86,7 @@ const Home = () => {
                     }}
                 />
                 <TrendingArea data={{ ranking: rankingData }} />
-                <ExploreProductArea
-                    data={{
-                        ...content1["explore-product-section"],
-                        products: productData,
-                    }}
-                />
+                <ExploreProductArea />
                 <ServiceArea data={content1["service-section"]} />
 
                 <TopCollection

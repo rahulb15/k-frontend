@@ -49,7 +49,7 @@ const ScrollToTop = () => {
                     <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
                 </svg>
             </div>
-            <div
+            {/* <div
                 style={{
                     position: "fixed",
                     bottom: "100px",
@@ -61,9 +61,9 @@ const ScrollToTop = () => {
                     boxShadow: "0 0 10px 0 rgba(0,0,0,0.1)",
                     right: "20px",
                 }}
-            >
+            > */}
                 <ChatBotArea />
-            </div>
+            {/* </div> */}
         </>
     );
 };

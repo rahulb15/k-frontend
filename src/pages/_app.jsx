@@ -51,8 +51,9 @@ const AppContent = ({ Component, pageProps }) => {
         document.body.className = `${pageProps.className}`;
     });
 
+    // Existing hotkeys
     useHotkeys("ctrl+shift+s", (event) => {
-        console.log("Hotkey triggered");
+        console.log("Search Hotkey triggered");
         event.preventDefault();
         dispatch(setSearchFocus(true));
     });
@@ -63,17 +64,72 @@ const AppContent = ({ Component, pageProps }) => {
         dispatch(setSearchFocus(false));
     });
 
-    useHotkeys("ctrl+shift+l", (event) => {
-        console.log("Hotkey triggered");
+    // New hotkeys
+    useHotkeys("ctrl+shift+e", (event) => {
+        console.log("Opening settings/preferences");
         event.preventDefault();
-        router.push("/launchpad");
-    });
-    useHotkeys("ctrl+shift+c", (event) => {
-        console.log("Hotkey triggered");
-        event.preventDefault();
-        router.push("/connect");
+        router.push("/settings");
     });
 
+    useHotkeys("ctrl+alt+n", (event) => {
+        console.log("Opening notifications");
+        event.preventDefault();
+        router.push("/notifications");
+    });
+
+    useHotkeys("ctrl+shift+p", (event) => {
+        console.log("Toggling theme");
+        event.preventDefault();
+        // Add your theme toggle logic here
+    });
+
+    useHotkeys("ctrl+shift+d", (event) => {
+        console.log("Navigating to dashboard");
+        event.preventDefault();
+        router.push("/dashboard");
+    });
+
+    useHotkeys("ctrl+alt+m", (event) => {
+        console.log("Opening messaging");
+        event.preventDefault();
+        router.push("/messages");
+    });
+
+    useHotkeys("ctrl+alt+o", (event) => {
+        console.log("Opening orders");
+        event.preventDefault();
+        router.push("/orders");
+    });
+
+    useHotkeys("ctrl+shift+f", (event) => {
+        console.log("Focus search");
+        event.preventDefault();
+        dispatch(setSearchFocus(true)); // Assuming this focuses your search bar
+    });
+
+    useHotkeys("alt+shift+h", (event) => {
+        console.log("Opening help");
+        event.preventDefault();
+        router.push("/help");
+    });
+
+    useHotkeys("alt+shift+i", (event) => {
+        console.log("Opening dev tools or inspection mode");
+        event.preventDefault();
+        // Add custom dev tools logic or route here
+    });
+
+    useHotkeys("ctrl+shift+u", (event) => {
+        console.log("Opening user profile");
+        event.preventDefault();
+        router.push("/profile");
+    });
+
+    useHotkeys("ctrl+alt+s", (event) => {
+        console.log("Saving data");
+        event.preventDefault();
+        // Add save data logic here
+    });
     return (
         <ThemeProvider defaultTheme="dark">
             <ToastContainer />
