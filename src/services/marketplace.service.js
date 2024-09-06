@@ -983,6 +983,7 @@ export const marketplaceApi = createApi({
         reserveSingleNft: builder.mutation({
             async queryFn(args) {
                 const { nftName, reserverAcc, walletName } = args;
+                console.log(args);
 
                 const fee = await getFee();
                 const price = await checkSingleNftPrice(nftName);

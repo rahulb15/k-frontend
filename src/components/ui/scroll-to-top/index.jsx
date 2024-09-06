@@ -62,7 +62,7 @@ const ScrollToTop = () => {
                     right: "20px",
                 }}
             > */}
-                <ChatBotArea />
+                {/* <ChatBotArea /> */}
             {/* </div> */}
         </>
     );

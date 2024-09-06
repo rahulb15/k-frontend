@@ -17,6 +17,7 @@ const Header = () => (
                 <SideMenu menu={sideMenuData} />
                 <HelpMenu menu={helpMenuData} />
             </div>
+            <div style={{ marginBottom: "220px" }}>
             {headerData?.author && (
                 <AuthorProfile
                     name={headerData.author.name}
@@ -24,6 +25,7 @@ const Header = () => (
                     balance={headerData.author.balance}
                 />
             )}
+            </div>
         </div>
     </div>
 );

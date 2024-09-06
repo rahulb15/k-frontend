@@ -23,13 +23,13 @@
 //     const [onSaleNfts, setOnSaleNfts] = useState([]);
 //     const [createdCollections, setCreatedCollections] = useState([]);
 //     const account = useAccountContext();
-    
+
 //     const { data: ownedNftsData, error: ownedNftsError, isLoading: ownedNftsLoading, refetch: refetchOwnedNfts } = useGetOwnedNftsQuery({
 //         pageNo,
 //         limit,
 //         search,
 //     });
-    
+
 //     const [getTokenDetailsMutation] = useGetTokenDetailsMutation();
 
 //     useEffect(() => {
@@ -194,8 +194,6 @@
 
 // export default AuthorProfileArea;
 
-
-
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
@@ -204,7 +202,9 @@ import { useGetOwnedNftsQuery } from "src/services/nft.service";
 import { useGetTokenDetailsMutation } from "src/services/launchpad.service";
 import { useAccountContext } from "src/contexts";
 import nftServices from "src/services/nftServices";
+import singleNftService from "src/services/singleNft.service";
 import Nft from "@components/nfts";
+import SingleNft from "@components/singleNft";
 import MarketCollection from "@components/marketplace-collection";
 import collectionService from "src/services/collection.service";
 
@@ -223,13 +223,18 @@ const AuthorProfileArea = ({ className }) => {
     const [createdCollections, setCreatedCollections] = useState([]);
     const [createdSingleNfts, setCreatedSingleNfts] = useState([]);
     const account = useAccountContext();
-    
-    const { data: ownedNftsData, error: ownedNftsError, isLoading: ownedNftsLoading, refetch: refetchOwnedNfts } = useGetOwnedNftsQuery({
+
+    const {
+        data: ownedNftsData,
+        error: ownedNftsError,
+        isLoading: ownedNftsLoading,
+        refetch: refetchOwnedNfts,
+    } = useGetOwnedNftsQuery({
         pageNo,
         limit,
         search,
     });
-    
+
     const [getTokenDetailsMutation] = useGetTokenDetailsMutation();
 
     useEffect(() => {
@@ -263,7 +268,12 @@ const AuthorProfileArea = ({ className }) => {
             if (activeTab === "nav-home") {
                 try {
                     const data = {}; // Add any necessary data for the API call
-                    const response = await nftServices.getOwnSaleNfts(data, pageNo, limit, search);
+                    const response = await nftServices.getOwnSaleNfts(
+                        data,
+                        pageNo,
+                        limit,
+                        search
+                    );
                     setOnSaleNfts(response.data.nfts);
                 } catch (error) {
                     console.error("Error fetching on sale NFTs:", error);
@@ -278,13 +288,34 @@ const AuthorProfileArea = ({ className }) => {
         const fetchCreatedItems = async () => {
             if (activeTab === "nav-contact") {
                 try {
-                    if (createdActiveTab === "collections" || createdActiveTab === "all") {
-                        const collectionsResponse = await collectionService.getCreatedCollections(pageNo, limit, search);
-                        setCreatedCollections(collectionsResponse.data.data[0].data);
+                    if (
+                        createdActiveTab === "collections" ||
+                        createdActiveTab === "all"
+                    ) {
+                        const collectionsResponse =
+                            await collectionService.getCreatedCollections(
+                                pageNo,
+                                limit,
+                                search
+                            );
+                        setCreatedCollections(
+                            collectionsResponse.data.data[0].data
+                        );
                     }
-                    if (createdActiveTab === "single-nfts" || createdActiveTab === "all") {
-                        const singleNftsResponse = await nftServices.getCreatedSingleNfts(pageNo, limit, search);
-                        setCreatedSingleNfts(singleNftsResponse.data.nfts);
+                    if (
+                        createdActiveTab === "single-nfts" ||
+                        createdActiveTab === "all"
+                    ) {
+                        const singleNftsResponse =
+                            await singleNftService.getCreatedSingleNfts(
+                                pageNo,
+                                limit,
+                                search
+                            );
+                        console.log("Single NFTs:", singleNftsResponse.data);
+                        setCreatedSingleNfts(
+                            singleNftsResponse.data.singleNfts
+                        );
                     }
                 } catch (error) {
                     console.error("Error fetching created items:", error);
@@ -293,7 +324,14 @@ const AuthorProfileArea = ({ className }) => {
         };
 
         fetchCreatedItems();
-    }, [activeTab, createdActiveTab, account.user.walletAddress, pageNo, limit, search]);
+    }, [
+        activeTab,
+        createdActiveTab,
+        account.user.walletAddress,
+        pageNo,
+        limit,
+        search,
+    ]);
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -314,11 +352,35 @@ const AuthorProfileArea = ({ className }) => {
                         <div className="col-12">
                             <div className="tab-wrapper-one">
                                 <nav className="tab-button-one">
-                                    <Nav className="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <Nav.Link as="button" eventKey="nav-home">On Sale</Nav.Link>
-                                        <Nav.Link as="button" eventKey="nav-profile">Owned</Nav.Link>
-                                        <Nav.Link as="button" eventKey="nav-contact">Created</Nav.Link>
-                                        <Nav.Link as="button" eventKey="nav-liked">Liked</Nav.Link>
+                                    <Nav
+                                        className="nav nav-tabs"
+                                        id="nav-tab"
+                                        role="tablist"
+                                    >
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-home"
+                                        >
+                                            On Sale
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-profile"
+                                        >
+                                            Owned
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-contact"
+                                        >
+                                            Created
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="nav-liked"
+                                        >
+                                            Liked
+                                        </Nav.Link>
                                     </Nav>
                                 </nav>
                             </div>
@@ -328,7 +390,10 @@ const AuthorProfileArea = ({ className }) => {
                     <TabContent className="tab-content rn-bid-content">
                         <TabPane className="row d-flex g-5" eventKey="nav-home">
                             {onSaleNfts?.map((nft) => (
-                                <div key={nft._id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div
+                                    key={nft._id}
+                                    className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                                >
                                     <Nft
                                         overlay
                                         placeBid
@@ -346,9 +411,15 @@ const AuthorProfileArea = ({ className }) => {
                                 </div>
                             ))}
                         </TabPane>
-                        <TabPane className="row g-5 d-flex" eventKey="nav-profile">
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-profile"
+                        >
                             {nfts?.map((nft) => (
-                                <div key={nft._id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div
+                                    key={nft._id}
+                                    className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                                >
                                     <Nft
                                         overlay
                                         placeBid
@@ -366,52 +437,100 @@ const AuthorProfileArea = ({ className }) => {
                                 </div>
                             ))}
                         </TabPane>
-                        <TabPane className="row g-5 d-flex" eventKey="nav-contact">
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-contact"
+                        >
                             <div className="col-12">
                                 <nav className="tab-button-one">
-                                    <Nav className="nav nav-tabs" id="created-tab" role="tablist">
-                                        <Nav.Link as="button" eventKey="collections" onClick={() => handleCreatedTabChange("collections")}>Collections</Nav.Link>
-                                        <Nav.Link as="button" eventKey="single-nfts" onClick={() => handleCreatedTabChange("single-nfts")}>Single NFTs</Nav.Link>
+                                    <Nav
+                                        className="nav nav-tabs"
+                                        id="created-tab"
+                                        role="tablist"
+                                    >
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="collections"
+                                            onClick={() =>
+                                                handleCreatedTabChange(
+                                                    "collections"
+                                                )
+                                            }
+                                        >
+                                            Collections
+                                        </Nav.Link>
+                                        <Nav.Link
+                                            as="button"
+                                            eventKey="single-nfts"
+                                            onClick={() =>
+                                                handleCreatedTabChange(
+                                                    "single-nfts"
+                                                )
+                                            }
+                                        >
+                                            Single NFTs
+                                        </Nav.Link>
                                         {/* <Nav.Link as="button" eventKey="all" onClick={() => handleCreatedTabChange("all")}>All</Nav.Link> */}
                                     </Nav>
                                 </nav>
                             </div>
-                            {(createdActiveTab === "collections" || createdActiveTab === "all") && createdCollections?.map((collection) => (
-                                <div key={collection._id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <MarketCollection
-                                        title={collection.collectionName}
-                                        total_item={collection.totalSupply}
-                                        path={collection.collectionName}
-                                        image={collection.collectionCoverImage}
-                                        thumbnails={collection.collectionBannerImage}
-                                        price={collection.mintPrice}
-                                        reservePrice={collection.reservePrice}
-                                        mintStartDate={collection.mintStartDate}
-                                        mintEndDate={collection.mintEndDate}
-                                        data={collection}
-                                    />
-                                </div>
-                            ))}
-                            {(createdActiveTab === "single-nfts" || createdActiveTab === "all") && createdSingleNfts?.map((nft) => (
-                                <div key={nft._id} className="col-5 col-lg-4 col-md-6 col-sm-6 col-12">
-                                    <Nft
-                                        overlay
-                                        placeBid
-                                        title={nft.collectionName}
-                                        slug={nft.tokenId}
-                                        latestBid={nft.nftPrice}
-                                        price={nft.nftPrice}
-                                        likeCount={nft.likes}
-                                        auction_date={nft.createdAt}
-                                        image={nft.tokenImage}
-                                        authors={nft.creatorName}
-                                        bitCount={nft.likes}
-                                        data={nft}
-                                    />
-                                </div>
-                            ))}
+                            {(createdActiveTab === "collections" ||
+                                createdActiveTab === "all") &&
+                                createdCollections?.map((collection) => (
+                                    <div
+                                        key={collection._id}
+                                        className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                                    >
+                                        <MarketCollection
+                                            title={collection.collectionName}
+                                            total_item={collection.totalSupply}
+                                            path={collection.collectionName}
+                                            image={
+                                                collection.collectionCoverImage
+                                            }
+                                            thumbnails={
+                                                collection.collectionBannerImage
+                                            }
+                                            price={collection.mintPrice}
+                                            reservePrice={
+                                                collection.reservePrice
+                                            }
+                                            mintStartDate={
+                                                collection.mintStartDate
+                                            }
+                                            mintEndDate={collection.mintEndDate}
+                                            data={collection}
+                                        />
+                                    </div>
+                                ))}
+                            {(createdActiveTab === "single-nfts" ||
+                                createdActiveTab === "all") &&
+                                createdSingleNfts?.map((nft) => (
+                                    <div
+                                        key={nft._id}
+                                        className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                                    >
+                                        <SingleNft
+                                            overlay
+                                            placeBid
+                                            title={nft.collectionName}
+                                            slug={nft.tokenId}
+                                            latestBid={nft.nftPrice}
+                                            price={nft.nftPrice}
+                                            likeCount={nft.likes}
+                                            auction_date={nft.createdAt}
+                                            image={nft.tokenImage}
+                                            authors={nft.creatorName}
+                                            bitCount={nft.likes}
+                                            data={nft}
+                                        />
+                                    </div>
+                                ))}
                         </TabPane>
-                        <TabPane className="row g-5 d-flex" eventKey="nav-liked">
+                        <TabPane
+                            className="row g-5 d-flex"
+                            eventKey="nav-liked"
+                        >
                             {/* Liked NFTs */}
                         </TabPane>
                     </TabContent>

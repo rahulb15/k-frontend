@@ -2,7 +2,7 @@ import { useReducer, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import SectionTitle from "@components/section-title/layout-02";
-import Product from "@components/product/layout-01";
+import Product from "@components/product/layout-04";
 import ProductFilter from "@components/product-filter/layout-02";
 import { SectionTitleType, ProductType } from "@utils/types";
 
@@ -122,6 +122,7 @@ const ExploreProductArea = ({ className, space, data }) => {
                                         placeBid={!!data.placeBid}
                                         title={prod.title}
                                         slug={prod.slug}
+                                        auction_date={prod.auction_date}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
                                         likeCount={prod.likeCount}

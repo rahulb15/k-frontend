@@ -32,7 +32,7 @@ const ProductFilter = ({ slectHandler, sortHandler, priceHandler, inputs }) => (
                     name="category"
                 />
             </div>
-            <div className="filter-select-option">
+            {/* <div className="filter-select-option">
                 <h6 className="filter-leble">Collections</h6>
                 <NiceSelect
                     options={[
@@ -55,7 +55,7 @@ const ProductFilter = ({ slectHandler, sortHandler, priceHandler, inputs }) => (
                     onChange={slectHandler}
                     name="collection"
                 />
-            </div>
+            </div> */}
 
             <div className="filter-select-option">
                 <h6 className="filter-leble">Sale type</h6>
@@ -76,7 +76,7 @@ const ProductFilter = ({ slectHandler, sortHandler, priceHandler, inputs }) => (
                 />
             </div>
             <div className="filter-select-option">
-                <h6 className="filter-leble">Price Range</h6>
+                <h6 className="filter-leble">Bulk Buy</h6>
                 <div className="price_filter s-filter clear">
                     <form action="#" method="GET">
                         <InputRange

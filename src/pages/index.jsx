@@ -16,6 +16,7 @@ import homepageData from "../data/homepages/home-06.json";
 import productData from "../data/products.json";
 import rankingData from "../data/ranking.json";
 import sellerData from "../data/sellers.json";
+import ProductArea from "@containers/product/layout-02";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
@@ -86,9 +87,18 @@ const Home = () => {
                     }}
                 />
                 <TrendingArea data={{ ranking: rankingData }} />
+                <ProductArea
+                data={{
+                    section_title: {
+                        title: "Best",
+                    },
+                    products: productData,
+                }}
+            />
+
                 <ExploreProductArea />
                 <ServiceArea data={content1["service-section"]} />
-
+ 
                 <TopCollection
                     space={4}
                     data={{

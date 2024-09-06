@@ -1,88 +1,60 @@
+import React, { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 import Image from "next/image";
+import dynamic from 'next/dynamic';
 import ClientAvatar from "@ui/client-avatar";
 import Anchor from "@ui/anchor";
 import { ImageType } from "@utils/types";
+import TVChartAdvanceContainer from '@components/TVChartAdvanceContainer';
 
-const HeroArea = ({ data }) => (
-    <div className="rn-banner-area">
-        <div className="slider-style-7" data-black-overlay="8">
-            {data?.image?.src && (
-                <Image
-                    className="slider-bg"
-                    src={data.image.src}
-                    alt="Slider BG"
-                    quality={100}
-                    priority
-                    fill
-                    sizes="100vw"
-                    style={{
-                        objectFit: "cover",
-                    }}
-                />
-            )}
-            <div className="rn-banner-wrapper row">
-                <div className="col-xl-5 col-lg-12 col-12 order-3 order-xl-1">
-                    <div className="item-description">
-                        <p>{data.description}</p>
-                        <div className="product-share-wrapper">
-                            <div className="profile-share">
-                                {data?.authors?.map((author) => (
-                                    <ClientAvatar
-                                        key={author.name}
-                                        slug={author.slug}
-                                        name={author.name}
-                                        image={author.image}
-                                    />
-                                ))}
-                                <Anchor
-                                    className="more-author-text"
-                                    path="/collection"
-                                >
-                                    {data.bitCount}+ Place Bit.
-                                </Anchor>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-xl-4 col-lg-12 col-12 order-2 order-xl-2">
-                    <h2
-                        className="title"
-                        dangerouslySetInnerHTML={{ __html: data.title }}
-                    />
-                </div>
-                <div className="col-xl-3 col-lg-12 col-12 order-1 order-xl-3">
-                    <div className="img-thumb-award">
-                        {data?.award_image?.src && (
-                            <Image
-                                src={data.award_image.src}
-                                alt="Nft_Profile"
-                                width={130}
-                                height={130}
-                            />
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+const TVChartContainer = dynamic(
+  () => import("@components/TVChartAdvanceContainer").then((mod) => mod.TVChartContainer),
+  { ssr: false }
 );
 
+const defaultWidgetProps = {
+  symbol: "AAPL",
+  interval: "1D",
+  library_path: "/static/charting_library/",
+  locale: "en",
+  charts_storage_url: "https://saveload.tradingview.com",
+  charts_storage_api_version: "1.1",
+  client_id: "tradingview.com",
+  user_id: "public_user_id",
+  fullscreen: false,
+  autosize: true,
+};
+
+const HeroArea = ({ data }) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return (
+    <div className="rn-banner-area">
+      {/* <div className="slider-style-7" data-black-overlay="8"> */}
+      {isClient && <TVChartAdvanceContainer {...defaultWidgetProps} />}
+      {/* </div> */}
+    </div>
+  );
+};
+
 HeroArea.propTypes = {
-    data: PropTypes.shape({
-        title: PropTypes.string.isRequired,
-        description: PropTypes.string.isRequired,
-        award_image: ImageType,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    image: ImageType.isRequired,
+    authors: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        slug: PropTypes.string.isRequired,
         image: ImageType.isRequired,
-        authors: PropTypes.arrayOf(
-            PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                slug: PropTypes.string.isRequired,
-                image: ImageType.isRequired,
-            })
-        ),
-        bitCount: PropTypes.number,
-    }),
+      })
+    ),
+    bitCount: PropTypes.number,
+  }),
 };
 
 export default HeroArea;

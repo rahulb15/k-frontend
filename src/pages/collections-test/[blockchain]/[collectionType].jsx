@@ -14,27 +14,7 @@ import NftListArea from "@components/nft-list";
 
 import nftServices from "src/services/nftServices";
 import collectionService from "src/services/collection.service";
-
-
-
-import Header2 from "@layout/header/collection-detail-header";
-import Footer2 from "@layout/footer/footer-02";
-import TopBarArea from "@containers/top-bar-collection";
-import HeroArea from "@containers/hero/layout-07";
-import LiveExploreArea from "@containers/live-explore/layout-03";
-import CollectionArea from "@containers/collection/layout-02";
-import ExploreProductArea from "@containers/explore-product/layout-03";
-import ServiceArea from "@containers/services/layout-02";
-import NotificationArea from "@containers/notification";
-import CreatorArea from "@containers/creator/layout-02";
-import { normalizedData } from "@utils/methods";
-
-// Demo data
-import homepageData from "../../../data/homepages/home-07.json";
-import sellerData from "../../../data/sellers.json";
-import productData from "../../../data/products-02.json";
-import collectionsData from "../../../data/collections.json";
-import notificationData from "../../../data/notifications.json";
+import TVChartAdvanceContainer from "@components/TVChartAdvanceContainer";
 
 
 const defaultWidgetProps = {
@@ -54,14 +34,6 @@ const TVChartContainer = dynamic(
     () => import("@components/TVChartContainer").then((mod) => mod.TVChartContainer),
     { ssr: false }
   );
-
-//   export async function getStaticProps() {
-//     return {
-//         props: {
-//             className: "home-sticky-pin sidebar-header position-relative",
-//         },
-//     };
-// }
   
   const CollectionDetails = ({ collection }) => {
     console.log(collection, "collection");
@@ -100,64 +72,46 @@ const TVChartContainer = dynamic(
   
           fetchNfts();
       }, [collection?.title]);
-
-      const content = normalizedData(homepageData?.content || []);
-    const liveAuctionData = productData
-        .filter(
-            (prod) =>
-                prod?.auction_date && new Date() <= new Date(prod?.auction_date)
-        )
-        .sort(
-            (a, b) =>
-                Number(new Date(b.published_at)) -
-                Number(new Date(a.published_at))
-        )
-        .slice(0, 4);
   
       return (
-        <Wrapper>
-        <SEO pageTitle="Home Seven" />
-        <Header />
-        <Header2 collection={collection} />
-        <main id="main-content" className="rn-nft-mid-wrapper" style={{ marginBottom: "200px" }}>
-            <div className="list-item-1">
-                <TopBarArea collection={collection} />
-                <HeroArea data={content["hero-section"]} />
-            </div>
-            {/* <LiveExploreArea
-                id="list-item-2"
-                data={{
-                    ...content["live-explore-section"],
-                    products: liveAuctionData,
-                }}
-            /> */}
-            {/* <CollectionArea
-                space={2}
-                data={{
-                    ...content["collection-section"],
-                    collections: collectionsData.slice(0, 4),
-                }}
-            /> */}
-            <ExploreProductArea
-                id="list-item-3"
-                space={2}
-                data={{
-                    ...content["explore-product-section"],
-                    products: productData,
-                    nfts: nfts,
-                }}
-            />
-        </main>
-        <div className="header-right-fixed">
-            <NotificationArea data={{ notifications: notificationData }} />
-            <CreatorArea
-                data={{
-                    creators: sellerData,
-                }}
-            />
-        </div>
-        <Footer />
-    </Wrapper>
+          <Wrapper>
+              <Head>
+                  <title>{collection?.title} - Launchpad Details</title>
+              </Head>
+              <SEO pageTitle="Launchpad Details" />
+              <Header />
+              <main id="main-content" style={{ marginBottom: "100px" }}>
+                  <CollectionDetailHeader
+                      pageTitle={collection?.title}
+                      data={collection?.data?.data}
+                  />
+                  <Script
+                      src="/static/datafeeds/udf/dist/bundle.js"
+                      strategy="lazyOnload"
+                      onReady={() => {
+                          setIsScriptReady(true);
+                      }}
+                  />
+                  {isScriptReady && <TVChartContainer {...defaultWidgetProps} />}
+                  {loading ? (
+                      <p>Loading NFTs...</p>
+                  ) : error ? (
+                      <p>Error: {error}</p>
+                  ) : (
+                      <NftListArea
+                          data={{
+                              section_title: {
+                                  title: "Explore NFTs",
+                              },
+                              products: nfts,
+                          }}
+                          collection={collection}
+                          collectionName={collection.title}
+                      />
+                  )}
+              </main>
+              <Footer />
+          </Wrapper>
       );
   };
 
@@ -181,7 +135,7 @@ export async function getStaticProps({ params }) {
     return {
         props: {
             collection,
-            className: "home-sticky-pin sidebar-header position-relative",
+            className: "template-color-1",
         },
         revalidate: 60,
     };

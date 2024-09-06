@@ -429,6 +429,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import styles from "./ApplyLaunchpadWrapper.module.css";
 import collectionService from "src/services/collection.service";
 import { MutatingDots } from "react-loader-spinner";
+import singleNftService from "src/services/singleNft.service";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -542,19 +543,40 @@ const CreateSingleNFTArea = ({ onBack }) => {
                 account: account?.user?.walletAddress,
                 royaltyAccount: data.royaltyAddress,
                 nftName: data.name,
-                nftUri: selectedImage, // Now using the uploaded image URL
+                nftUri: data.uri,
                 nftPolicy: policy.join(" "),
                 nftPrice: parseFloat(data.price),
                 royaltyPerc: parseFloat(data.royaltyPercentage) / 100,
                 walletName: account?.user?.walletName,
             };
 
-            const result = await launchSingleNft(nftData).unwrap();
-            if (result.result.status === "success") {
-                toast.success("NFT launched successfully!");
-                reset();
-                setSelectedImage(null);
-                setPolicy([]);
+            const resultData = await launchSingleNft(nftData).unwrap();
+            console.log("Launch Single NFT Result:", resultData);
+            if (resultData.result.status === "success") {
+                const body = {
+                    user: account?.user?._id,
+                    nftName: data.name,
+                    creator: account?.user?._id,
+                    creatorName: account?.user?.name,
+                    tokenImage: selectedImage,
+                    nftPrice: parseFloat(data.price),
+                    policies: policy,
+                    uri: data.uri,
+                    royaltyAccount: data.royaltyAddress,
+                    royaltyPercentage: parseFloat(data.royaltyPercentage),
+                };
+                console.log("Create Single NFT Body:", body);
+
+                const result = await singleNftService.createSingleNFT(body);
+                console.log("Create Single NFT Result:", result);
+                if (result.status === "success") {
+                    toast.success("NFT launched successfully!");
+                    reset();
+                    setSelectedImage(null);
+                    setPolicy([]);
+                } else {
+                    toast.error("Failed to launch NFT. Please try again.");
+                }
             } else {
                 toast.error("Failed to launch NFT. Please try again.");
             }
@@ -729,6 +751,7 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                             )}
                                         </div>
                                     </div>
+
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
@@ -756,6 +779,33 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                         errors.royaltyAddress
                                                             .message
                                                     }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="uri"
+                                                className="form-label"
+                                            >
+                                                URI
+                                            </label>
+                                            <input
+                                                id="uri"
+                                                type="text"
+                                                placeholder="e. g. `https://www.example.com`"
+                                                {...register("uri", {
+                                                    required: "URI is required",
+                                                    pattern: {
+                                                        message:
+                                                            "Please enter a valid URI",
+                                                    },
+                                                })}
+                                            />
+                                            {errors.uri && (
+                                                <ErrorText>
+                                                    {errors.uri.message}
                                                 </ErrorText>
                                             )}
                                         </div>
