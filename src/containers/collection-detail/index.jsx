@@ -687,7 +687,7 @@ import { useCollectionTypeFunctions } from "src/hooks/useCollectionTypeFunctions
 import { useCreateNFTMutation } from "src/services/nft.service";
 import Loader from "@components/loader";
 
-const CollectionDetailsArea = ({ space, className, product }) => {
+const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
     const [isLoading, setIsLoading] = useState(false);
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
@@ -823,6 +823,9 @@ const CollectionDetailsArea = ({ space, className, product }) => {
                 console.log("Create NFT Response:", responsenft);
 
                 if (updateResponse?.data?.status === "success") {
+                    await refresh();
+                    setSwap(false);
+                    setReservePrice(0);
                     Swal.fire({
                         icon: "success",
                         title: "Success!",

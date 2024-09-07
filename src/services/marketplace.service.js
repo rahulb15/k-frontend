@@ -313,7 +313,7 @@ const signFunction = async (signedTx) => {
 const coin_fungible = {
     refSpec: [{ name: "fungible-v2" }],
     refName: { name: "coin" },
-  };
+};
 
 const getFee = async () => {
     const pactCode = `(free.mp-ng-003.get-fee "mint")`;
@@ -718,7 +718,6 @@ export const marketplaceApi = createApi({
                 };
                 const formattedSyncTkns = `[${syncTkns}]`;
 
-
                 const pactCode = `(free.mp-ng-003.bulk-sync-with-ng ${JSON.stringify(
                     syncColName
                 )} ${formattedSyncTkns} )`;
@@ -995,7 +994,9 @@ export const marketplaceApi = createApi({
 
                 let mintFee = price * fee;
 
-                const pactCode = `(free.mp-ng-003.reserve-single-nft ${JSON.stringify(account)} (read-keyset "guard") ${JSON.stringify(nftName)})`;
+                const pactCode = `(free.mp-ng-003.reserve-single-nft ${JSON.stringify(
+                    account
+                )} (read-keyset "guard") ${JSON.stringify(nftName)})`;
 
                 let txn;
                 if (account === creator) {
@@ -1004,7 +1005,12 @@ export const marketplaceApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("coin.TRANSFER", account, admin, mintFee),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                admin,
+                                mintFee
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -1021,8 +1027,18 @@ export const marketplaceApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("coin.TRANSFER", account, admin, mintFee),
-                            withCapability("coin.TRANSFER", account, creator, price),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                admin,
+                                mintFee
+                            ),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                creator,
+                                price
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -1058,6 +1074,315 @@ export const marketplaceApi = createApi({
                 }
             },
         }),
+        denyCollection: builder.mutation({
+            async queryFn(args) {
+                const { launchCollectionName, walletName } = args;
+                const account = admin;
+                const publicKey = account.slice(2, account.length);
+                const guard = { keys: [publicKey], pred: "keys-all" };
+
+                const pactCode = `(free.mp-ng-003.deny-collection ${JSON.stringify(
+                    launchCollectionName
+                )})`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .addData("guard", guard)
+                    .addSigner(publicKey, (withCapability) => [
+                        withCapability("coin.GAS"),
+                        withCapability("free.mp-ng-003.IS_ADMIN"),
+                    ])
+                    .setMeta({
+                        creationTime: creationTime(),
+                        sender: account,
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        ttl: 28800,
+                    })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                try {
+                    const localResponse = await client.local(txn, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (localResponse.result.status === "success") {
+                        let signedTx;
+                        if (walletName === "Ecko Wallet") {
+                            signedTx = await eckoWallet(txn);
+                        } else if (walletName === "Chainweaver") {
+                            signedTx = await signWithChainweaver(txn);
+                        }
+                        const response = await signFunction(signedTx);
+                        return { data: response };
+                    } else {
+                        return { error: localResponse.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        getTokenDetails: builder.query({
+            async queryFn(args) {
+                const { account } = args;
+                const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(
+                    account
+                )})`;
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({
+                        creationTime: creationTime(),
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        ttl: 28800,
+                    })
+                    .createTransaction();
+
+                try {
+                    const response = await client.local(transaction, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (response.result.status === "success") {
+                        return { data: response.result.data };
+                    } else {
+                        return { error: response.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        saleFunction: builder.mutation({
+            async queryFn(args) {
+                const { saleOwner, saleTokenId, buyNowPrice, walletName } =
+                    args;
+                const publicKey = saleOwner.slice(2, saleOwner.length);
+                const guard = { keys: [publicKey], pred: "keys-all" };
+
+                const pactCode = `(n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.ledger.sale ${JSON.stringify(
+                    saleTokenId
+                )} ${JSON.stringify(
+                    saleOwner
+                )} 1.0 n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.ledger.NO-TIMEOUT )`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({
+                        creationTime: creationTime(),
+                        sender: saleOwner,
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        ttl: 28800,
+                    })
+                    .addData("marmalade_marketplace", {
+                        "marketplace-name": "Kryptomerch.io",
+                        "marketplace-account": admin,
+                        "shared-rate": 0.0,
+                        currency: coin_fungible,
+                        "min-fee": 1.0,
+                        "fee-rate": 0.1,
+                        "max-fee": 10000.0,
+                    })
+                    .addData("marmalade_sale", {
+                        sale_type: "fixed",
+                        currency: coin_fungible,
+                    })
+                    .addData("marmalade_fixed_quote", {
+                        recipient: saleOwner,
+                        price: buyNowPrice,
+                    })
+                    .addSigner(publicKey, (withCapability) => [
+                        withCapability("coin.GAS"),
+                    ])
+                    .addSigner(publicKey, (withCapability) => [
+                        withCapability(
+                            "n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.ledger.OFFER",
+                            saleTokenId,
+                            saleOwner,
+                            1.0
+                        ),
+                    ])
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                try {
+                    const localResponse = await client.local(txn, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (localResponse.result.status === "success") {
+                        let signedTx;
+                        if (walletName === "Ecko Wallet") {
+                            signedTx = await eckoWallet(txn);
+                        } else if (walletName === "Chainweaver") {
+                            signedTx = await signWithChainweaver(txn);
+                        }
+                        const response = await signFunction(signedTx);
+                        return { data: response };
+                    } else {
+                        return { error: localResponse.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        getMinter: builder.query({
+            async queryFn(args) {
+                const { nftName } = args;
+                const pactCode = `(free.mp-ng-003.get-single-nft-minter ${JSON.stringify(
+                    nftName
+                )})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                try {
+                    const response = await client.local(transaction, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (response.result.status === "success") {
+                        return { data: response.result.data };
+                    } else {
+                        return { error: response.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        syncSingleNft: builder.mutation({
+            async queryFn(args) {
+                const { singleNftName, account, walletName } = args;
+                console.log(args);
+                const royaltyAddress = await getRoyaltyAddressSingleNft(
+                    singleNftName
+                );
+                const royaltyPerc = await getRoyaltyPercSingleNft(
+                    singleNftName
+                );
+
+                const publicKey = account.slice(2, account.length);
+                const publicKeyRoyalty = royaltyAddress.slice(
+                    2,
+                    royaltyAddress.length
+                );
+
+                const guard = { keys: [publicKey], pred: "keys-all" };
+                const guardRoyalty = {
+                    keys: [publicKeyRoyalty],
+                    pred: "keys-all",
+                };
+
+                const pactCode = `(free.mp-ng-003.mint-single-nft ${JSON.stringify(
+                    account
+                )} (read-keyset "guard") ${JSON.stringify(singleNftName)} )`;
+
+                let txnBuilder = Pact.builder
+                    .execution(pactCode)
+                    .addData("guard", guard)
+                    .addSigner(publicKey)
+                    .setMeta({
+                        creationTime: creationTime(),
+                        sender: account,
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        ttl: 28800,
+                    })
+                    .setNetworkId(NETWORKID);
+
+                if (
+                    royaltyAddress !== "" &&
+                    royaltyPerc > 0.0 &&
+                    royaltyPerc <= 1.0
+                ) {
+                    txnBuilder = txnBuilder.addData("marmalade_royalty", {
+                        creator_acct: royaltyAddress,
+                        creator_guard: guardRoyalty,
+                        rate: royaltyPerc,
+                        currencies: [coin_fungible],
+                    });
+                }
+
+                const txn = txnBuilder.createTransaction();
+
+                try {
+                    const localResponse = await client.local(txn, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (localResponse.result.status === "success") {
+                        let signedTx;
+                        if (walletName === "Ecko Wallet") {
+                            signedTx = await eckoWallet(txn);
+                        } else if (walletName === "Chainweaver") {
+                            signedTx = await signWithChainweaver(txn);
+                        }
+                        const response = await signFunction(signedTx);
+                        return { data: response };
+                    } else {
+                        return { error: localResponse.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        getTokensOwned: builder.query({
+            async queryFn(args) {
+                const { account } = args;
+                const pactCode = `(free.mp-ng-003.get-all-tokens-by-account ${JSON.stringify(
+                    account
+                )})`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({
+                        creationTime: creationTime(),
+                        sender: account,
+                        gasLimit: 150000,
+                        chainId: CHAIN_ID,
+                        ttl: 28800,
+                    })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                try {
+                    const localResponse = await client.local(txn, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (localResponse.result.status === "success") {
+                        let tokens = localResponse.result.data.flatMap(
+                            (item) => item.tokens
+                        );
+                        return { data: tokens };
+                    } else {
+                        return { error: localResponse.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
     }),
 });
 
@@ -1074,6 +1399,12 @@ export const {
     useAirdropNftMutation,
     useLaunchSingleNftMutation,
     useReserveSingleNftMutation,
+    useDenyCollectionMutation,
+    useGetTokenDetailsQuery,
+    useSaleFunctionMutation,
+    useGetMinterQuery,
+    useSyncSingleNftMutation,
+    useGetTokensOwnedQuery,
 } = marketplaceApi;
 
 // Helper functions
@@ -1194,7 +1525,9 @@ const collectionId = async (colNameId) => {
 };
 
 const checkSingleNftPrice = async (nftName) => {
-    const pactCode = `(free.mp-ng-003.get-single-nft-mint-price ${JSON.stringify(nftName)})`;
+    const pactCode = `(free.mp-ng-003.get-single-nft-mint-price ${JSON.stringify(
+        nftName
+    )})`;
 
     const transaction = Pact.builder
         .execution(pactCode)
@@ -1215,7 +1548,9 @@ const checkSingleNftPrice = async (nftName) => {
 };
 
 const getSingleNftCreator = async (nftName) => {
-    const pactCode = `(free.mp-ng-003.get-single-nft-creator ${JSON.stringify(nftName)})`;
+    const pactCode = `(free.mp-ng-003.get-single-nft-creator ${JSON.stringify(
+        nftName
+    )})`;
 
     const transaction = Pact.builder
         .execution(pactCode)
@@ -1232,5 +1567,51 @@ const getSingleNftCreator = async (nftName) => {
         return response.result.data;
     } else {
         throw new Error("Failed to get single NFT creator");
+    }
+};
+
+const getRoyaltyAddressSingleNft = async (nftName) => {
+    const pactCode = `(free.mp-ng-003.get-royalty-info-single-nft ${JSON.stringify(
+        nftName
+    )} "account")`;
+
+    const transaction = Pact.builder
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
+
+    const response = await client.local(transaction, {
+        preflight: false,
+        signatureVerification: false,
+    });
+
+    if (response.result.status === "success") {
+        return response.result.data;
+    } else {
+        throw new Error("Failed to get single NFT royalty address");
+    }
+};
+
+const getRoyaltyPercSingleNft = async (nftName) => {
+    const pactCode = `(free.mp-ng-003.get-royalty-info-single-nft ${JSON.stringify(
+        nftName
+    )} "rate")`;
+
+    const transaction = Pact.builder
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
+
+    const response = await client.local(transaction, {
+        preflight: false,
+        signatureVerification: false,
+    });
+
+    if (response.result.status === "success") {
+        return response.result.data;
+    } else {
+        throw new Error("Failed to get single NFT royalty percentage");
     }
 };

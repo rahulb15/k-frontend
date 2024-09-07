@@ -223,6 +223,7 @@ const AuthorProfileArea = ({ className }) => {
     const [createdCollections, setCreatedCollections] = useState([]);
     const [createdSingleNfts, setCreatedSingleNfts] = useState([]);
     const account = useAccountContext();
+    const [refresh, setRefresh] = useState(false);
 
     const {
         data: ownedNftsData,
@@ -331,6 +332,7 @@ const AuthorProfileArea = ({ className }) => {
         pageNo,
         limit,
         search,
+        refresh,
     ]);
 
     const handleTabChange = (tab) => {
@@ -433,6 +435,7 @@ const AuthorProfileArea = ({ className }) => {
                                         authors={nft.creatorName}
                                         bitCount={nft.likes}
                                         data={nft}
+                                        refetchOwnedNfts={refetchOwnedNfts}
                                     />
                                 </div>
                             ))}
@@ -523,6 +526,9 @@ const AuthorProfileArea = ({ className }) => {
                                             authors={nft.creatorName}
                                             bitCount={nft.likes}
                                             data={nft}
+                                            refresh={refresh}
+                                            setRefresh={setRefresh}
+                                            refetchOwnedNfts={refetchOwnedNfts}
                                         />
                                     </div>
                                 ))}

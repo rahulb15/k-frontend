@@ -14,7 +14,11 @@ import { useReserveSingleNftMutation } from "src/services/marketplace.service";
 import { useAccountContext } from "src/contexts";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import { useCreateNFTMutation } from "src/services/nft.service";
+import {
+    useCreateNFTMutation,
+    useCreateOneNFTMutation,
+} from "src/services/nft.service";
+import singleNftService from "src/services/singleNft.service";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
@@ -39,6 +43,9 @@ const SingleNft = ({
     data,
     disableShareDropdown,
     sellable,
+    refresh,
+    setRefresh,
+    refetchOwnedNfts,
 }) => {
     console.log("🚀 ~ file: index.jsx ~ line 13 ~ Nft ~ data", data);
     const [showBidModal, setShowBidModal] = useState(false);
@@ -46,7 +53,7 @@ const SingleNft = ({
     const [isHovered, setIsHovered] = useState(false);
     const [reserveSingleNft, { isLoading }] = useReserveSingleNftMutation();
     const account = useAccountContext();
-    const [createNFT] = useCreateNFTMutation();
+    const [createOneNFT] = useCreateOneNFTMutation();
 
     const handleOpenModal = () => {
         setShowDetailModal(true);
@@ -58,7 +65,6 @@ const SingleNft = ({
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
     };
-    console.log("imge", image);
     const handleReserveNft = async () => {
         try {
             const nftData = {
@@ -66,76 +72,61 @@ const SingleNft = ({
                 nftName: data.nftName,
                 walletName: account?.user?.walletName,
             };
-            console.log(
-                "🚀 ~ file: index.jsx ~ line 39 ~ handleReserveNft ~ nftData",
-                nftData
-            );
 
             const resultData = await reserveSingleNft(nftData).unwrap();
-            console.log(
-                "🚀 ~ file: index.jsx ~ line 39 ~ handleReserveNft ~ resultData",
-                resultData
-            );
 
-            // {
-            //     gas: 1097,
-            //     result: { status: 'success', data: 'Write succeeded' },
-            //     reqKey: 'SJtZXxtuug7dnloX5TkN9fzdS5-BI9XL5OI-zYKl4DU',
-            //     logs: 'TodNkD-rXQBptEfWl_XvuVQeqA5SG7EZ8u7wkhZAd2I',
-            //     events: [
-            //       {
-            //         params: [
-            //           'k:a9ca12cafb238d8789899de1b2303783435f201b1dfb9e2fdca28fa3b7077fcf', 'k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616',
-            //           0.00001097
-            //         ],
-            //         name: 'TRANSFER',
-            //         module: { namespace: null, name: 'coin' },
-            //         moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-            //       },
-            //       {
-            //         params: [
-            //           'k:a9ca12cafb238d8789899de1b2303783435f201b1dfb9e2fdca28fa3b7077fcf', 'k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf',
-            //           0.003
-            //         ],
-            //         name: 'TRANSFER',
-            //         module: { namespace: null, name: 'coin' },
-            //         moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-            //       }
-            //     ],
-            //     metaData: {
-            //       blockTime: 1725534781873617,
-            //       prevBlockHash: 'fcmPyJhEy34ci80pILwrg_IlyjAo9P--uFptenDP4FM',
-            //       blockHash: 'qHB6m90DB5j9xFB5a9k5sHc0dJkDX8umwp6TrDxbFos',
-            //       blockHeight: 4618152
-            //     },
-            //     continuation: null,
-            //     txId: 6438101
-            //   }
             if (resultData.result.status === "success") {
                 toast.success("NFT reserved successfully");
-                const random = Math.floor(Math.random() * 1000000);
-                console.log("Random Number:", random);
+                const bodyupdate = {
+                    _id: data._id,
+                    isMinted: true,
+                };
+                const responseupdate = await singleNftService.updateSingleNFT(
+                    bodyupdate
+                );
+                console.log(
+                    "🚀 ~ file: index.jsx ~ line 77 ~ handleReserveNft ~ responseupdate",
+                    responseupdate
+                );
+                setRefresh(!refresh);
+                if (responseupdate?.status === "success") {
+                    const uniqueHash = Date.now();
+                    const uniqueCollectionName = `${data.nftName}_${uniqueHash}`;
+                    const body = {
+                        collectionName: uniqueCollectionName,
+                        // nftPrice: data.nftPrice,
+                        // unlockable: data.unlockable,
+                        creatorName: data.creatorName,
+                        // duration: data.duration,
+                        isPlatform: true,
+                        // uri: data.uri,
+                        // policies: data.policies,
+                        // royaltyAccount: data.royaltyAccount,
+                        // royaltyPercentage: data.royaltyPercentage,
+                    };
+                    const responsenft = await createOneNFT(body);
 
-                // const data = {
-                //     collectionName: "SingleNFT",
-                //     reserveTknAmount: random,
-                // };
-                // const responsenft = await createNFT(data);
-                // console.log("Create NFT Response:", responsenft);
-
-                // if (updateResponse?.data?.status === "success") {
-                //     Swal.fire({
-                //         icon: "success",
-                //         title: "Success!",
-                //         text: "Minted successfully!",
-                //     });
-                // } else {
-                //     Swal.fire({
-                //         icon: "error",
-                //         title: "Oops...",
-                //         text: "Failed to mint!",
-                //     });
-                // }
+                    if (responsenft?.data?.status === "success") {
+                        refetchOwnedNfts();
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success!",
+                            text: "Minted successfully!",
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Failed to mint!",
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Failed to mint!",
+                    });
+                }
             } else {
                 toast.error("Failed to reserve NFT");
             }
@@ -246,7 +237,7 @@ const SingleNft = ({
                             <></>
                         )}
                     </div>
-                    {data?.isRevealed === false && (
+                    {data?.isMinted === false && (
                         <Button onClick={handleReserveNft} size="small">
                             {isLoading ? "Reserving..." : "Mint"}
                         </Button>

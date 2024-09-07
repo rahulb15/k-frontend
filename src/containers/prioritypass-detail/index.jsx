@@ -18,14 +18,12 @@ import {
     useCheckPresaleMutation,
     useCheckPresalePriceMutation,
 } from "src/services/launchpad.service";
-import {
-    useReserveTokensMutation,
-} from "src/services/prioritypass.service";
+import { useReserveTokensMutation } from "src/services/prioritypass.service";
 import axios from "axios";
 import Loader from "@components/loader";
 import { useCreateNFTMutation } from "src/services/nft.service";
 
-const PriorityPassDetailsArea = ({ space, className, product }) => {
+const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
     console.log("Product:", product);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -95,13 +93,11 @@ const PriorityPassDetailsArea = ({ space, className, product }) => {
         const checkStages = async () => {
             setIsLoading(true);
             try {
-              
-                    setStageInfo({
-                        currentStage: "Public",
-                        isLive: true,
-                        price: product.mintPrice,
-                    });
-                
+                setStageInfo({
+                    currentStage: "Public",
+                    isLive: true,
+                    price: product.mintPrice,
+                });
             } catch (error) {
                 console.error("Error checking stages:", error);
                 Swal.fire({
@@ -212,6 +208,9 @@ const PriorityPassDetailsArea = ({ space, className, product }) => {
                 console.log("Create NyncColName,FT Response:", responsenft);
 
                 if (updateResponse?.data?.status === "success") {
+                    await refresh();
+                    setSwap(false);
+                    setReservePrice(0);
                     Swal.fire({
                         icon: "success",
                         title: "Success!",

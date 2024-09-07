@@ -32,7 +32,7 @@ const signFunction = async (signedTx) => {
 };
 
 const getPassPrice = async () => {
-    const pactCode = `(free.kmpasstest002.get-mint-price )`;
+    const pactCode = `(free.kmpasstest003.get-mint-price )`;
     const transaction = Pact.builder
         .execution(pactCode)
         .setMeta({ chainId: "1" })
@@ -79,7 +79,7 @@ export const priorityPassApi = createApi({
                 const account = creator;
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
-                const pactCode = `(free.kmpasstest002.create-collection 
+                const pactCode = `(free.kmpasstest003.create-collection 
                             ${totalSupply}
                             (read-keyset 'guard)
                             ${JSON.stringify(account)}
@@ -93,8 +93,8 @@ export const priorityPassApi = createApi({
                     .addData("guard", guard)
                     .addSigner(account, (withCapability) => [
                         withCapability("coin.GAS"),
-                        withCapability("free.kmpasstest002.IS_ADMIN"),
-                        withCapability("free.kmpasstest002.CREATE-COLLECTION"),
+                        withCapability("free.kmpasstest003.IS_ADMIN"),
+                        withCapability("free.kmpasstest003.CREATE-COLLECTION"),
                     ])
                     .setMeta({
                         creationTime: creationTime(),
@@ -150,14 +150,14 @@ export const priorityPassApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                const pactCode = `(free.kmpasstest002.get-unrevealed-tokens-for-collection)`;
+                const pactCode = `(free.kmpasstest003.get-unrevealed-tokens-for-collection)`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
                     .addData("guard", guard)
                     .addSigner(publicKey, (withCapability) => [
                         withCapability("coin.GAS"),
-                        withCapability("free.kmpasstest002.IS_ADMIN"),
+                        withCapability("free.kmpasstest003.IS_ADMIN"),
                     ])
                     .setMeta({
                         creationTime: creationTime(),
@@ -202,7 +202,7 @@ export const priorityPassApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                const pactCode = `(free.kmpasstest002.reserve-token ${JSON.stringify(
+                const pactCode = `(free.kmpasstest003.reserve-token ${JSON.stringify(
                     account
                 )} ${amount})`;
 
@@ -215,7 +215,7 @@ export const priorityPassApi = createApi({
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
                             withCapability(
-                                "free.kmpasstest002.MINT-PASS",
+                                "free.kmpasstest003.MINT-PASS",
                                 account
                             ),
                         ])
@@ -236,7 +236,7 @@ export const priorityPassApi = createApi({
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
                             withCapability(
-                                "free.kmpasstest002.MINT-PASS",
+                                "free.kmpasstest003.MINT-PASS",
                                 account
                             ),
                             withCapability(

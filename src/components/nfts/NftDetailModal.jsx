@@ -824,7 +824,7 @@ function AuctionPriceNet({sale_data, token_id, fee})
 }
 
 
-const NftDetailModal = ({ open, onClose, data }) => {
+const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
     console.log("data", data);
     const accountuser = useAccountContext();
     const [showFullImage, setShowFullImage] = useState(false);

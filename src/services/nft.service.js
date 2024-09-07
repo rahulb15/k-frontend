@@ -22,6 +22,13 @@ export const nftApi = createApi({
                 body,
             }),
         }),
+        createOneNFT: builder.mutation({
+            query: (body) => ({
+                url: "/nft/createOne",
+                method: "POST",
+                body,
+            }),
+        }),
         getNFTById: builder.query({
             query: (id) => `/nft/${id}`,
         }),
@@ -50,6 +57,7 @@ export const nftApi = createApi({
 
 export const {
     useCreateNFTMutation,
+    useCreateOneNFTMutation,
     useGetNFTByIdQuery,
     useGetNFTsQuery,
     useGetOwnedNftsQuery,
