@@ -24,6 +24,7 @@ import HeroArea from "@containers/hero/layout-07";
 import LiveExploreArea from "@containers/live-explore/layout-03";
 import CollectionArea from "@containers/collection/layout-02";
 import ExploreProductArea from "@containers/explore-product/layout-03";
+import ExploreNftArea from "@containers/collection-detail-nft-list";
 import ServiceArea from "@containers/services/layout-02";
 import NotificationArea from "@containers/notification";
 import CreatorArea from "@containers/creator/layout-02";
@@ -54,14 +55,6 @@ const TVChartContainer = dynamic(
     () => import("@components/TVChartContainer").then((mod) => mod.TVChartContainer),
     { ssr: false }
   );
-
-//   export async function getStaticProps() {
-//     return {
-//         props: {
-//             className: "home-sticky-pin sidebar-header position-relative",
-//         },
-//     };
-// }
   
   const CollectionDetails = ({ collection }) => {
     console.log(collection, "collection");
@@ -138,7 +131,7 @@ const TVChartContainer = dynamic(
                     collections: collectionsData.slice(0, 4),
                 }}
             /> */}
-            <ExploreProductArea
+            <ExploreNftArea
                 id="list-item-3"
                 space={2}
                 data={{

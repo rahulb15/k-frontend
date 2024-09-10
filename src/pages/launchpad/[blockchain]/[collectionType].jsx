@@ -210,6 +210,7 @@ const CollectionDetails = ({ initialCollection }) => {
                         pageNo,
                         limit
                     );
+                    console.log(response.data, "response");
                     setNfts(response.data.nfts);
                     setLoading(false);
                 } catch (err) {

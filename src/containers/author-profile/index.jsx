@@ -236,6 +236,8 @@ const AuthorProfileArea = ({ className }) => {
         search,
     });
 
+    
+
     const [getTokenDetailsMutation] = useGetTokenDetailsMutation();
 
     useEffect(() => {
@@ -423,19 +425,10 @@ const AuthorProfileArea = ({ className }) => {
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                                 >
                                     <Nft
-                                        overlay
-                                        placeBid
-                                        title={nft.collectionName}
-                                        slug={nft.tokenId}
-                                        latestBid={nft.nftPrice}
-                                        price={nft.nftPrice}
-                                        likeCount={nft.likes}
-                                        auction_date={nft.createdAt}
-                                        image={nft.tokenImage}
-                                        authors={nft.creatorName}
-                                        bitCount={nft.likes}
                                         data={nft}
+                                        nft={nft}
                                         refetchOwnedNfts={refetchOwnedNfts}
+                                        disableShareDropdown={true}
                                     />
                                 </div>
                             ))}

@@ -76,3 +76,51 @@ const TVChartContainer = (props) => {
 };
 
 export default dynamic(() => Promise.resolve(TVChartContainer), { ssr: false });
+
+
+
+// // File: components/TVChartContainer.js
+// import { useEffect, useRef } from 'react';
+// import customDatafeed from '../CustomDatafeed';
+// import APITest from './api-test';
+
+// const TVChartContainer = (props) => {
+//   const chartContainerRef = useRef(null);
+
+//   useEffect(() => {
+//     const loadTradingViewWidget = async () => {
+//       const TradingView = await import('../../../public/static/charting_library');
+      
+//       const widgetOptions = {
+//         symbol: props.symbol || 'CUSTOM:ASSET',
+//         datafeed: customDatafeed, // Use the imported instance directly
+//         interval: props.interval || 'D',
+//         container: chartContainerRef.current,
+//         library_path: props.library_path || '/static/charting_library/',
+//         locale: props.locale || 'en',
+//         disabled_features: ['use_localstorage_for_settings'],
+//         enabled_features: ['study_templates'],
+//         charts_storage_url: props.charts_storage_url,
+//         charts_storage_api_version: props.charts_storage_api_version,
+//         client_id: props.client_id,
+//         user_id: props.user_id,
+//         fullscreen: props.fullscreen,
+//         autosize: props.autosize,
+//       };
+
+//       const tvWidget = new TradingView.widget(widgetOptions);
+
+//       return () => {
+//         if (tvWidget !== null) {
+//           tvWidget.remove();
+//         }
+//       };
+//     };
+
+//     loadTradingViewWidget();
+//   }, [props]);
+
+//   return (<><div ref={chartContainerRef} className="TVChartContainer" /> <APITest /></>);
+// };
+
+// export default TVChartContainer;

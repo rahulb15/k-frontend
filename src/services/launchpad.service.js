@@ -601,7 +601,7 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { account } = args;
                 console.log("account", account);
-                const pactCode = `(free.lptest001.get-token-details ${JSON.stringify(account)})`;
+                const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(account)})`;
                 const transaction = Pact.builder
                     .execution(pactCode)
                     .setMeta({

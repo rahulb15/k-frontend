@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Box, Typography, Button, ClickAwayListener } from "@mui/material";
-import { removeSingleIteams,removeToCart, emptycartIteam } from "src/features/cartSlice";
+import { removeSingleItem, removeFromCart, emptyCart } from "src/features/cartSlice";
 import { useState } from "react";
 import { FaShoppingCart, FaTrash } from "react-icons/fa";
 import Scrollbars from "react-custom-scrollbars-2";
@@ -14,11 +14,11 @@ const CartDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleRemoveItem = (item) => {
-        dispatch(removeToCart(item._id));
+        dispatch(removeFromCart(item._id));
     };
 
     const handleCheckout = () => {
-        dispatch(emptycartIteam());
+        dispatch(emptyCart());
         setIsOpen(false);
     };
 

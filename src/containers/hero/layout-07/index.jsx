@@ -8,9 +8,7 @@ import { ImageType } from "@utils/types";
 import TVChartAdvanceContainer from '@components/TVChartAdvanceContainer';
 
 const TVChartContainer = dynamic(
-  () => import("@components/TVChartAdvanceContainer").then((mod) => mod.TVChartContainer),
-  { ssr: false }
-);
+  () => import("@components/TVChartAdvanceContainer"),{ ssr: false });
 
 const defaultWidgetProps = {
   symbol: "AAPL",
@@ -36,6 +34,7 @@ const HeroArea = ({ data }) => {
     <div className="rn-banner-area">
       {/* <div className="slider-style-7" data-black-overlay="8"> */}
       {isClient && <TVChartAdvanceContainer {...defaultWidgetProps} />}
+      {/* {isClient && <TVChartContainer />} */}
       {/* </div> */}
     </div>
   );

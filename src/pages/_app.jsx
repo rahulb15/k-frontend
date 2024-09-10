@@ -27,6 +27,7 @@ import "../assets/css/swal.css";
 import "../assets/scss/style.scss";
 import "../components/search/styles.css";
 import "../containers/wallet-button/styles.css";
+import '../styles/sweetalert2-custom.css'
 const AppContent = ({ Component, pageProps }) => {
     const { data, isLoading, pactError, setInstance, validate, cleanImageCache } = useSettings();
     useEffect(() => {

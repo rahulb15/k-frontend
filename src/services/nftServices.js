@@ -76,12 +76,33 @@ const onSale = async (data) => {
     }
 };
 
-// getAllmarketPlaceNfts ?pageNo=1&limit=10&search= post api
-const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
+const getAllmarketPlaceNfts = async (filters, pageNo, limit) => {
     try {
         const token = localStorage.getItem("token");
+        
+        // Construct query parameters
+        const params = new URLSearchParams({
+            pageNo: pageNo.toString(),
+            limit: limit.toString(),
+        });
+
+        // Add search parameter if it exists
+        if (filters.search) {
+            params.append('search', filters.search);
+        }
+
+        // Prepare the data object for the POST request
+        const data = {};
+
+        // Add onSale and onAuction properties based on the filter
+        if (filters.filter === 'Fixed Sale') {
+            data.onSale = true;
+        } else if (filters.filter === 'Live Auction') {
+            data.onAuction = true;
+        }
+
         const response = await axios.post(
-            `${url}nft/marketPlaceNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            `${url}nft/marketPlaceNfts?${params.toString()}`,
             data,
             {
                 headers: {
@@ -94,7 +115,6 @@ const getAllmarketPlaceNfts = async (data, pageNo, limit, search) => {
         return error.response.data;
     }
 };
-
 // //   getOwnSaleNfts: builder.query({
 //     query: ({ pageNo, limit, search }) => ({
 //         url: "/nft/ownSaleNfts",
