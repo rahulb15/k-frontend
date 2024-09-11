@@ -84,6 +84,28 @@ html[data-theme="light"] body {
     .color-body,
     .tab-button-one .nav-tabs button,
     ol li,
+    .nft-modal-box {
+        background-color: #ffffff;
+    }
+    .nft-modal-header {
+        background-color: #f5f5f5;
+        border-bottom: 1px solid #f3fb3f;
+
+    }
+    .nft-modal-footer {
+        background-color: #f5f5f5;
+        border-top: 1px solid #f3fb3f;
+    }
+
+    .fullscreen-icon {
+    
+        color: black;
+    }
+    
+    .close-icon {
+       
+        color: black;
+    }
     .rn-pd-bd-wrapper .top-seller-inner-one h6.name-title,
     .rn-pd-sm-property-wrapper h6.pd-property-title,
     .rn-pd-sm-slick .pd-slide-wrapper .rn-pd-slick .rn-pd-pric span,

@@ -859,35 +859,184 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     return (
         <>
             <Modal open={open} onClose={onClose}>
-                <Box className={`nft-modal-box ${isFullScreen ? 'nft-fullscreen' : ''}`}>
-                    <Box className="nft-modal-header">
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: isFullScreen ? 0 : "50%",
+                        left: isFullScreen ? 0 : "50%",
+                        transform: isFullScreen
+                            ? "none"
+                            : "translate(-50%, -50%)",
+                        width: isFullScreen ? "100%" : "95%",
+                        height: isFullScreen ? "100%" : "auto",
+                        maxWidth: isFullScreen ? "none" : 1200,
+                        bgcolor: "#ffffff",
+                        boxShadow: 24,
+                        borderRadius: isFullScreen ? 0 : 2,
+                        maxHeight: isFullScreen ? "100vh" : "90vh",
+                        display: "flex",
+                        flexDirection: "column",
+                        transition: "all 0.3s ease-in-out",
+                    }}
+                >
+                    {/* Header */}
+                    <Box
+                        sx={{
+                            p: 2,
+                            borderBottom: "1px solid #e0e0e0",
+                            backgroundColor: "#f5f5f5",
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 1000,
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
+                        >
                             <div>
-                                <Typography variant="h4">{data.collectionName}</Typography>
-                                <Typography variant="h5" color="textSecondary">
+                                <Typography variant="h4">
+                                    {data.collectionName}
+                                </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
                                     Token ID: {data.tokenId}
                                 </Typography>
-                                <Typography variant="h5" color="textSecondary">
+                                {/* rarityRank */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
                                     Rarity Rank: {data?.rarityRank}
                                 </Typography>
-                                <Typography variant="h5" color="textSecondary">
+                                {/* rarityScore */}
+                                <Typography
+                                    variant="subtitle1"
+                                    color="textSecondary"
+                                >
                                     Rarity Score: {data?.rarityScore}
                                 </Typography>
                             </div>
-                            <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", marginRight: 8 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginRight: 8,
+                                }}
+                            >
                                 <IconButton onClick={toggleFullScreen}>
-                                    {isFullScreen ? <FullscreenExitIcon className="fullscreen-icon"
-                                    /> : <FullscreenIcon className="fullscreen-icon" />}
+                                    {isFullScreen ? (
+                                        <FullscreenExitIcon />
+                                    ) : (
+                                        <FullscreenIcon />
+                                    )}
                                 </IconButton>
                                 <IconButton onClick={onClose}>
-                                    <CloseIcon className="close-icon" />
+                                    <CloseIcon />
                                 </IconButton>
                             </Box>
                         </div>
                     </Box>
-                    <Box className="nft-modal-content">
-                        <Box className="nft-image-section">
-                            <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+
+                    {/* Content */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: { xs: "column", md: "row" },
+                            flex: 1,
+                            p: 2,
+                            overflowY: "auto",
+                        }}
+                    >
+                        {/* Image Section */}
+                        <Box
+                            sx={{
+                                flexBasis: { xs: "100%", md: "40%" },
+                                position: "relative",
+                                overflow: "hidden",
+                            }}
+                        >
+                            <ReactCardFlip
+                                isFlipped={isFlipped}
+                                flipDirection="horizontal"
+                            >
+                                {/* Front side - Image */}
+                                {/* <Box
+                                    id="nft-image-container"
+                                    sx={{
+                                        position: "relative",
+                                        cursor: "pointer",
+                                    }}
+                                    onClick={handleImageClick}
+                                >
+                                    <Image
+                                        src={data.tokenImage}
+                                        alt={data.collectionName}
+                                        layout="responsive"
+                                        width={500}
+                                        height={500}
+                                        objectFit="contain"
+                                    />
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            top: 0,
+                                            right: 0,
+                                            padding: 1,
+                                            backgroundColor:
+                                                "rgba(0, 0, 0, 0.5)",
+                                            borderBottomLeftRadius: 8,
+                                            transition: "opacity 0.3s",
+                                            opacity: 1,
+                                            "&:hover": {
+                                                opacity: 1,
+                                            },
+                                        }}
+                                    >
+                                        <IconButton
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleImageClick();
+                                            }}
+                                            sx={{ color: "white" }}
+                                        >
+                                            <FullscreenIcon />
+                                        </IconButton>
+                                    </Box>
+
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 0,
+                                            right: 0,
+                                            padding: 1,
+                                            backgroundColor:
+                                                "rgba(0, 0, 0, 0.5)",
+                                            borderTopLeftRadius: 8,
+                                            transition: "opacity 0.3s",
+                                            opacity: 1,
+                                            "&:hover": {
+                                                opacity: 1,
+                                            },
+                                        }}
+                                    >
+                                        <IconButton
+                                            sx={{ color: "white" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsFlipped(!isFlipped);
+                                            }}
+                                        >
+                                            <QrCodeIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Box> */}
+
                                 <NftImageContainer
                                     data={data}
                                     handleImageClick={handleImageClick}
@@ -895,28 +1044,88 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     isFlipped={isFlipped}
                                 />
 
-                                <Box className="qr-code-container">
-                                    <Box className="qr-code-box">
+                                {/* Back side - QR Code */}
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        backgroundColor: "white",
+                                        // height: `${qrSize.height}px`,
+                                        // width: `${qrSize.width}px`,
+                                        position: "relative",
+                                        padding: "20px",
+                                        boxSizing: "border-box",
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            backgroundColor: "#f5f5f5",
+                                            borderRadius: "12px",
+                                            padding: "10px",
+                                            border: "1px solid #bee32c",
+                                            boxShadow:
+                                                "0px 4px 20px rgba(0, 0, 0, 0.05)",
+                                            position: "relative",
+                                        }}
+                                    >
                                         <QRCode
+                                        // NEXT_PUBLIC_FRONTEND_URL
+                                            // value={`http://localhost:3000/nft/${data.tokenId}`}
                                             value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/nft/${data.tokenId}`}
-                                            size={Math.min(qrSize.width, qrSize.height) * 0.7}
+                                            size={
+                                                Math.min(
+                                                    qrSize.width,
+                                                    qrSize.height
+                                                ) * 0.7
+                                            }
                                             qrStyle="dots"
                                             eyeRadius={8}
                                             quietZone={10}
                                             bgColor="#f5f5f5"
                                             fgColor="#333333"
-                                            logoImage="/assets-images/prodOwner2.png"
+                                            logoImage="/assets-images/prodOwner2.png" // Replace with your logo path
                                             logoWidth={60}
                                             logoHeight={60}
                                             logoPadding={5}
                                             logoPaddingStyle="circle"
                                         />
                                     </Box>
-                                    <Typography variant="caption" className="qr-caption">
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            marginTop: "10px",
+                                            textAlign: "center",
+                                            color: "#666",
+                                            maxWidth: "80%",
+                                        }}
+                                    >
                                         Scan to view NFT details
                                     </Typography>
-                                    <Box className="flip-button-container">
-                                        <IconButton onClick={() => setIsFlipped(!isFlipped)}>
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 0,
+                                            right: 0,
+                                            padding: 1,
+                                            backgroundColor:
+                                                "rgba(0, 0, 0, 0.5)",
+                                            borderTopLeftRadius: 8,
+                                            transition: "opacity 0.3s",
+                                            opacity: 1,
+                                            "&:hover": {
+                                                opacity: 1,
+                                            },
+                                        }}
+                                    >
+                                        <IconButton
+                                            sx={{ color: "white" }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setIsFlipped(!isFlipped);
+                                            }}
+                                        >
                                             <FlipCameraAndroidIcon />
                                         </IconButton>
                                     </Box>
@@ -924,31 +1133,154 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                             </ReactCardFlip>
                         </Box>
 
-                        <Box className="nft-details-section">
-                            <Box className="nft-basic-info">
-                                <Box>
-                                    <Typography variant="h5" paragraph className="nft-creator-info">
-                                        Creator: <strong>{data?.creator.slice(0, 10)}...{data?.creator.slice(-10)}</strong>
-                                        <ContentCopyIcon onClick={() => navigator.clipboard.writeText(data?.creator)} />
+                        {/* Details Section */}
+                        <Box
+                            sx={{
+                                flexBasis: { xs: "100%", md: "60%" },
+                                pl: { md: 4 },
+                                mt: { xs: 2, md: 0 },
+                            }}
+                        >
+                            {/* Basic Info */}
+                            <Box
+                                sx={{
+                                    position: "relative",
+                                    mb: 4,
+                                }}
+                            >
+                                <Box sx={{ pr: 2, maxWidth: "70%" }}>
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{
+                                            fontSize: 16,
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        Creator:{" "}
+                                        {/* k:c9078691a009cca61b9ba2f34a4ebff59b166c87a6b638eb9ed514109ecd43c8 */}
+                                        <strong style={{ marginLeft: "5px" }}>
+                                            {data?.creator.slice(0, 10)}...
+                                            {data?.creator.slice(-10)}
+                                        </strong>
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginLeft: "5px",
+                                                marginTop: "10px",
+                                            }}
+                                        >
+                                            <ContentCopyIcon
+                                                onClick={() =>
+                                                    navigator.clipboard.writeText(
+                                                        data?.creator
+                                                    )
+                                                }
+                                            />
+                                        </div>
                                     </Typography>
-                                    <Typography variant="h5" paragraph>
-                                        Collection Type: <strong>{data.collectionType}</strong>
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{ fontSize: 16 }}
+                                    >
+                                        Collection Type:{" "}
+                                        <strong>{data.collectionType}</strong>
                                     </Typography>
-                                    <Typography variant="h5" paragraph>
-                                        Price: <strong>{data.nftPrice > 0 ? `${data.nftPrice}` : "Not for sale"}</strong>
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{ fontSize: 16 }}
+                                    >
+                                        Price:{" "}
+                                        <strong>
+                                            {data.nftPrice > 0
+                                                ? `${data.nftPrice} KDA`
+                                                : "Not for sale"}
+                                        </strong>
                                     </Typography>
                                 </Box>
 
-                                <Box className="nft-action-buttons">
-                                    {data?.onMarketplace && data?.onSale && (
-                                        <Button className="nft-buy-button" onClick={handleBuy}>
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        top: 0,
+                                        right: 0,
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: 1,
+                                        maxWidth: "50%",
+                                        justifyContent: "flex-end",
+                                    }}
+                                >
+                                    {/* {sellable && !showSaleOptions && (
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            sx={{
+                                                fontSize: 16,
+                                                padding: "8px 16px",
+                                                borderRadius: 2,
+                                                fontWeight: "bold",
+                                                textTransform: "none",
+                                                width: "200px",
+                                            }}
+                                            onClick={handleSell}
+                                        >
+                                            Sell
+                                        </Button>
+                                    )} */}
+
+                                    {data?.onMarketplace && data?.onSale ? (
+                                        <Button
+                                            variant="contained"
+                                            style={{
+                                                fontSize: 16,
+                                                padding: "8px 16px",
+                                                borderRadius: 2,
+                                                fontWeight: "bold",
+                                                textTransform: "none",
+                                                width: "150px",
+                                                color: "black",
+                                                backgroundColor: "#fae944",
+                                                borderRadius: "5px",
+                                                border: "1px solid #fae944",
+                                                boxShadow:
+                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                            }}
+                                            onClick={handleBuy}
+                                        >
                                             Buy Now
                                         </Button>
+                                    ) : (
+                                        <></>
                                     )}
-                                    {data?.onMarketplace && data?.onAuction && (
-                                        <Button className="nft-bid-button" onClick={handleBid}>
+
+                                    {data?.onMarketplace && data?.onAuction ? (
+                                        <Button
+                                            variant="contained"
+                                            style={{
+                                                fontSize: 16,
+                                                padding: "8px 16px",
+                                                borderRadius: 2,
+                                                fontWeight: "bold",
+                                                textTransform: "none",
+                                                width: "150px",
+                                                color: "black",
+                                                backgroundColor: "#fae944",
+                                                borderRadius: "5px",
+                                                border: "1px solid #fae944",
+                                                boxShadow:
+                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                            }}
+                                            onClick={handleBid}
+                                        >
                                             Bid
                                         </Button>
+                                    ) : (
+                                        <></>
                                     )}
                                 </Box>
                             </Box>
@@ -960,25 +1292,81 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                     >
-                                        {data?.attributes && data?.attributes?.length > 0 && (
-                                            <Box mt={4}>
-                                                <Typography variant="h5" gutterBottom>
-                                                    Attributes
-                                                </Typography>
-                                                <Box className="nft-attributes-grid">
-                                                    {data.attributes.map((attr, index) => (
-                                                        <Box key={index} className="nft-attribute-box">
-                                                            <Typography variant="subtitle2" className="attribute-type">
-                                                                {attr.trait_type}
-                                                            </Typography>
-                                                            <Typography variant="body1" className="attribute-value">
-                                                                {attr.value}
-                                                            </Typography>
-                                                        </Box>
-                                                    ))}
+                                        {/* Attributes Section */}
+                                        {data?.attributes &&
+                                            data?.attributes?.length > 0 && (
+                                                <Box mt={4}>
+                                                    <Typography
+                                                        variant="h5"
+                                                        gutterBottom
+                                                    >
+                                                        Attributes
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            display: "grid",
+                                                            gridTemplateColumns:
+                                                                "repeat(auto-fill, minmax(150px, 1fr))",
+                                                            gap: 2,
+                                                            mt: 2,
+                                                        }}
+                                                    >
+                                                        {data.attributes.map(
+                                                            (attr, index) => (
+                                                                <Box
+                                                                    key={index}
+                                                                    sx={{
+                                                                        backgroundColor:
+                                                                            "#f0f0f0",
+                                                                        borderRadius: 2,
+                                                                        padding: 2,
+                                                                        textAlign:
+                                                                            "center",
+                                                                        transition:
+                                                                            "transform 0.2s, box-shadow 0.2s",
+                                                                        "&:hover":
+                                                                            {
+                                                                                transform:
+                                                                                    "translateY(-5px)",
+                                                                                boxShadow:
+                                                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                                            },
+                                                                    }}
+                                                                >
+                                                                    <Typography
+                                                                        variant="subtitle2"
+                                                                        sx={{
+                                                                            color: "#666",
+                                                                            textTransform:
+                                                                                "uppercase",
+                                                                            fontSize:
+                                                                                "0.75rem",
+                                                                            marginBottom: 1,
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            attr.trait_type
+                                                                        }
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="body1"
+                                                                        sx={{
+                                                                            fontWeight:
+                                                                                "bold",
+                                                                            fontSize:
+                                                                                "1rem",
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            attr.value
+                                                                        }
+                                                                    </Typography>
+                                                                </Box>
+                                                            )
+                                                        )}
+                                                    </Box>
                                                 </Box>
-                                            </Box>
-                                        )}
+                                            )}
 
                                         {/* Properties Section */}
                                         {data.properties &&
@@ -1216,7 +1604,17 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                         </Box>
                     </Box>
 
-                    <Box className="nft-modal-footer">
+                    {/* Footer */}
+                    <Box
+                        sx={{
+                            p: 2,
+                            borderTop: "1px solid #e0e0e0",
+                            backgroundColor: "#f5f5f5",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            flexWrap: "wrap",
+                        }}
+                    >
                         <Typography variant="body1" paragraph>
                             Listed: <strong>{321}</strong>
                         </Typography>
@@ -1230,7 +1628,10 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                             24H Volume: <strong>{6}</strong>
                         </Typography>
                         <Typography variant="body1" paragraph>
-                            Social Media Links: <strong><a href={"https://google.com"}>Twitter</a></strong>
+                            Social Media Links:{" "}
+                            <strong>
+                                <a href={"https://google.com"}>Twitter</a>
+                            </strong>
                         </Typography>
                     </Box>
                 </Box>
