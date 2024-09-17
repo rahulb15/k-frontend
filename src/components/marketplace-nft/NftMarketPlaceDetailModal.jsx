@@ -66,6 +66,14 @@ import QrCodeIcon from "@mui/icons-material/QrCode";
 import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NftImageContainer from "./NftImageContainer";
+import NftPriceHistoryGraph from "@components/NftPriceHistoryGraph";
+const mockPriceData = [
+    { date: '2023-01', price: 100 },
+    { date: '2023-02', price: 120 },
+    { date: '2023-03', price: 110 },
+    { date: '2023-04', price: 130 },
+    { date: '2023-05', price: 150 },
+  ];
 const StyledDateTimePicker = styled(DateTimePicker)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
         borderRadius: theme.shape.borderRadius,
@@ -460,7 +468,7 @@ function DecimalPriceField({ name, onChange, disabled, error }) {
         </div>
     );
 }
-const PRICE_DIGITS = 2
+const PRICE_DIGITS = 2;
 
 function NoTimeoutDatePicker({ value, onChange, disabled }) {
     const is_no_timeout = value == null;
@@ -651,11 +659,32 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     const [qrSize, setQrSize] = useState({ width: 500, height: 500 });
     const [buyTrx, setBuyTrx] = useState(null);
     const [bidAmount, setBidAmount] = useState("");
+    const [bidError, setBidError] = useState("");
     const [amountError, setAmountError] = useState(false);
     const [bidTrx, setBidTrx] = useState(null);
     const [showBuyOptions, setShowBuyOptions] = useState(false);
     const [showBidOptions, setShowBidOptions] = useState(false);
+    const handleBidAmountChange = (event) => {
+        const value = event.target.value;
+        setBidAmount(value);
+        validateBidAmount(value);
+    };
 
+    const validateBidAmount = (value) => {
+        if (!value) {
+            setBidError("Bid amount is required");
+            return;
+        }
+
+        const minBid = auction_next_price(sales[0]);
+        if (Decimal(value).lt(minBid)) {
+            setBidError(`Bid must be at least ${minBid}`);
+        } else {
+            setBidError("");
+        }
+    };
+
+    console.log("bidError", bidError);
     // Add this useEffect to dynamically set the QR size based on the image container
     useEffect(() => {
         const updateQRSize = () => {
@@ -811,25 +840,80 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
         setBuyTrx(transaction);
     };
 
-    const handleBid = () => {
-        console.log("Bid");
-        setSaleType("Auction-Sale");
-        setShowBidOptions(true);
-        //   const transaction = useMemo(() => (sale && userData?.account && userData?.guard && userData?.key && !amountError)
-        //   // eslint-disable-next-line react-hooks/exhaustive-deps
-        //                                   ?make_bid_trx(sale, userData.account, userData.guard, Decimal(bidAmount)):null, [sale?.['sale-id'], userData, bidAmount, amountError])
+    console.log("bidAmount", bidAmount);
 
-        const transaction =
-            sales[0] && userData?.account && userData?.guard && userData?.key
-                ? make_bid_trx(
-                      sales[0],
-                      userData.account,
-                      userData.guard,
-                      Decimal(4)
-                  )
-                : null;
-        console.log("transaction", transaction);
-        setBidTrx(transaction);
+    // const handleBid = () => {
+    //     console.log("Bid");
+    //     setSaleType("Auction-Sale");
+    //     setShowBidOptions(true);
+    //     //   const transaction = useMemo(() => (sale && userData?.account && userData?.guard && userData?.key && !amountError)
+    //     //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    //     //                                   ?make_bid_trx(sale, userData.account, userData.guard, Decimal(bidAmount)):null, [sale?.['sale-id'], userData, bidAmount, amountError])
+
+    //     const transaction =
+    //         sales[0] && userData?.account && userData?.guard && userData?.key
+    //             ? make_bid_trx(
+    //                   sales[0],
+    //                   userData.account,
+    //                   userData.guard,
+    //                   Decimal(parseInt(bidAmount || 0))
+    //               )
+    //             : null;
+    //     console.log("transaction", transaction);
+    //     setBidTrx(transaction);
+    // };
+
+    // useEffect(() => {
+    //     if (bidAmount) {
+    //         console.log("Bid");
+    //     setSaleType("Auction-Sale");
+    //     // setShowBidOptions(true);
+    //     //   const transaction = useMemo(() => (sale && userData?.account && userData?.guard && userData?.key && !amountError)
+    //     //   // eslint-disable-next-line react-hooks/exhaustive-deps
+    //     //                                   ?make_bid_trx(sale, userData.account, userData.guard, Decimal(bidAmount)):null, [sale?.['sale-id'], userData, bidAmount, amountError])
+
+    //     const transaction =
+    //         sales[0] && userData?.account && userData?.guard && userData?.key
+    //             ? make_bid_trx(
+    //                   sales[0],
+    //                   userData.account,
+    //                   userData.guard,
+    //                   Decimal(parseInt(bidAmount || 0))
+    //               )
+    //             : null;
+    //     console.log("transaction", transaction);
+    //     setBidTrx(transaction);
+    //     }
+    // }, [bidAmount]);
+
+    useEffect(() => {
+        if (bidAmount && !bidError) {
+            setSaleType("Auction-Sale");
+            const transaction =
+                sales[0] &&
+                userData?.account &&
+                userData?.guard &&
+                userData?.key
+                    ? make_bid_trx(
+                          sales[0],
+                          userData.account,
+                          userData.guard,
+                          Decimal(bidAmount)
+                      )
+                    : null;
+            console.log("transaction", transaction);
+            setBidTrx(transaction);
+        } else {
+            setBidTrx(null);
+        }
+    }, [bidAmount, bidError]);
+
+    const handleBid = () => {
+        console.log("Bid", bidAmount, !bidError);
+        if (!bidError) {
+            console.log("Bid", bidAmount);
+            setShowBidOptions(true);
+        }
     };
 
     function EndOfSaleMessage({ sale }) {
@@ -859,11 +943,22 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
     return (
         <>
             <Modal open={open} onClose={onClose}>
-                <Box className={`nft-modal-box ${isFullScreen ? 'nft-fullscreen' : ''}`}>
+                <Box
+                    className={`nft-modal-box ${
+                        isFullScreen ? "nft-fullscreen" : ""
+                    }`}
+                >
                     <Box className="nft-modal-header">
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
+                        >
                             <div>
-                                <Typography variant="h4">{data.collectionName}</Typography>
+                                <Typography variant="h4">
+                                    {data.collectionName}
+                                </Typography>
                                 <Typography variant="h5" color="textSecondary">
                                     Token ID: {data.tokenId}
                                 </Typography>
@@ -874,10 +969,20 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     Rarity Score: {data?.rarityScore}
                                 </Typography>
                             </div>
-                            <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", marginRight: 8 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    marginRight: 8,
+                                }}
+                            >
                                 <IconButton onClick={toggleFullScreen}>
-                                    {isFullScreen ? <FullscreenExitIcon className="fullscreen-icon"
-                                    /> : <FullscreenIcon className="fullscreen-icon" />}
+                                    {isFullScreen ? (
+                                        <FullscreenExitIcon className="fullscreen-icon" />
+                                    ) : (
+                                        <FullscreenIcon className="fullscreen-icon" />
+                                    )}
                                 </IconButton>
                                 <IconButton onClick={onClose}>
                                     <CloseIcon className="close-icon" />
@@ -886,8 +991,11 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                         </div>
                     </Box>
                     <Box className="nft-modal-content">
-                        <Box className="nft-image-section">
-                            <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
+                    <Box className="nft-image-and-graph-section">
+                    <ReactCardFlip
+                                isFlipped={isFlipped}
+                                flipDirection="horizontal"
+                            >
                                 <NftImageContainer
                                     data={data}
                                     handleImageClick={handleImageClick}
@@ -899,7 +1007,12 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     <Box className="qr-code-box">
                                         <QRCode
                                             value={`${process.env.NEXT_PUBLIC_FRONTEND_URL}/nft/${data.tokenId}`}
-                                            size={Math.min(qrSize.width, qrSize.height) * 0.7}
+                                            size={
+                                                Math.min(
+                                                    qrSize.width,
+                                                    qrSize.height
+                                                ) * 0.7
+                                            }
                                             qrStyle="dots"
                                             eyeRadius={8}
                                             quietZone={10}
@@ -912,41 +1025,78 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             logoPaddingStyle="circle"
                                         />
                                     </Box>
-                                    <Typography variant="caption" className="qr-caption">
+                                    <Typography
+                                        variant="caption"
+                                        className="qr-caption"
+                                    >
                                         Scan to view NFT details
                                     </Typography>
                                     <Box className="flip-button-container">
-                                        <IconButton onClick={() => setIsFlipped(!isFlipped)}>
+                                        <IconButton
+                                            onClick={() =>
+                                                setIsFlipped(!isFlipped)
+                                            }
+                                        >
                                             <FlipCameraAndroidIcon />
                                         </IconButton>
                                     </Box>
                                 </Box>
                             </ReactCardFlip>
+                            <Box className="nft-graph-section">
+              <Typography variant="h5" gutterBottom>Price History</Typography>
+              <NftPriceHistoryGraph data={mockPriceData} />
+            </Box>
                         </Box>
 
                         <Box className="nft-details-section">
                             <Box className="nft-basic-info">
                                 <Box>
-                                    <Typography variant="h5" paragraph className="nft-creator-info">
-                                        Creator: <strong>{data?.creator.slice(0, 10)}...{data?.creator.slice(-10)}</strong>
-                                        <ContentCopyIcon onClick={() => navigator.clipboard.writeText(data?.creator)} />
+                                    <Typography
+                                        variant="h5"
+                                        paragraph
+                                        className="nft-creator-info"
+                                    >
+                                        Creator:{" "}
+                                        <strong>
+                                            {data?.creator.slice(0, 10)}...
+                                            {data?.creator.slice(-10)}
+                                        </strong>
+                                        <ContentCopyIcon
+                                            onClick={() =>
+                                                navigator.clipboard.writeText(
+                                                    data?.creator
+                                                )
+                                            }
+                                        />
                                     </Typography>
                                     <Typography variant="h5" paragraph>
-                                        Collection Type: <strong>{data.collectionType}</strong>
+                                        Collection Type:{" "}
+                                        <strong>{data.collectionType}</strong>
                                     </Typography>
                                     <Typography variant="h5" paragraph>
-                                        Price: <strong>{data.nftPrice > 0 ? `${data.nftPrice}` : "Not for sale"}</strong>
+                                        Price:{" "}
+                                        <strong>
+                                            {data.nftPrice > 0
+                                                ? `${data.nftPrice}`
+                                                : "Not for sale"}
+                                        </strong>
                                     </Typography>
                                 </Box>
 
                                 <Box className="nft-action-buttons">
                                     {data?.onMarketplace && data?.onSale && (
-                                        <Button className="nft-buy-button" onClick={handleBuy}>
+                                        <Button
+                                            className="nft-buy-button"
+                                            onClick={handleBuy}
+                                        >
                                             Buy Now
                                         </Button>
                                     )}
                                     {data?.onMarketplace && data?.onAuction && (
-                                        <Button className="nft-bid-button" onClick={handleBid}>
+                                        <Button
+                                            className="nft-bid-button"
+                                            onClick={handleBid}
+                                        >
                                             Bid
                                         </Button>
                                     )}
@@ -955,31 +1105,31 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
 
                             <AnimatePresence>
                                 {!showSaleOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                    >
-                                        {data?.attributes && data?.attributes?.length > 0 && (
-                                            <Box mt={4}>
-                                                <Typography variant="h5" gutterBottom>
-                                                    Attributes
-                                                </Typography>
-                                                <Box className="nft-attributes-grid">
-                                                    {data.attributes.map((attr, index) => (
-                                                        <Box key={index} className="nft-attribute-box">
-                                                            <Typography variant="subtitle2" className="attribute-type">
-                                                                {attr.trait_type}
-                                                            </Typography>
-                                                            <Typography variant="body1" className="attribute-value">
-                                                                {attr.value}
-                                                            </Typography>
-                                                        </Box>
-                                                    ))}
-                                                </Box>
-                                            </Box>
-                                        )}
-
+                                     <motion.div
+                                     initial={{ opacity: 0 }}
+                                     animate={{ opacity: 1 }}
+                                     exit={{ opacity: 0 }}
+                                     className="animate-fade-in"
+                                 >
+                                     {data?.attributes && data?.attributes?.length > 0 && (
+                                         <Box mt={4}>
+                                             <Typography variant="h5" gutterBottom>
+                                                 Attributes
+                                             </Typography>
+                                             <Box className="nft-attributes-grid">
+                                                 {data.attributes.map((attr, index) => (
+                                                     <Box key={index} className="nft-attribute-box">
+                                                         <Typography variant="subtitle2" className="attribute-type">
+                                                             {attr.trait_type}
+                                                         </Typography>
+                                                         <Typography variant="body1" className="attribute-value">
+                                                             {attr.value}
+                                                         </Typography>
+                                                     </Box>
+                                                 ))}
+                                             </Box>
+                                         </Box>
+                                     )}
                                         {/* Properties Section */}
                                         {data.properties &&
                                             data.properties.length > 0 && (
@@ -987,6 +1137,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                     <Typography
                                                         variant="h5"
                                                         gutterBottom
+                                                        className="nft-properties-heading"
                                                     >
                                                         Properties
                                                     </Typography>
@@ -1040,124 +1191,66 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                     <>
                                         {showBidOptions && (
                                             <>
-                                                <label>
-                                                    Bid amount: Min:{" "}
-                                                    <Price
-                                                        value={auction_next_price(
-                                                            sales[0]
-                                                        )}
-                                                        curr={
-                                                            sales[0]?.currency
+                                                <div className="nft-bid-options">
+                                                    <label className="nft-bid-label">
+                                                        Bid amount: Min:{" "}
+                                                        <span className="nft-price-display">
+                                                            <Price
+                                                                value={auction_next_price(
+                                                                    sales[0]
+                                                                )}
+                                                                curr={
+                                                                    sales[0]
+                                                                        ?.currency
+                                                                }
+                                                            />{" "}
+                                                        </span>
+                                                    </label>
+                                                    <input
+                                                        type="number"
+                                                        className={`nft-bid-input ${
+                                                            amountError
+                                                                ? "error"
+                                                                : ""
+                                                        }`}
+                                                        value={bidAmount}
+                                                        onChange={(e) =>
+                                                            handleBidAmountChange(
+                                                                e
+                                                            )
                                                         }
-                                                    />{" "}
-                                                </label>
+                                                    />
+                                                    {amountError && (
+                                                        <p className="nft-bid-error-message">
+                                                            Invalid bid amount
+                                                        </p>
+                                                    )}
+                                                    {bidError && (
+                                                        <p className="nft-bid-error-message">
+                                                            {bidError}
+                                                        </p>
+                                                    )}
+                                                    
 
-                                                <EndOfSaleMessage
-                                                    sale={sales[0]}
-                                                />
+                                                    <div
+                                                        className={`nft-end-of-sale-message ${
+                                                            sales[0].timeout >
+                                                            warning_date()
+                                                                ? "warning"
+                                                                : "info"
+                                                        }`}
+                                                    >
+                                                        <EndOfSaleMessage
+                                                            sale={sales[0]}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </>
                                         )}
                                     </>
                                 )}
 
-                                {/* {showSaleOptions && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                    >
-                                        <Typography variant="h5" gutterBottom>
-                                            Choose Sale Type
-                                        </Typography>
-                                    
-
-                                        <Box
-                                            sx={{
-                                                display: "grid",
-                                                gridTemplateColumns:
-                                                    "repeat(auto-fill, minmax(150px, 1fr))",
-                                                gap: 2,
-                                                mt: 2,
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    backgroundColor: "#f0f0f0",
-                                                    borderRadius: 2,
-                                                    padding: 2,
-                                                    textAlign: "center",
-                                                    transition:
-                                                        "transform 0.2s, box-shadow 0.2s",
-                                                    "&:hover": {
-                                                        transform:
-                                                            "translateY(-5px)",
-                                                        boxShadow:
-                                                            "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                                    },
-                                                    cursor: "pointer",
-                                                }}
-                                                onClick={() => {
-                                                    const event = {
-                                                        target: {
-                                                            value: "Fixed-Sale",
-                                                        },
-                                                    };
-                                                    handleSaleTypeChange(event);
-                                                }}
-                                            >
-                                                <Typography
-                                                    variant="body1"
-                                                    sx={{
-                                                        fontWeight: "bold",
-                                                        fontSize: "1rem",
-                                                    }}
-                                                >
-                                                    {"Fixed Price"}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-
-                                 
-                                        {console.log(
-                                            "selectedSale",
-                                            selectedSale
-                                        )}
-                                        {saleType === "Fixed-Sale" &&
-                                            selectedSale == "FIXED-SALE" && (
-                                                <>
-                                                    {has_balance && (
-                                                        <>
-                                                            <FixedPriceSellForm
-                                                                onChange={
-                                                                    setDataNew
-                                                                }
-                                                            />
-                                                            <FixedPriceNet
-                                                                sale_data={
-                                                                    dataNew
-                                                                }
-                                                                token_id={
-                                                                    data?.tokenId
-                                                                }
-                                                                fee={fee}
-                                                            />
-                                                        </>
-                                                    )}
-
-                                                    <TransactionManager
-                                                        trx={trx}
-                                                        wallet={
-                                                            userData?.wallet
-                                                        }
-                                                        onConfirm={clear_sales}
-                                                        data={data}
-                                                        onClose={onClose}
-                                                    />
-                                                </>
-                                            )}
-
-                                    </motion.div>
-                                )} */}
+                              
 
                                 {showBuyOptions && (
                                     <motion.div
@@ -1172,7 +1265,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                             trx={buyTrx}
                                             wallet={userData?.wallet}
                                             data={data}
-                                            //   type={type}
+                                              type="buy"
                                             onClose={onClose}
                                             onConfirm={() => {
                                                 clear_sales();
@@ -1192,15 +1285,16 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                     >
-                                        <Typography variant="h5" gutterBottom>
+                                        <Typography variant="h5" gutterBottom style={{marginTop: "20px"}} className="nft-bid-title">
                                             Confirm Bid
                                         </Typography>
                                         <TransactionManager
                                             trx={bidTrx}
                                             wallet={userData?.wallet}
                                             data={data}
-                                            //   type={type}
+                                              type="bid"
                                             onClose={onClose}
+                                            amount={bidAmount}
                                             onConfirm={() => {
                                                 clear_sales();
                                                 // Additional actions after successful cancellation
@@ -1230,7 +1324,10 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                             24H Volume: <strong>{6}</strong>
                         </Typography>
                         <Typography variant="body1" paragraph>
-                            Social Media Links: <strong><a href={"https://google.com"}>Twitter</a></strong>
+                            Social Media Links:{" "}
+                            <strong>
+                                <a href={"https://google.com"}>Twitter</a>
+                            </strong>
                         </Typography>
                     </Box>
                 </Box>

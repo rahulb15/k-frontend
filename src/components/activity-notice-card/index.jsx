@@ -4,18 +4,16 @@ import Anchor from "@ui/anchor";
 import Button from "@ui/button";
 
 const NoticeCard = ({ title, description, path, date, time, image }) => (
-    console.log("NoticeCard", title, description, path, date, time, image),
     <div className="single-notice">
         {image?.src && (
             <div className="thumbnail">
                 <Anchor path={path}>
-                    {/* <Image
+                    <Image
                         src={image.src}
                         alt={image?.alt || "Nft_Profile"}
                         width={44}
                         height={44}
-                    /> */}
-                    <img src={image.src} alt={image?.alt || "Nft_Profile"} width={44} height={44} />
+                    />
                 </Anchor>
             </div>
         )}

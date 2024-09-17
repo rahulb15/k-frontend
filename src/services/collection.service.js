@@ -284,6 +284,12 @@ const getCreatedCollections = async ( page, limit, search) => {
 }
 
 
+// const response = await axios.post('http://localhost:5000/api/v1/activity/candle', {
+//     collectionId: "66d493c972bd90c63f2e1ca0",
+//     interval: intervalMap[resolution] || '1d'
+//   });
+
+
 
 
 

@@ -276,16 +276,235 @@ function TransactionResult({ result, hash }) {
         );
 }
 
-function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
-    console.log(type);
+// function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
+//     console.log(type);
+//     const [localResult, setLocalResult] = useState(null);
+//     console.log(localResult);
+//     const [localError, setLocalError] = useState(false);
+//     const [sigSendError, setSigSendError] = useState(null);
+//     const [successful, setSuccessful] = useState(false);
+//     const [statusResult, setStatusResult] = useState(null);
+//     console.log(statusResult);
+//     // { status: 'success', data: true }
+//     const [signatureModal, setSignatureModal] = useState(false);
+
+//     const signer = SIGNERS[wallet];
+
+//     useEffect(() => {
+//         setLocalResult(null);
+//         setLocalError(false);
+//         setSigSendError(null);
+//         setSuccessful(false);
+//         setStatusResult(null);
+//         if (trx) {
+//             m_client
+//                 .local_check(trx, {
+//                     signatureVerification: false,
+//                     preflight: false,
+//                 })
+//                 .then((e) => {
+//                     setLocalResult(e);
+//                     setLocalError(false);
+//                 })
+//                 .catch((e) => {
+//                     setLocalResult(e);
+//                     setLocalError(true);
+//                 });
+//         }
+//     }, [trx]);
+
+//     const do_sign = async () => {
+//         console.log("do_sign", data);
+//         //  try{
+//         //   const body = {
+//         //     tokenId: data.tokenId,
+//         //   }
+//         //   console.log(body);
+
+//         //   const response = await nftServices.onSale(body);
+//         //   console.log(response);
+//         //   if(response.status === 'success'){
+//         //     onClose();
+//         //     Swal.fire({
+//         //       title: 'Success',
+//         //       text: 'NFT is on sale',
+//         //       icon: 'success',
+//         //       confirmButtonText: 'Ok'
+//         //     });
+//         //   }else{
+//         //     console.log(response);
+//         //     Swal.fire({
+//         //       title: 'Error',
+//         //       text: 'NFT is not on sale',
+//         //       icon: 'error',
+//         //       confirmButtonText: 'Ok'
+//         //     });
+//         //   }
+
+//         //  } catch(e){
+//         //     console.log(e);
+//         //   }
+
+//         // return;
+//         setSigSendError(null);
+//         setSuccessful(false);
+//         if (signer) {
+//             signer(trx)
+//                 .then((t) => m_client.preflight(t))
+//                 .then((t) => m_client.send(t))
+//                 .then(() => {
+//                     setSuccessful(true), setStatusResult(null);
+//                     return m_client.status(trx).then(async (x) => {
+//                         const body = {
+//                             tokenId: data.tokenId,
+//                         };
+//                         console.log(body);
+//                         if(type === 'sell'){
+//                             const response = await nftServices.onSale(body);
+//                             console.log(response);
+//                             if (response.status === "success") {
+//                                 onClose();
+//                                 Swal.fire({
+//                                     title: "Success",
+//                                     text: "NFT is on sale",
+//                                     icon: "success",
+//                                     confirmButtonText: "Ok",
+//                                 });
+//                             } else {
+//                                 console.log(response);
+//                                 Swal.fire({
+//                                     title: "Error",
+//                                     text: "NFT is not on sale",
+//                                     icon: "error",
+//                                     confirmButtonText: "Ok",
+//                                 });
+//                             }
+//                         }
+//                         if(type === 'close'){
+//                             // const response = await nftServices.closeSale(body);
+//                             // console.log(response);
+//                             // if (response.status === "success") {
+//                                 onClose();
+//                                 Swal.fire({
+//                                     title: "Success",
+//                                     text: "NFT is not on sale",
+//                                     icon: "success",
+//                                     confirmButtonText: "Ok",
+//                                 });
+//                             // } else {
+//                             //     console.log(response);
+//                             //     Swal.fire({
+//                             //         title: "Error",
+//                             //         text: "NFT is on sale",
+//                             //         icon: "error",
+//                             //         confirmButtonText: "Ok",
+//                             //     });
+//                             // }
+//                         }
+
+//                         setStatusResult(x.result);
+//                         if (onConfirm) onConfirm();
+//                     });
+//                 })
+//                 .catch((x) => setSigSendError(x));
+//         } else setSignatureModal(true);
+//     };
+
+//     return (
+//         <>
+//             <Paper
+//                 style={{
+//                     padding: "20px",
+//                     borderRadius: "10px",
+//                     marginBottom: "20px",
+//                     marginTop: "20px",
+//                 }}
+//             >
+//                 <Form.Field style={{ marginTop: "10px", marginBottom: "20px" }}>
+//                     <label>
+//                         Transaction:{" "}
+//                         {trx && <CopyButton value={trx.hash} fontsize={12} />}
+//                     </label>
+//                     <input
+//                         placeholder="hash"
+//                         value={trx ? trx.hash : ""}
+//                         disabled
+//                         style={{
+//                             width: "100%",
+//                             fontSize: "12px",
+//                             height: "30px",
+//                             borderRadius: "10px",
+//                         }}
+//                     />
+//                 </Form.Field>
+//                 {localResult && (
+//                     <Message
+//                         positive={!localError}
+//                         negative={localError}
+//                         header="Local Result:"
+//                         content={localResult.toString()}
+//                     />
+//                 )}
+
+//                 <Button
+//                 primary
+//                 disabled={!trx}
+//                 onClick={do_sign}
+//                 loading={sigSendError || successful}
+//                 style={{
+//                     height: "50px",
+//                     fontSize: "20px",
+//                     marginBottom: "50px",
+//                     backgroundColor: `${!trx ? "" : "green"}`,
+//                     color: `${!trx ? "" : "white"}`,
+//                     border: `${!trx ? "1px solid black" : ""}`,
+//                     borderRadius: "10px",
+//                     ":hover": {
+//                         backgroundColor: `${!trx ? "" : "green"}`,
+//                         color: `${!trx ? "" : "white"}`,
+//                     },
+
+//                 }}
+//             >
+//                 Sign and Submit
+//             </Button>
+
+//                 {/* <button onClick={do_sign}>Sign and Submit</button> */}
+
+//                 <SignatureModal
+//                     trx={trx}
+//                     open={signatureModal}
+//                     onClose={() => setSignatureModal(false)}
+//                 />
+//                 {sigSendError && (
+//                     <Message
+//                         negative
+//                         header="Signature / Submit Error:"
+//                         content={sigSendError.toString()}
+//                     />
+//                 )}
+//                 {successful && (
+//                     <Message
+//                         positive
+//                         header="Signature / Submit Result:"
+//                         content="Transaction successfuly signed and submitted"
+//                     />
+//                 )}
+//                 {successful && (
+//                     <TransactionResult result={statusResult} hash={trx?.hash} />
+//                 )}
+//             </Paper>
+//         </>
+//     );
+// }
+
+function TransactionManager({ trx, wallet, onConfirm, data, onClose, type, amount }) {
+    console.log(type, data);
     const [localResult, setLocalResult] = useState(null);
-    console.log(localResult);
     const [localError, setLocalError] = useState(false);
     const [sigSendError, setSigSendError] = useState(null);
     const [successful, setSuccessful] = useState(false);
     const [statusResult, setStatusResult] = useState(null);
-    console.log(statusResult);
-    // { status: 'success', data: true }
     const [signatureModal, setSignatureModal] = useState(false);
 
     const signer = SIGNERS[wallet];
@@ -314,38 +533,6 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
     }, [trx]);
 
     const do_sign = async () => {
-        console.log("do_sign", data);
-        //  try{
-        //   const body = {
-        //     tokenId: data.tokenId,
-        //   }
-        //   console.log(body);
-
-        //   const response = await nftServices.onSale(body);
-        //   console.log(response);
-        //   if(response.status === 'success'){
-        //     onClose();
-        //     Swal.fire({
-        //       title: 'Success',
-        //       text: 'NFT is on sale',
-        //       icon: 'success',
-        //       confirmButtonText: 'Ok'
-        //     });
-        //   }else{
-        //     console.log(response);
-        //     Swal.fire({
-        //       title: 'Error',
-        //       text: 'NFT is not on sale',
-        //       icon: 'error',
-        //       confirmButtonText: 'Ok'
-        //     });
-        //   }
-
-        //  } catch(e){
-        //     console.log(e);
-        //   }
-
-        // return;
         setSigSendError(null);
         setSuccessful(false);
         if (signer) {
@@ -353,15 +540,14 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
                 .then((t) => m_client.preflight(t))
                 .then((t) => m_client.send(t))
                 .then(() => {
-                    setSuccessful(true), setStatusResult(null);
+                    setSuccessful(true);
+                    setStatusResult(null);
                     return m_client.status(trx).then(async (x) => {
                         const body = {
                             tokenId: data.tokenId,
                         };
-                        console.log(body);
-                        if(type === 'sell'){
+                        if (type === "sell") {
                             const response = await nftServices.onSale(body);
-                            console.log(response);
                             if (response.status === "success") {
                                 onClose();
                                 Swal.fire({
@@ -371,7 +557,6 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
                                     confirmButtonText: "Ok",
                                 });
                             } else {
-                                console.log(response);
                                 Swal.fire({
                                     title: "Error",
                                     text: "NFT is not on sale",
@@ -380,29 +565,69 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
                                 });
                             }
                         }
-                        if(type === 'close'){
-                            // const response = await nftServices.closeSale(body);
-                            // console.log(response);
-                            // if (response.status === "success") {
+                        if (type === "close") {
+                            onClose();
+                            Swal.fire({
+                                title: "Success",
+                                text: "NFT is not on sale",
+                                icon: "success",
+                                confirmButtonText: "Ok",
+                            });
+                        }
+                        if (type === "bid") {
+                            const bidBody = {
+                                nftId: data._id,
+                                bidderAddress: data.owner,
+                                bidAmount: parseFloat(amount),
+                            };
+                            const response = await nftServices.placeBid(bidBody);
+                            console.log(response);
+                            if (response.status === "success") {
                                 onClose();
                                 Swal.fire({
                                     title: "Success",
-                                    text: "NFT is not on sale",
+                                    text: "NFT is on bid",
                                     icon: "success",
                                     confirmButtonText: "Ok",
                                 });
-                            // } else {
-                            //     console.log(response);
-                            //     Swal.fire({
-                            //         title: "Error",
-                            //         text: "NFT is on sale",
-                            //         icon: "error",
-                            //         confirmButtonText: "Ok",
-                            //     });
-                            // }
+                            } else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "NFT is not on bid",
+                                    icon: "error",
+                                    confirmButtonText: "Ok",
+                                });
+                            }
                         }
 
-                       
+                        if (type === "buy") {
+                            const buyBody = {
+                                nftId: data._id,
+                                buyerWalletAddress: data.owner,
+                            };
+                            const response = await nftServices.buyNFT(buyBody);
+                            console.log(response);
+                            if (response.status === "success") {
+                                onClose();
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "NFT is bought",
+                                    icon: "success",
+                                    confirmButtonText: "Ok",
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "NFT is not bought",
+                                    icon: "error",
+                                    confirmButtonText: "Ok",
+                                });
+                            }
+                        }
+
+
+
+
                         setStatusResult(x.result);
                         if (onConfirm) onConfirm();
                     });
@@ -412,90 +637,66 @@ function TransactionManager({ trx, wallet, onConfirm, data, onClose,type }) {
     };
 
     return (
-        <>
-            <Paper
-                style={{
-                    padding: "20px",
-                    borderRadius: "10px",
-                    marginBottom: "20px",
-                    marginTop: "20px",
-                }}
-            >
-                <Form.Field style={{ marginTop: "10px", marginBottom: "20px" }}>
-                    <label>
-                        Transaction:{" "}
-                        {trx && <CopyButton value={trx.hash} fontsize={12} />}
-                    </label>
-                    <input
-                        placeholder="hash"
-                        value={trx ? trx.hash : ""}
-                        disabled
-                        style={{
-                            width: "100%",
-                            fontSize: "12px",
-                            height: "30px",
-                            borderRadius: "10px",
-                        }}
-                    />
-                </Form.Field>
-                {localResult && (
-                    <Message
-                        positive={!localError}
-                        negative={localError}
-                        header="Local Result:"
-                        content={localResult.toString()}
-                    />
-                )}
+        <Paper className="nft-transaction-manager">
+            <div className="nft-transaction-field">
+                <label>
+                    Transaction:{" "}
+                    {trx && <CopyButton value={trx.hash} fontsize={12} />}
+                </label>
+                <input
+                    placeholder="hash"
+                    value={trx ? trx.hash : ""}
+                    disabled
+                />
+            </div>
+            {localResult && (
+                <div
+                    className={`nft-transaction-message ${
+                        localError ? "negative" : "positive"
+                    }`}
+                >
+                    <div className="nft-transaction-message-header">
+                        Local Result:
+                    </div>
+                    <div>{localResult.toString()}</div>
+                </div>
+            )}
 
-                <Button
-                primary
+            <Button
+                className="nft-transaction-button"
                 disabled={!trx}
                 onClick={do_sign}
-                loading={sigSendError || successful}
-                style={{
-                    height: "50px",
-                    fontSize: "20px",
-                    marginBottom: "50px",
-                    backgroundColor: `${!trx ? "" : "green"}`,
-                    color: `${!trx ? "" : "white"}`,
-                    border: `${!trx ? "1px solid black" : ""}`,
-                    borderRadius: "10px",
-                    ":hover": {
-                        backgroundColor: `${!trx ? "" : "green"}`,
-                        color: `${!trx ? "" : "white"}`,
-                    },
-
-                }}
             >
                 Sign and Submit
             </Button>
 
-                {/* <button onClick={do_sign}>Sign and Submit</button> */}
-
-                <SignatureModal
-                    trx={trx}
-                    open={signatureModal}
-                    onClose={() => setSignatureModal(false)}
-                />
-                {sigSendError && (
-                    <Message
-                        negative
-                        header="Signature / Submit Error:"
-                        content={sigSendError.toString()}
-                    />
-                )}
-                {successful && (
-                    <Message
-                        positive
-                        header="Signature / Submit Result:"
-                        content="Transaction successfuly signed and submitted"
-                    />
-                )}
-                {successful && (
+            <SignatureModal
+                trx={trx}
+                open={signatureModal}
+                onClose={() => setSignatureModal(false)}
+            />
+            {sigSendError && (
+                <div className="nft-transaction-message negative">
+                    <div className="nft-transaction-message-header">
+                        Signature / Submit Error:
+                    </div>
+                    <div>{sigSendError.toString()}</div>
+                </div>
+            )}
+            {successful && (
+                <div className="nft-transaction-message positive">
+                    <div className="nft-transaction-message-header">
+                        Signature / Submit Result:
+                    </div>
+                    <div>Transaction successfully signed and submitted</div>
+                </div>
+            )}
+            {successful && (
+                <div className="nft-transaction-result">
                     <TransactionResult result={statusResult} hash={trx?.hash} />
-                )}
-            </Paper>
-        </>
+                </div>
+            )}
+        </Paper>
     );
 }
 

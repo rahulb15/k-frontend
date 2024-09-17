@@ -823,6 +823,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         };
         // createVerification
         const response = await userService.createVerification(data);
+        console.log("🚀 ~ verificationComplete ~ response", response);
         if (response?.status === 200 || response?.status === 201) {
             setKycStatus(true);
         } else {
@@ -2287,7 +2288,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                     console.log("payload", payload);
                                     setOpen(false);
                                     verificationComplete(payload);
-                                    // setStep(2);
                                 }
                             }}
                             onError={(data) => console.log("onError", data)}

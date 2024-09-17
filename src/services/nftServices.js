@@ -79,7 +79,7 @@ const onSale = async (data) => {
 const getAllmarketPlaceNfts = async (filters, pageNo, limit) => {
     try {
         const token = localStorage.getItem("token");
-        
+
         // Construct query parameters
         const params = new URLSearchParams({
             pageNo: pageNo.toString(),
@@ -88,16 +88,16 @@ const getAllmarketPlaceNfts = async (filters, pageNo, limit) => {
 
         // Add search parameter if it exists
         if (filters.search) {
-            params.append('search', filters.search);
+            params.append("search", filters.search);
         }
 
         // Prepare the data object for the POST request
         const data = {};
 
         // Add onSale and onAuction properties based on the filter
-        if (filters.filter === 'Fixed Sale') {
+        if (filters.filter === "Fixed Sale") {
             data.onSale = true;
-        } else if (filters.filter === 'Live Auction') {
+        } else if (filters.filter === "Live Auction") {
             data.onAuction = true;
         }
 
@@ -178,6 +178,43 @@ const getNftsMyCollectionNameMarket = async (data, pageNo, limit) => {
     }
 };
 
+const placeBid = async (data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(`${url}nft/place-bid`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+const buyNFT = async (data) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(`${url}nft/buy`, data, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
+const getTopCreators = async (body) => {
+    try {
+        const response = await axios.post(`${url}single-nft/top-creators`, body);
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
 export default {
     createNFT,
     updateNFT,
@@ -188,4 +225,7 @@ export default {
     getNftsMyCollectionName,
     getNftsMyCollectionNameMarket,
     getOwnSaleNfts,
+    placeBid,
+    buyNFT,
+    getTopCreators,
 };

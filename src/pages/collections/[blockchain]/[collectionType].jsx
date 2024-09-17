@@ -115,7 +115,7 @@ const TVChartContainer = dynamic(
         <main id="main-content" className="rn-nft-mid-wrapper" style={{ marginBottom: "200px" }}>
             <div className="list-item-1">
                 <TopBarArea collection={collection} />
-                <HeroArea data={content["hero-section"]} />
+                <HeroArea data={collection} />
             </div>
             {/* <LiveExploreArea
                 id="list-item-2"
@@ -142,12 +142,12 @@ const TVChartContainer = dynamic(
             />
         </main>
         <div className="header-right-fixed">
-            <NotificationArea data={{ notifications: notificationData }} />
-            <CreatorArea
+            <NotificationArea data={{ notifications: notificationData }} collectionId={collection.data.data._id} />
+            {/* <CreatorArea
                 data={{
                     creators: sellerData,
                 }}
-            />
+            /> */}
         </div>
         <Footer />
     </Wrapper>

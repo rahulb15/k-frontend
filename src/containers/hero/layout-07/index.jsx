@@ -1,50 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
-import Image from "next/image";
 import dynamic from 'next/dynamic';
-import ClientAvatar from "@ui/client-avatar";
-import Anchor from "@ui/anchor";
 import { ImageType } from "@utils/types";
-import TVChartAdvanceContainer from '@components/TVChartAdvanceContainer';
 
-const TVChartContainer = dynamic(
-  () => import("@components/TVChartAdvanceContainer"),{ ssr: false });
+const TVChartAdvanceContainer = dynamic(
+  () => import("@components/TVChartAdvanceContainer"),
+  { ssr: false }
+);
 
 const defaultWidgetProps = {
-  symbol: "AAPL",
-  interval: "1D",
+  interval: "D",
   library_path: "/static/charting_library/",
   locale: "en",
   charts_storage_url: "https://saveload.tradingview.com",
   charts_storage_api_version: "1.1",
-  client_id: "tradingview.com",
+  client_id: "nft_trading_view",
   user_id: "public_user_id",
   fullscreen: false,
   autosize: true,
 };
 
 const HeroArea = ({ data }) => {
+  console.log("HeroArea", data);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+console.log(data.data, "data");
+  if (!data || !data.data.data._id || !data.data.data.collectionName) {
+    console.log("No collection data found");
+    return <div>Loading collection data...</div>;
+  }
+
+  const widgetProps = {
+    ...defaultWidgetProps,
+    symbol: `KRYPTOMERCH:${data.data.data.collectionName}`,
+    collectionId: data.data.data._id,
+    collectionName: data.data.data.collectionName,
+  };
+
+  console.log("widgetProps", widgetProps);
 
   return (
     <div className="rn-banner-area">
-      {/* <div className="slider-style-7" data-black-overlay="8"> */}
-      {isClient && <TVChartAdvanceContainer {...defaultWidgetProps} />}
-      {/* {isClient && <TVChartContainer />} */}
-      {/* </div> */}
+      {isClient && <TVChartAdvanceContainer {...widgetProps} />}
     </div>
   );
 };
 
 HeroArea.propTypes = {
   data: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    image: ImageType.isRequired,
+    _id: PropTypes.string.isRequired,
+    collectionName: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    image: ImageType,
     authors: PropTypes.arrayOf(
       PropTypes.shape({
         name: PropTypes.string.isRequired,
@@ -53,6 +64,11 @@ HeroArea.propTypes = {
       })
     ),
     bitCount: PropTypes.number,
+    collectionBannerImage: PropTypes.string,
+    collectionCoverImage: PropTypes.string,
+    creator: PropTypes.string,
+    size: PropTypes.string,
+    totalSupply: PropTypes.number,
   }),
 };
 
