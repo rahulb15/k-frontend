@@ -45,10 +45,218 @@ const fetchData = async () => {
     }
 };
 
+
+const getPrimeRoleUsers = async () => {
+    const pactCode = `(free.lptest001.get-prime-role)`;
+
+    const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+    const localResponse = await client.local(txn, {
+      preflight: false,
+      signatureVerification: false,
+    });
+
+    if (localResponse.result.status == "success") {
+      let users = localResponse.result.data;
+      console.log("users", users);
+      return users;
+    } else {
+      console.log("Error in local response", localResponse.result.error);
+    }
+  };
+
+  const getDiscountRoleUsers = async () => {
+    const pactCode = `(free.lptest001.get-discount-role)`;
+
+    const txn = Pact.builder
+    .execution(pactCode)
+    .setMeta({ chainId: CHAIN_ID })
+    .setNetworkId(NETWORKID)
+    .createTransaction();
+
+    const localResponse = await client.local(txn, {
+      preflight: false,
+      signatureVerification: false,
+    });
+
+    if (localResponse.result.status == "success") {
+      let users = localResponse.result.data;
+      console.log("users", users);
+      return users;
+    } else {
+      console.log("Error in local response", localResponse.result.error);
+    }
+  };
+
+  const getDiscountRate = async () => {
+    const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+
+   
+    const txn = Pact.builder
+    .execution(pactCode)
+    .setMeta({ chainId: CHAIN_ID })
+    .setNetworkId(NETWORKID)
+    .createTransaction();
+
+    const localResponse = await client.local(txn, {
+      preflight: false,
+      signatureVerification: false,
+    });
+
+    if (localResponse.result.status == "success") {
+      let discount = localResponse.result.data;
+      console.log("users", discount);
+      return discount;
+    } else {
+      console.log("Error in local response", localResponse.result.error);
+    }
+  };
+
+  const getLaunchFee = async () => {
+    const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+
+    const txn = Pact.builder
+    .execution(pactCode)
+    .setMeta({ chainId: CHAIN_ID })
+    .setNetworkId(NETWORKID)
+    .createTransaction();
+
+    const localResponse = await client.local(txn, {
+      preflight: false,
+      signatureVerification: false,
+    });
+
+    if (localResponse.result.status == "success") {
+      let fee = localResponse.result.data;
+      console.log("fee", fee);
+      return fee;
+    } else {
+      console.log("Error in local response", localResponse.result.error);
+    }
+  };
+
 export const launchpadApi = createApi({
     reducerPath: "launchpadApi",
     baseQuery: fetchBaseQuery({ baseUrl: API_HOST }),
     endpoints: (builder) => ({
+        // collectionRequest: builder.mutation({
+        //     async queryFn(args) {
+        //         const {
+        //             collectionRequestName,
+        //             collectionRequestSymbol,
+        //             collectionRequestCreator,
+        //             collectionRequestDescription,
+        //             collectionRequestCategory,
+        //             collectionRequestSupply,
+        //             collectionRequestUriList,
+        //             collectionRequestMintPrice,
+        //             collectionRequestRoyalityPerc,
+        //             collectionRequestRoyalityAddress,
+        //             collectionRequestCoverImgUrl,
+        //             collectionRequestBannerImgUrl,
+        //             collectionRequestStartDate,
+        //             collectionRequesEndDate,
+        //             collectionRequestEnableFreeMint,
+        //             collectionRequestEnableWl,
+        //             collectionRequestEnablePresale,
+        //             collectionRequestEnableAirdrop,
+        //             collectionRequestPolicy,
+        //             walletName,
+        //         } = args;
+        //         console.log(args);
+
+        //         // return;
+
+        //         const account = collectionRequestCreator;
+        //         const publicKey = account.slice(2, account.length);
+        //         console.log(publicKey);
+        //         const guard = { keys: [publicKey], pred: "keys-all" };
+
+        //         const pactCode = `(free.lptest001.nft-collection-request 
+        //         ${JSON.stringify(collectionRequestName)}
+        //         ${JSON.stringify(collectionRequestSymbol)}  
+        //         ${JSON.stringify(account)}        
+        //         (read-keyset  "guard")
+        //         ${JSON.stringify(collectionRequestDescription)}
+        //         ${JSON.stringify(collectionRequestCategory)}
+        //         ${collectionRequestSupply}
+        //         ${JSON.stringify(collectionRequestUriList)}
+        //         ${collectionRequestMintPrice}
+        //         ${collectionRequestRoyalityPerc}
+        //         ${JSON.stringify(collectionRequestRoyalityAddress)}
+        //         ${JSON.stringify(collectionRequestCoverImgUrl)}
+        //         ${JSON.stringify(collectionRequestBannerImgUrl)}
+        //         ${JSON.stringify(collectionRequestStartDate)}
+        //         (${collectionRequestStartDate})
+        //         ${JSON.stringify(collectionRequesEndDate)}       
+        //         (${collectionRequesEndDate}) 
+        //         ${collectionRequestEnableFreeMint}                 
+        //         ${collectionRequestEnableWl} 
+        //         ${collectionRequestEnablePresale} 
+        //         ${collectionRequestEnableAirdrop} 
+        //         ${JSON.stringify(collectionRequestPolicy)}
+        //         )
+        //         `;
+
+        //         console.log(pactCode);
+
+        //         const txn = Pact.builder
+        //             .execution(pactCode)
+        //             .addData("guard", guard)
+        //             .addSigner(publicKey, (withCapability) => [
+        //                 withCapability("coin.GAS"),
+        //                 withCapability("coin.TRANSFER", account, admin, 1.0),
+        //             ])
+        //             .setMeta({
+        //                 creationTime: creationTime(),
+        //                 sender: account,
+        //                 gasLimit: 150000,
+        //                 chainId: CHAIN_ID,
+        //                 ttl: 28800,
+        //             })
+        //             .setNetworkId(NETWORKID)
+        //             .createTransaction();
+
+        //         try {
+        //             const localResponse = await client.local(txn, {
+        //                 preflight: false,
+        //                 signatureVerification: false,
+        //             });
+
+        //             if (localResponse.result.status === "success") {
+        //                 let signedTx;
+        //                 if (walletName === "EckoWallet") {
+        //                     console.log("ECKO");
+        //                     const walletstatus = await fetchData();
+        //                     if (walletstatus) {
+        //                         signedTx = await eckoWallet(txn);
+        //                     } else {
+        //                         return { error: "Wallet not connected" };
+        //                     }
+
+        //                     // signedTx = await eckoWallet(txn);
+        //                 } else if (walletName === "Chainweaver") {
+        //                     console.log("Chainweaver");
+
+        //                     signedTx = await signWithChainweaver(txn);
+        //                 }
+
+        //                 const response = await signFunction(signedTx);
+        //                 console.log("response", response);
+
+        //                 return { data: response };
+        //             } else {
+        //                 return { error: localResponse.result.error };
+        //             }
+        //         } catch (error) {
+        //             return { error: error.message };
+        //         }
+        //     },
+        // }),
         collectionRequest: builder.mutation({
             async queryFn(args) {
                 const {
@@ -75,9 +283,27 @@ export const launchpadApi = createApi({
                 } = args;
                 console.log(args);
 
-                // return;
+                const launchFee = await getLaunchFee();
+                console.log("launchFee", launchFee);
+                const primeRole = await getPrimeRoleUsers();
+                console.log("primeRole", primeRole);
+                const discountRole = await getDiscountRoleUsers();
+                console.log("discountRole", discountRole);
+                const discountRate = await getDiscountRate();
+                console.log("discountRate", discountRate);
+                const discountFee = (launchFee * (1 - discountRate));
+                console.log("discountFee", discountFee);
+
+
 
                 const account = collectionRequestCreator;
+                console.log("account", account);
+
+                const primeRoleArray = primeRole.split(" ");
+                const discountRoleArray = discountRole.split(" ");
+
+
+
                 const publicKey = account.slice(2, account.length);
                 console.log(publicKey);
                 const guard = { keys: [publicKey], pred: "keys-all" };
@@ -109,23 +335,61 @@ export const launchpadApi = createApi({
                 `;
 
                 console.log(pactCode);
+                let txn;
 
-                const txn = Pact.builder
-                    .execution(pactCode)
-                    .addData("guard", guard)
-                    .addSigner(publicKey, (withCapability) => [
-                        withCapability("coin.GAS"),
-                        withCapability("coin.TRANSFER", account, admin, 1.0),
-                    ])
-                    .setMeta({
-                        creationTime: creationTime(),
-                        sender: account,
-                        gasLimit: 150000,
-                        chainId: CHAIN_ID,
-                        ttl: 28800,
-                    })
-                    .setNetworkId(NETWORKID)
-                    .createTransaction();
+                if (primeRoleArray.includes(account)) {
+                    txn = Pact.builder
+                        .execution(pactCode)
+                        .addData("guard", guard)
+                        .addSigner(publicKey, (withCapability) => [
+                            withCapability("coin.GAS"),
+                        ])
+                        .setMeta({
+                            creationTime: creationTime(),
+                            sender: account,
+                            gasLimit: 150000,
+                            chainId: CHAIN_ID,
+                            ttl: 28800,
+                        })
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+                } else if (discountRoleArray.includes(account)) {
+                    txn = Pact.builder
+                        .execution(pactCode)
+                        .addData("guard", guard)
+                        .addSigner(publicKey, (withCapability) => [
+                            withCapability("coin.GAS"),
+                            withCapability("coin.TRANSFER", account, admin, discountFee),
+                        ])
+                        .setMeta({
+                            creationTime: creationTime(),
+                            sender: account,
+                            gasLimit: 150000,
+                            chainId: CHAIN_ID,
+                            ttl: 28800,
+                        })
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+                } else {
+                    txn = Pact.builder
+                        .execution(pactCode)
+                        .addData("guard", guard)
+                        .addSigner(publicKey, (withCapability) => [
+                            withCapability("coin.GAS"),
+                            withCapability("coin.TRANSFER", account, admin, launchFee),
+                        ])
+                        .setMeta({
+                            creationTime: creationTime(),
+                            sender: account,
+                            gasLimit: 150000,
+                            chainId: CHAIN_ID,
+                            ttl: 28800,
+                        })
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+                }
+
+                console.log("updateMintTime", txn);
 
                 try {
                     const localResponse = await client.local(txn, {
@@ -160,6 +424,97 @@ export const launchpadApi = createApi({
                     }
                 } catch (error) {
                     return { error: error.message };
+                }
+            },
+        }),
+        getLaunchFee: builder.query({
+            async queryFn() {
+                const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(txn, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        getPrimeRoleUsers: builder.query({
+            async queryFn() {
+                const pactCode = `(free.lptest001.get-prime-role)`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(txn, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        getDiscountRoleUsers: builder.query({
+            async queryFn() {
+                const pactCode = `(free.lptest001.get-discount-role)`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(txn, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        getDiscountRate: builder.query({
+            async queryFn() {
+                const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(txn, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
                 }
             },
         }),
@@ -655,6 +1010,10 @@ export const launchpadApi = createApi({
 
 export const {
     useCollectionRequestMutation,
+    useGetLaunchFeeQuery,
+    useGetPrimeRoleUsersQuery,
+    useGetDiscountRoleUsersQuery,
+    useGetDiscountRateQuery,
     useGetColCreatorMutation,
     useCheckPublicMutation,
     useCheckWlMutation,

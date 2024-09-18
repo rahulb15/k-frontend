@@ -74,6 +74,7 @@ const policies = [
     "MARKETPLACE",
     "FIXED-SALE",
     "AUCTION-SALE",
+    "ADJUSTABLE-ROYALTY",
     "BLACKLIST",
     "DISABLE-BURN",
     "DISABLE-TRANSFER",
@@ -512,6 +513,9 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
     const handleWalletSubmit = async (data) => {
         console.log(data);
+
+        console.log("collectionRequestCoverImgUrl", collectionRequestCoverImgUrl);
+        console.log("collectionRequestBannerImgUrl", collectionRequestBannerImgUrl);
         try {
             const result = await collectionRequest({
                 collectionRequestName,
@@ -631,19 +635,21 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             royaltyAddress: collectionRequestRoyalityAddress,
             policy: collectionRequestPolicy,
             tokenList: collectionRequestUriList,
+            collectionCoverImage: collectionRequestCoverImgUrl,
+            collectionBannerImage: collectionRequestBannerImgUrl,
         };
 
         console.log("🚀 ~ createCollectionRequest ~ body", body);
 
         const response = await collectionService.launchCollection(body);
         if (response?.data?.status === "success") {
-            if (selectedImage) {
-                await uploadImage("coverImage", selectedImage);
-            }
-            if (selectedBannerImage) {
-                await uploadImage("profileImage", selectedBannerImage);
-            }
-            console.log("🚀 ~ createCollectionRequest ~ response", response);
+            // if (selectedImage) {
+            //     await uploadImage("coverImage", selectedImage);
+            // }
+            // if (selectedBannerImage) {
+            //     await uploadImage("profileImage", selectedBannerImage);
+            // }
+            // console.log("🚀 ~ createCollectionRequest ~ response", response);
 
             // setCollectionData(response.data.data);
             return response;
@@ -732,56 +738,119 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         }
     };
 
+    // const uploadImage = async (name, file) => {
+    //     console.log("🚀 ~ uploadImage ~ name:", name);
+    //     console.log("🚀 ~ uploadImage ~ file:", file);
+    //     if (name === "coverImage") {
+    //         setImageCoverLoading(true);
+    //     }
+    //     if (name === "profileImage") {
+    //         setImageBannerLoading(true);
+    //     }
+
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append(name, file);
+    //         const response = await collectionService.uploadImage(
+    //             formData,
+    //             collectionRequestName
+    //         );
+    //         console.log("🚀 ~ uploadImage ~ response", response);
+    //         if (response?.data?.status === "success") {
+    //             if (name === "coverImage") {
+    //                 setSelectedImage(file);
+    //                 setImageCoverLoading(false);
+    //                 dispatch(
+    //                     setCollectionRequestCoverImgUrl(
+    //                         response.data.data.collectionCoverImage
+    //                     )
+    //                 );
+    //             }
+    //             if (name === "profileImage") {
+    //                 setSelectedBannerImage(file);
+    //                 setImageBannerLoading(false);
+    //                 dispatch(
+    //                     setCollectionRequestBannerImgUrl(
+    //                         response.data.data.collectionBannerImage
+    //                     )
+    //                 );
+    //             }
+    //         } else {
+    //             toast.error("Image Upload Failed");
+    //             if (name === "coverImage") {
+    //                 setImageCoverLoading(false);
+    //             }
+    //             if (name === "profileImage") {
+    //                 setImageBannerLoading(false);
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.log("🚀 ~ uploadImage ~ error", error);
+    //         setImageCoverLoading(false);
+    //         setImageBannerLoading(false);
+    //     }
+    // };
+
+
+
+
     const uploadImage = async (name, file) => {
-        console.log("🚀 ~ uploadImage ~ name:", name);
-        console.log("🚀 ~ uploadImage ~ file:", file);
-        if (name === "coverImage") {
-            setImageCoverLoading(true);
-        }
-        if (name === "profileImage") {
-            setImageBannerLoading(true);
-        }
+        if (name === "coverImage") setImageCoverLoading(true);
+        if (name === "profileImage") setImageBannerLoading(true);
 
         try {
             const formData = new FormData();
             formData.append(name, file);
-            const response = await collectionService.uploadImage(
-                formData,
-                collectionRequestName
-            );
-            console.log("🚀 ~ uploadImage ~ response", response);
+            const response = await collectionService.uploadImageById(formData);
+            console.log("Image Upload Response:", response.data);
+
             if (response?.data?.status === "success") {
+                const imageUrl =
+                    response.data.data.collectionCoverImage ||
+                    response.data.data.collectionBannerImage;
+                console.log("Image URL:", imageUrl);
+
                 if (name === "coverImage") {
-                    setSelectedImage(file);
+                    setSelectedImage(imageUrl); // Use the server URL
                     setImageCoverLoading(false);
-                    dispatch(
-                        setCollectionRequestCoverImgUrl(
-                            response.data.data.collectionCoverImage
-                        )
-                    );
+                    dispatch(setCollectionRequestCoverImgUrl(imageUrl));
                 }
                 if (name === "profileImage") {
-                    setSelectedBannerImage(file);
+                    setSelectedBannerImage(imageUrl); // Use the server URL
                     setImageBannerLoading(false);
-                    dispatch(
-                        setCollectionRequestBannerImgUrl(
-                            response.data.data.collectionBannerImage
-                        )
-                    );
+                    dispatch(setCollectionRequestBannerImgUrl(imageUrl));
                 }
             } else {
                 toast.error("Image Upload Failed");
-                if (name === "coverImage") {
-                    setImageCoverLoading(false);
-                }
-                if (name === "profileImage") {
-                    setImageBannerLoading(false);
-                }
+                setImageCoverLoading(false);
+                setImageBannerLoading(false);
             }
         } catch (error) {
-            console.log("🚀 ~ uploadImage ~ error", error);
+            console.log("Image Upload Error:", error);
             setImageCoverLoading(false);
             setImageBannerLoading(false);
+        } finally {
+            // Reset the file input to allow re-uploading the same file
+            document.getElementById(
+                name === "coverImage" ? "coverFile" : "bannerFile"
+            ).value = null;
+        }
+    };
+
+    console.log("Selected Image:", selectedImage);
+    console.log("Selected Banner Image:", selectedBannerImage);
+
+    const handleCoverImageChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            uploadImage("coverImage", file);
+        }
+    };
+
+    const handleBannerImageChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            uploadImage("profileImage", file);
         }
     };
 
@@ -1447,17 +1516,15 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         id="coverFile"
                                         type="file"
                                         className="inputfile"
-                                        onChange={imageChange}
+                                        onChange={handleCoverImageChange}
                                     />
                                     {selectedImage && (
-                                        <img
-                                            id="createCoverImage"
-                                            src={URL.createObjectURL(
-                                                selectedImage
-                                            )}
-                                            alt=""
-                                            data-black-overlay="6"
-                                        />
+                                         <img
+                                         id="createCoverImage"
+                                         src={selectedImage}
+                                         alt=""
+                                         data-black-overlay="6"
+                                     />
                                     )}
                                     <label
                                         htmlFor="coverFile"
@@ -1502,17 +1569,15 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         id="bannerFile"
                                         type="file"
                                         className="inputfile"
-                                        onChange={imageBannerChange}
+                                        onChange={handleBannerImageChange}
                                     />
                                     {selectedBannerImage && (
-                                        <img
-                                            id="createBannerImage"
-                                            src={URL.createObjectURL(
-                                                selectedBannerImage
-                                            )}
-                                            alt=""
-                                            data-black-overlay="6"
-                                        />
+                                          <img
+                                          id="createBannerImage"
+                                          src={selectedBannerImage}
+                                          alt=""
+                                          data-black-overlay="6"
+                                      />
                                     )}
                                     <label
                                         htmlFor="bannerFile"
