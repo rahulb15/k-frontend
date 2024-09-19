@@ -504,6 +504,7 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="card-thumbnail" onClick={isRevealed ? handleOpenModal : undefined}>
+                    {console.log("nftimage", nft.tokenImage)}
                     {isRevealed ? (
                         <Image
                             src={nft.tokenImage}

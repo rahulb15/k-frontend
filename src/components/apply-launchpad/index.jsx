@@ -319,32 +319,55 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     }, [mintEndTime]);
     console.log("mintEndDateTime", mintEndDateTime);
 
+    // useEffect(() => {
+    //     console.log("watch", watch("tokenList"));
+    //     dispatch(
+    //         setCollectionRequestUriList(
+    //             watch("tokenList")
+    //                 ?.split(",")
+    //                 ?.map((token) => token.replace(/"/g, "").trim())
+    //         )
+    //     );
+
+    //     //totalSupply
+    //     setValue(
+    //         "totalSupply",
+    //         watch("tokenList")
+    //             ?.split(",")
+    //             .map((token) => token.replace(/"/g, "").trim()).length
+    //     );
+
+    //     dispatch(
+    //         setCollectionRequestSupply(
+    //             watch("tokenList")
+    //                 ?.split(",")
+    //                 ?.map((token) => token.replace(/"/g, "").trim()).length
+    //         )
+    //     );
+    // }, [tokenList]);
+
+
     useEffect(() => {
         console.log("watch", watch("tokenList"));
+        const processedTokenList = processTokenList(watch("tokenList") || "");
         dispatch(
             setCollectionRequestUriList(
-                watch("tokenList")
-                    ?.split(",")
-                    ?.map((token) => token.replace(/"/g, "").trim())
+                processedTokenList.split(',').map(token => token.replace(/"/g, '').trim())
             )
         );
 
         //totalSupply
         setValue(
             "totalSupply",
-            watch("tokenList")
-                ?.split(",")
-                .map((token) => token.replace(/"/g, "").trim()).length
+            processedTokenList.split(',').length
         );
 
         dispatch(
             setCollectionRequestSupply(
-                watch("tokenList")
-                    ?.split(",")
-                    ?.map((token) => token.replace(/"/g, "").trim()).length
+                processedTokenList.split(',').length
             )
         );
-    }, [tokenList]);
+    }, [watch("tokenList")]);
 
     useEffect(() => {
         console.log("watch", watch("royaltyAddress"));
@@ -509,7 +532,28 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     }
     // }, [formData]);
 
-    console.log("formData", formData);
+
+    const processTokenList = (input) => {
+        // Split the input by newlines or commas
+        const tokens = input.split(/[\n,]+/)
+            .map(token => token.trim()) // Trim whitespace
+            .filter(token => token.length > 0) // Remove empty entries
+            .map(token => {
+                // If the token doesn't start with a quote, add quotes
+                if (!token.startsWith('"')) {
+                    token = `"${token}"`;
+                }
+                return token;
+            });
+
+        // Join the processed tokens with commas
+        return tokens.join(',');
+    };
+
+
+
+
+    console.log("formData", collectionRequestUriList);
 
     const handleWalletSubmit = async (data) => {
         console.log(data);
@@ -1955,7 +1999,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                     </div>
 
                                     <div className="col-md-12">
-                                        <div className="input-box pb--20">
+                                        {/* <div className="input-box pb--20">
                                             <label
                                                 htmlFor="tokenList"
                                                 className="form-label"
@@ -1984,7 +2028,33 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     {errors.tokenList?.message}
                                                 </ErrorText>
                                             )}
-                                        </div>
+                                        </div> */}
+
+<div className="input-box pb--20">
+                <label
+                    htmlFor="tokenList"
+                    className="form-label"
+                >
+                    Token List
+                </label>
+                <textarea
+                    id="tokenList"
+                    rows="5"
+                    placeholder="Enter or paste your token URLs, one per line or comma-separated"
+                    {...register("tokenList", {
+                        required: "Token List is required",
+                        validate: (value) => {
+                            const processed = processTokenList(value);
+                            return processed.length > 0 || "Please enter valid token URLs";
+                        }
+                    })}
+                />
+                {errors.tokenList && (
+                    <ErrorText>
+                        {errors.tokenList?.message}
+                    </ErrorText>
+                )}
+            </div>
                                     </div>
 
                                     <div className="col-md-4">
