@@ -411,7 +411,7 @@ const Collection = ({
                 {image && (
                     <div className="collection-big-thumbnail">
                         <Image
-                            src={data.collectionName === "Priority Pass" ? "https://ipfs.filebase.io/ipfs/QmXtzpiDDDT6dkguKmNPsLVBoZLMme4QgwX7WknCoDKuMG" : image}
+                            src={image}
                             alt={image?.alt || "Nft_Profile"}
                             width={507}
                             height={339}

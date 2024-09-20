@@ -256,8 +256,7 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
                     right: 0,
                     bottom: 0,
                     // backgroundImage: `linear-gradient(rgba(70, 70, 70, 0.7), rgba(70, 70, 70, 0.7)), url(${imageUrl})`,
-                    // backgroundImage: `url(${product?.collectionBannerImage})`,
-                    backgroundImage: `url(${product?.collectionName === "Priority Pass" ? "https://ipfs.filebase.io/ipfs/QmXtzpiDDDT6dkguKmNPsLVBoZLMme4QgwX7WknCoDKuMG" : product?.collectionBannerImage})`,
+                    backgroundImage: `url(${product?.collectionBannerImage})`,
                     backgroundSize: "cover",
                     backgroundPosition: "bottom",
                     filter: "blur(5px)",
@@ -283,7 +282,7 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
                     <div className="col-lg-7 col-md-12 col-sm-12">
                         <Sticky>
                             <CollectionDetailTab
-                                image={product?.collectionName === "Priority Pass" ? "https://ipfs.filebase.io/ipfs/QmXtzpiDDDT6dkguKmNPsLVBoZLMme4QgwX7WknCoDKuMG" : product?.collectionCoverImage}
+                                image={product?.collectionCoverImage}
                             />
                         </Sticky>
                     </div>
