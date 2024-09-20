@@ -195,7 +195,7 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
                 const updateResponse = await collectionService.updateCollection(
                     {
                         reservePrice:
-                            product.reservePrice + parseInt(reservePrice),
+                             parseInt(reservePrice),
                     },
                     product.collectionName
                 );

@@ -216,7 +216,7 @@ const AuthorProfileArea = ({ className }) => {
     const [activeTab, setActiveTab] = useState("nav-profile");
     const [createdActiveTab, setCreatedActiveTab] = useState("collections");
     const [pageNo, setPageNo] = useState(1);
-    const [limit, setLimit] = useState(20);
+    const [limit, setLimit] = useState(40);
     const [search, setSearch] = useState("");
     const [nfts, setNfts] = useState([]);
     const [onSaleNfts, setOnSaleNfts] = useState([]);

@@ -810,7 +810,7 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
             if (response.data.result.status === "success") {
                 const updateResponse = await collectionService.updateCollection(
                     {
-                        reservePrice: product.reservePrice + parseInt(reservePrice),
+                        reservePrice: parseInt(reservePrice),
                     },
                     product.collectionName
                 );
