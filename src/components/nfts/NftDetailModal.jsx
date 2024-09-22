@@ -1545,34 +1545,35 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                                                 key={index}
                                                                 mt={2}
                                                             >
+                                                                {console.log(prop)}
                                                                 <Typography variant="body1">
                                                                     Collection:{" "}
                                                                     <strong>
                                                                         {
                                                                             prop
-                                                                                .collection
-                                                                                .name
+                                                                                ?.collection
+                                                                                ?.name
                                                                         }
                                                                     </strong>{" "}
                                                                     (
                                                                     {
                                                                         prop
-                                                                            .collection
-                                                                            .family
+                                                                            ?.collection
+                                                                            ?.family
                                                                     }
                                                                     )
                                                                 </Typography>
                                                                 <Typography variant="body1">
                                                                     Authors:{" "}
                                                                     <strong>
-                                                                        {prop.authors
-                                                                            .map(
+                                                                        {prop?.authors
+                                                                            ?.map(
                                                                                 (
                                                                                     author
                                                                                 ) =>
                                                                                     author.name
                                                                             )
-                                                                            .join(
+                                                                            ?.join(
                                                                                 ", "
                                                                             )}
                                                                     </strong>

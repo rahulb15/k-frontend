@@ -521,7 +521,7 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                         />
                     )}
                     {isOnAuction && (
-                        <CountdownTimer date={nft.auction_date} />
+                        <CountdownTimer date={nft.timeout} />
                     )}
 
                     {/* {!isRevealed && nft.collectionType === "SingleNFT" && (

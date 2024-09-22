@@ -372,6 +372,40 @@
     }
 }
 
+.priority-pass-tab {
+    border: 2px solid;
+    border-image: linear-gradient(
+        45deg,
+        red,
+        orange,
+        yellow,
+        green,
+        blue,
+        indigo,
+        violet
+    )!important;
+    border-image-slice: 1;
+    background: linear-gradient(135deg, #f3ec78, #af4261)!important;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.priority-pass-tab:hover {
+    background: linear-gradient(135deg, #af4261, #f3ec78);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.priority-pass-tab.active {
+    border-color: gold;
+    color: gold;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+
 .tab-button-one {
     display: block;
     border-radius: 5px;

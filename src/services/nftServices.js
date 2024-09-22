@@ -141,6 +141,65 @@ const getOwnSaleNfts = async (data, pageNo, limit, search) => {
     }
 };
 
+const getOwnAuctionNfts = async (data, pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${url}nft/ownAuctionNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+
+const getOwnDutchAuctionNfts = async (data, pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${url}nft/ownDutchAuctionNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+const getOwnedPriorityPassNfts = async (data, pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${url}nft/ownedPriorityPassNfts?pageNo=${pageNo}&limit=${limit}&search=${search}`,
+            data,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+
+
+
+
 // getNftsMyCollectionName paginating post
 const getNftsMyCollectionName = async (data, pageNo, limit) => {
     try {
@@ -225,6 +284,9 @@ export default {
     getNftsMyCollectionName,
     getNftsMyCollectionNameMarket,
     getOwnSaleNfts,
+    getOwnAuctionNfts,
+    getOwnDutchAuctionNfts,
+    getOwnedPriorityPassNfts,
     placeBid,
     buyNFT,
     getTopCreators,
