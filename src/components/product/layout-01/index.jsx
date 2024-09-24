@@ -393,7 +393,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                             )}
                             {isOnAuction && (
                                 <motion.button
-                                    onClick={handleBidModal}
+                                    onClick={handleOpenModal}
                                     style={bidButtonStyle}
                                     whileHover={{
                                         scale: 1.05,

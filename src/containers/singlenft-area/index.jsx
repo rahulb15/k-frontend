@@ -9,6 +9,7 @@ import { useAccountContext } from "src/contexts";
 import collectionService from "src/services/collection.service";
 import singleNftService from "src/services/singleNft.service";
 import SingleNft from "@components/singleNftMarketplace";
+import NoDataFound from "@components/not-found";
 
 const POSTS_PER_PAGE = 8;
 
@@ -46,6 +47,11 @@ const SingleNftArea = ({ className, space, id }) => {
       
             <div className="container">
                 <div className="row g-5">
+                {createdSingleNfts.length === 0 && (
+                    <div className="col-12">
+                        <NoDataFound />
+                    </div>
+                )}
                 {createdSingleNfts?.map((nft) => (
                                             <div
                                                 key={nft._id}

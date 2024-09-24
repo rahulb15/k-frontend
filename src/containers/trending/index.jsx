@@ -233,7 +233,7 @@ const TrendingArea = ({ className, space }) => {
                                                                                 item
                                                                                     .firstTokenData
                                                                                     ?.thumbnail ||
-                                                                                "/images/placeholder.png"
+                                                                                "/assets-images/collections/noimagefound.webp"
                                                                             }
                                                                             alt={
                                                                                 item.collectionName

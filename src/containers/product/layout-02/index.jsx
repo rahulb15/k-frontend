@@ -35,7 +35,7 @@ const ProductArea = ({ space, className, data }) => (
                 <div className="row">
                     <div className="col-lg-12">
                         {data?.section_title && (
-                            <h2 className="text-center mb--50">
+                            <h2 className="text-left mb--50">
                                 {data.section_title.title}
                             </h2>
                         )}

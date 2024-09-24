@@ -229,7 +229,8 @@ const SingleNft = ({
                            
                        
                     </div>
-                    {data?.isRevealed === false && (
+                    {data?.isRevealed === false && data?.isMinted === false && (
+                        
                         <Button onClick={handleReserveNft} size="small">
                             {isLoading ? "Reserving..." : "Mint"}
                         </Button>

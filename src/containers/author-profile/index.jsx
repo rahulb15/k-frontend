@@ -510,6 +510,26 @@ const AuthorProfileArea = ({ className }) => {
         }
     }, [ownedNftsData]);
 
+        useEffect(() => {
+        const fetchTokenDetails = async () => {
+            if (account?.user?.walletAddress) {
+                try {
+                    const response = await getTokenDetailsMutation({
+                        account: account.user.walletAddress,
+                    }).unwrap();
+                    console.log("Token details:", response);
+                    const body = { reveledData: response };
+                    await nftServices.updateRevealedNFTs(body);
+                    refetchOwnedNfts();
+                } catch (error) {
+                    console.error("Error fetching token details:", error);
+                }
+            }
+        };
+
+        fetchTokenDetails();
+    }, [account.user.walletAddress, getTokenDetailsMutation, refetchOwnedNfts]);
+
         // Fetch Priority Pass NFTs
         useEffect(() => {
             const fetchPriorityPassNfts = async () => {

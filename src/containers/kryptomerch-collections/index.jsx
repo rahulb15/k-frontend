@@ -7,6 +7,7 @@ import { CollectionType } from "@utils/types";
 import MarketCollection from "@components/marketplace-collection-home";
 import { useAccountContext } from "src/contexts";
 import collectionService from "src/services/collection.service";
+import NoDataFound from "@components/not-found";
 
 const POSTS_PER_PAGE = 8;
 
@@ -55,30 +56,34 @@ const CollectionArea = ({ className, space, id, data }) => {
     console.log("collections", createdCollections);
 
     return (
-      
-            <div className="container">
-                <div className="row g-5">
-                    {createdCollections.map((collection) => (
-                        <div
-                            key={collection._id}
-                                        className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
-                        >
-                            <MarketCollection
-                                title={collection.collectionName}
-                                total_item={collection.totalSupply}
-                                path={collection.collectionName}
-                                image={collection.collectionCoverImage}
-                                thumbnails={collection.collectionBannerImage}
-                                price={collection.mintPrice}
-                                reservePrice={collection.reservePrice}
-                                mintStartDate={collection.mintStartDate}
-                                mintEndDate={collection.mintEndDate}
-                                data={collection}
-                            />
-                        </div>
-                    ))}
-                </div>
-                {/* <div className="row">
+        <div className="container">
+            <div className="row g-5">
+                {createdCollections.length === 0 && (
+                    <div className="col-12">
+                        <NoDataFound />
+                    </div>
+                )}
+                {createdCollections.map((collection) => (
+                    <div
+                        key={collection._id}
+                        className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
+                    >
+                        <MarketCollection
+                            title={collection.collectionName}
+                            total_item={collection.totalSupply}
+                            path={collection.collectionName}
+                            image={collection.collectionCoverImage}
+                            thumbnails={collection.collectionBannerImage}
+                            price={collection.mintPrice}
+                            reservePrice={collection.reservePrice}
+                            mintStartDate={collection.mintStartDate}
+                            mintEndDate={collection.mintEndDate}
+                            data={collection}
+                        />
+                    </div>
+                ))}
+            </div>
+            {/* <div className="row">
                     <div
                         className="col-lg-12"
                         data-sal="slide-up"
@@ -92,7 +97,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                         />
                     </div>
                 </div> */}
-            </div>
+        </div>
     );
 };
 

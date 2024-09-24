@@ -190,7 +190,7 @@ const uploadImage = async (formData) => {
     try {
         const token = localStorage.getItem("token");
         const response = await axios.post(
-            API_URL + "user/upload-image",
+            API_URL + "user/upload-image-user",
             formData,
             {
                 headers: {

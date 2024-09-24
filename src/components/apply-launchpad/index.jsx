@@ -346,26 +346,22 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     );
     // }, [tokenList]);
 
-
     useEffect(() => {
         console.log("watch", watch("tokenList"));
         const processedTokenList = processTokenList(watch("tokenList") || "");
         dispatch(
             setCollectionRequestUriList(
-                processedTokenList.split(',').map(token => token.replace(/"/g, '').trim())
+                processedTokenList
+                    .split(",")
+                    .map((token) => token.replace(/"/g, "").trim())
             )
         );
 
         //totalSupply
-        setValue(
-            "totalSupply",
-            processedTokenList.split(',').length
-        );
+        setValue("totalSupply", processedTokenList.split(",").length);
 
         dispatch(
-            setCollectionRequestSupply(
-                processedTokenList.split(',').length
-            )
+            setCollectionRequestSupply(processedTokenList.split(",").length)
         );
     }, [watch("tokenList")]);
 
@@ -532,13 +528,13 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     }
     // }, [formData]);
 
-
     const processTokenList = (input) => {
         // Split the input by newlines or commas
-        const tokens = input.split(/[\n,]+/)
-            .map(token => token.trim()) // Trim whitespace
-            .filter(token => token.length > 0) // Remove empty entries
-            .map(token => {
+        const tokens = input
+            .split(/[\n,]+/)
+            .map((token) => token.trim()) // Trim whitespace
+            .filter((token) => token.length > 0) // Remove empty entries
+            .map((token) => {
                 // If the token doesn't start with a quote, add quotes
                 if (!token.startsWith('"')) {
                     token = `"${token}"`;
@@ -547,19 +543,22 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             });
 
         // Join the processed tokens with commas
-        return tokens.join(',');
+        return tokens.join(",");
     };
-
-
-
 
     console.log("formData", collectionRequestUriList);
 
-    const handleWalletSubmit = async (data) => {
-        console.log(data);
+    const handleWalletSubmit = async () => {
+        // console.log(data);
 
-        console.log("collectionRequestCoverImgUrl", collectionRequestCoverImgUrl);
-        console.log("collectionRequestBannerImgUrl", collectionRequestBannerImgUrl);
+        console.log(
+            "collectionRequestCoverImgUrl",
+            collectionRequestCoverImgUrl
+        );
+        console.log(
+            "collectionRequestBannerImgUrl",
+            collectionRequestBannerImgUrl
+        );
         try {
             const result = await collectionRequest({
                 collectionRequestName,
@@ -585,54 +584,56 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             }).unwrap();
             dispatch(setLastRequestResult(result));
             if (result.result.status === "success") {
-                const body = {
-                    paymentId: result.reqKey,
-                    paymentStatus: "paid",
-                    paymentAmount: 1,
-                    paymentCurrency: "kda",
-                    paymentDate: new Date(),
-                    paymentMethod: "wallet",
-                    paymentDescription: "collection creation",
-                    paymentUserRole: "user",
-                    order_id: data._id,
-                    order_type: "apply-launchpad",
-                    type: "wallet",
-                };
-                const response = await collectionService.createCheckoutSession(
-                    body
-                );
+                const createResponse = await createCollectionRequest();
+                if (createResponse?.data?.status === "success") {
+                    const body = {
+                        paymentId: result.reqKey,
+                        paymentStatus: "paid",
+                        paymentAmount: 1,
+                        paymentCurrency: "kda",
+                        paymentDate: new Date(),
+                        paymentMethod: "wallet",
+                        paymentDescription: "collection creation",
+                        paymentUserRole: "user",
+                        order_id: createResponse?.data?.data?._id,
+                        order_type: "apply-launchpad",
+                        type: "wallet",
+                    };
+                    const response =
+                        await collectionService.createCheckoutSession(body);
 
-                console.log("🚀 ~ handleWalletSubmit ~ response", response);
-                Swal.fire({
-                    title: "Success",
-                    text: "Collection Created Successfully",
-                    icon: "success",
-                    confirmButtonText: "Cool",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        dispatch(setCollectionRequestName(""));
-                        dispatch(setCollectionRequestSymbol(""));
-                        dispatch(setCollectionRequestCreator(""));
-                        dispatch(setCollectionRequestDescription(""));
-                        dispatch(setCollectionRequestCategory(""));
-                        dispatch(setCollectionRequestSupply(0));
-                        dispatch(setCollectionRequestUriList([]));
-                        dispatch(setCollectionRequestMintPrice(0));
-                        dispatch(setCollectionRequestRoyalityPerc(0));
-                        dispatch(setCollectionRequestRoyalityAddress(""));
-                        dispatch(setCollectionRequestCoverImgUrl(""));
-                        dispatch(setCollectionRequestBannerImgUrl(""));
-                        dispatch(setCollectionRequestStartDate(""));
-                        dispatch(setCollectionRequesEndDate(""));
-                        dispatch(setCollectionRequestEnableFreeMint(false));
-                        dispatch(setCollectionRequestEnableWl(false));
-                        dispatch(setCollectionRequestEnablePresale(false));
-                        dispatch(setCollectionRequestEnableAirdrop(false));
-                        dispatch(setCollectionRequestPolicy(""));
-                        dispatch(setWalletName(""));
-                        window.location.href = "/apply-launchpad";
-                    }
-                });
+                    console.log("🚀 ~ handleWalletSubmit ~ response", response);
+                    Swal.fire({
+                        title: "Success",
+                        text: "Collection Created Successfully",
+                        icon: "success",
+                        confirmButtonText: "Cool",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            dispatch(setCollectionRequestName(""));
+                            dispatch(setCollectionRequestSymbol(""));
+                            dispatch(setCollectionRequestCreator(""));
+                            dispatch(setCollectionRequestDescription(""));
+                            dispatch(setCollectionRequestCategory(""));
+                            dispatch(setCollectionRequestSupply(0));
+                            dispatch(setCollectionRequestUriList([]));
+                            dispatch(setCollectionRequestMintPrice(0));
+                            dispatch(setCollectionRequestRoyalityPerc(0));
+                            dispatch(setCollectionRequestRoyalityAddress(""));
+                            dispatch(setCollectionRequestCoverImgUrl(""));
+                            dispatch(setCollectionRequestBannerImgUrl(""));
+                            dispatch(setCollectionRequestStartDate(""));
+                            dispatch(setCollectionRequesEndDate(""));
+                            dispatch(setCollectionRequestEnableFreeMint(false));
+                            dispatch(setCollectionRequestEnableWl(false));
+                            dispatch(setCollectionRequestEnablePresale(false));
+                            dispatch(setCollectionRequestEnableAirdrop(false));
+                            dispatch(setCollectionRequestPolicy(""));
+                            dispatch(setWalletName(""));
+                            window.location.href = "/apply-launchpad";
+                        }
+                    });
+                }
             }
         } catch (err) {
             dispatch(setLastRequestResult(err));
@@ -768,10 +769,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     ) {
                         console.log("EckoWallet");
 
-                        const createResponse = await createCollectionRequest();
-                        if (createResponse?.data?.status === "success") {
-                            handleWalletSubmit(createResponse.data.data);
-                        }
+                        // const createResponse = await createCollectionRequest();
+                        // if (createResponse?.data?.status === "success") {
+                        //     handleWalletSubmit(createResponse.data.data);
+                        // }
+                        handleWalletSubmit();
                     }
                 }
             } else {
@@ -834,9 +836,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //         setImageBannerLoading(false);
     //     }
     // };
-
-
-
 
     const uploadImage = async (name, file) => {
         if (name === "coverImage") setImageCoverLoading(true);
@@ -1563,12 +1562,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         onChange={handleCoverImageChange}
                                     />
                                     {selectedImage && (
-                                         <img
-                                         id="createCoverImage"
-                                         src={selectedImage}
-                                         alt=""
-                                         data-black-overlay="6"
-                                     />
+                                        <img
+                                            id="createCoverImage"
+                                            src={selectedImage}
+                                            alt=""
+                                            data-black-overlay="6"
+                                        />
                                     )}
                                     <label
                                         htmlFor="coverFile"
@@ -1616,12 +1615,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         onChange={handleBannerImageChange}
                                     />
                                     {selectedBannerImage && (
-                                          <img
-                                          id="createBannerImage"
-                                          src={selectedBannerImage}
-                                          alt=""
-                                          data-black-overlay="6"
-                                      />
+                                        <img
+                                            id="createBannerImage"
+                                            src={selectedBannerImage}
+                                            alt=""
+                                            data-black-overlay="6"
+                                        />
                                     )}
                                     <label
                                         htmlFor="bannerFile"
@@ -2030,31 +2029,39 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             )}
                                         </div> */}
 
-<div className="input-box pb--20">
-                <label
-                    htmlFor="tokenList"
-                    className="form-label"
-                >
-                    Token List
-                </label>
-                <textarea
-                    id="tokenList"
-                    rows="5"
-                    placeholder="Enter or paste your token URLs, one per line or comma-separated"
-                    {...register("tokenList", {
-                        required: "Token List is required",
-                        validate: (value) => {
-                            const processed = processTokenList(value);
-                            return processed.length > 0 || "Please enter valid token URLs";
-                        }
-                    })}
-                />
-                {errors.tokenList && (
-                    <ErrorText>
-                        {errors.tokenList?.message}
-                    </ErrorText>
-                )}
-            </div>
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="tokenList"
+                                                className="form-label"
+                                            >
+                                                Token List
+                                            </label>
+                                            <textarea
+                                                id="tokenList"
+                                                rows="5"
+                                                placeholder="Enter or paste your token URLs, one per line or comma-separated"
+                                                {...register("tokenList", {
+                                                    required:
+                                                        "Token List is required",
+                                                    validate: (value) => {
+                                                        const processed =
+                                                            processTokenList(
+                                                                value
+                                                            );
+                                                        return (
+                                                            processed.length >
+                                                                0 ||
+                                                            "Please enter valid token URLs"
+                                                        );
+                                                    },
+                                                })}
+                                            />
+                                            {errors.tokenList && (
+                                                <ErrorText>
+                                                    {errors.tokenList?.message}
+                                                </ErrorText>
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="col-md-4">

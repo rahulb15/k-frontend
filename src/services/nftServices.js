@@ -270,9 +270,19 @@ const getTopCreators = async (body) => {
         const response = await axios.post(`${url}single-nft/top-creators`, body);
         return response.data;
     } catch (error) {
-        return error.response.data;
+        return error?.response?.data;
     }
 };
+
+const getNftByTokenId = async (tokenId) => {
+    try {
+        const response = await axios.get(`${url}nft/token/${tokenId}`);
+        return response.data;
+    } catch (error) {
+        return error?.response?.data;
+    }
+}
+
 
 export default {
     createNFT,
@@ -290,4 +300,5 @@ export default {
     placeBid,
     buyNFT,
     getTopCreators,
+    getNftByTokenId,
 };

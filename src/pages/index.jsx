@@ -90,7 +90,7 @@ const Home = () => {
                 <ProductArea
                 data={{
                     section_title: {
-                        title: "Best",
+                        title: "Explore Marketplace",
                     },
                     products: productData,
                 }}

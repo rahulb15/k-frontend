@@ -7,7 +7,7 @@ import { CollectionType } from "@utils/types";
 import MarketCollection from "@components/collection-home";
 import { useAccountContext } from "src/contexts";
 import collectionService from "src/services/collection.service";
-
+import NoDataFound from "@components/not-found";
 const POSTS_PER_PAGE = 8;
 
 const CollectionArea = ({ className, space, id, data }) => {
@@ -69,6 +69,12 @@ const CollectionArea = ({ className, space, id, data }) => {
       
             <div className="container">
                 <div className="row g-5">
+                    {collections.length === 0 && (
+                        <div className="col-12">
+                            <NoDataFound />
+                        </div>
+                    )}
+                    
                     {collections.map((collection) => (
                         <div
                             key={collection._id}
