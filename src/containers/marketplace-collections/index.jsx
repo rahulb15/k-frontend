@@ -46,11 +46,12 @@ const CollectionArea = ({ className, space, id, data }) => {
     const getCollections = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await collectionService.getAllMarketplaceCollections(
+            const response = await collectionService.getAllCollectionMarketplace(
                 currentPage,
                 itemsPerPage,
                 search
             );
+            console.log(response, "response");
             setCollections(response.data.data.collections);
             setTotalItems(response?.data?.pagination?.totalItems);
             setTotalPages(response.data.pagination.totalPages);

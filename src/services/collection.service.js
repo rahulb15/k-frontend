@@ -215,6 +215,37 @@ const getAllMarketplaceCollections = async (page, limit, search, timeRange) => {
     }
 }
 
+const getAllCollectionMarketplace = async (page, limit, search) => {
+    console.log(page, limit, search);
+    try {
+        // const response = await axios.get(
+        //     API_URL + `launch-collection/getAllLaunched?page=${page}&limit=${limit}&search=${search}`
+        // );
+        // console.log(response, "response");
+        // return response;
+
+        // post request
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `collection/getAllCollection`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+
+        return response;
+
+
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 //get collection by name
 const getCollectionByName = async (name) => {
     console.log(name)
@@ -308,5 +339,6 @@ export default {
     getAllLaunched,
     getAllDeposits,
     getAllMarketplaceCollections,
-    getCreatedCollections
+    getCreatedCollections,
+    getAllCollectionMarketplace
 };
