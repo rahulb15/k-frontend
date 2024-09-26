@@ -315,10 +315,28 @@ const getCreatedCollections = async ( page, limit, search) => {
 }
 
 
-// const response = await axios.post('http://localhost:5000/api/v1/activity/candle', {
-//     collectionId: "66d493c972bd90c63f2e1ca0",
-//     interval: intervalMap[resolution] || '1d'
-//   });
+// getCollectionsAllCategory
+// http://localhost:5000/api/v1/launch-collection/category-wise  POST
+const getCollectionsAllCategory = async () => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/category-wise`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 
 
 
@@ -340,5 +358,6 @@ export default {
     getAllDeposits,
     getAllMarketplaceCollections,
     getCreatedCollections,
-    getAllCollectionMarketplace
+    getAllCollectionMarketplace,
+    getCollectionsAllCategory
 };

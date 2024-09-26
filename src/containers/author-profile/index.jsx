@@ -175,6 +175,7 @@ const AuthorProfileArea = ({ className }) => {
                         limit,
                         search
                     );
+                    console.log("On sale NFTs:", response.data.nfts);
                     setOnSaleNfts(response.data.nfts);
                 } else if (marketplaceSubTab === "onAuction") {
                     // Replace with actual API call for auction NFTs
