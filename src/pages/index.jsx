@@ -86,7 +86,7 @@ const Home = () => {
                         creators: sellerData,
                     }}
                 />
-                <TrendingArea data={{ ranking: rankingData }} />
+                <TrendingArea />
                 <ProductArea
                 data={{
                     section_title: {

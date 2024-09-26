@@ -184,7 +184,7 @@ const getAllLaunched = async (page, limit, search) => {
     }
 }
 
-const getAllMarketplaceCollections = async (page, limit, search) => {
+const getAllMarketplaceCollections = async (page, limit, search, timeRange) => {
     console.log(page, limit, search);
     try {
         // const response = await axios.get(
@@ -197,7 +197,7 @@ const getAllMarketplaceCollections = async (page, limit, search) => {
         const token = localStorage.getItem("token");
         const response = await axios.post(
             API_URL + `collection/getAll`,
-            { page, limit, search },
+            { page, limit, search,timeRange },
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

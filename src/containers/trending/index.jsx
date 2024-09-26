@@ -8,8 +8,9 @@ import TabContent from "react-bootstrap/TabContent";
 import TabContainer from "react-bootstrap/TabContainer";
 import TabPane from "react-bootstrap/TabPane";
 import collectionService from "src/services/collection.service";
-import { debounce } from 'lodash';
+import { debounce } from "lodash";
 import SectionTitle from "@components/section-title/layout-02";
+import { RefreshCw } from "lucide-react";
 
 const TrendingArea = ({ className, space }) => {
     const [collections, setCollections] = useState([]);
@@ -20,16 +21,20 @@ const TrendingArea = ({ className, space }) => {
     console.log(itemsPerPage, "itemsPerPage");
     const [totalItems, setTotalItems] = useState(0);
     const [search, setSearch] = useState("");
-    const [timeRange, setTimeRange] = useState("1 day");
+    const [timeRange, setTimeRange] = useState("All time");
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const getCollections = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await collectionService.getAllMarketplaceCollections(
-                currentPage,
-                itemsPerPage,
-                search
-            );
+            const response =
+                await collectionService.getAllMarketplaceCollections(
+                    currentPage,
+                    itemsPerPage,
+                    search,
+                    timeRange
+                );
+            console.log("API response:", response);
             setCollections(response.data.data.collections);
             setTotalItems(response?.data?.pagination?.totalItems);
             setTotalPages(response.data.pagination.totalPages);
@@ -38,25 +43,30 @@ const TrendingArea = ({ className, space }) => {
         } finally {
             setLoading(false);
         }
-    }, [currentPage, itemsPerPage, search]);
+    }, [currentPage, itemsPerPage, search, timeRange]);
 
     useEffect(() => {
         getCollections();
     }, [getCollections]);
 
+    const refreshData = async () => {
+        setIsRefreshing(true);
+        await getCollections();
+        setIsRefreshing(false);
+    };
 
     const debouncedSearch = useCallback(
         debounce((value) => {
-          setSearch(value);
-          setCurrentPage(1);
-          getCollections();
-        }, 300),
+            setSearch(value);
+            setCurrentPage(1);
+            getCollections();
+        }, 100),
         [getCollections]
-      );
-      
-      const handleSearchChange = (e) => {
+    );
+
+    const handleSearchChange = (e) => {
         debouncedSearch(e.target.value);
-      };
+    };
 
     const handleTimeRangeChange = (value) => {
         setTimeRange(value);
@@ -92,24 +102,22 @@ const TrendingArea = ({ className, space }) => {
         });
     }
 
+    console.log(collections, "collections");
 
     return (
         <div
             className={`rn-upcoming-area mt-5
          ${space === 1 ? "rn-section-gapTop" : ""} ${className || ""}`}
         >
-            
             <div className="container">
-            <div className="col-lg-6 col-md-6 col-sm-6 col-12 mb--50 mt--50">
-                        
-                        <SectionTitle
-                            title="Trending Collections"
-                            className="mb--0"
-                            disableAnimation
-                        />
-                    
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12 mb--50 mt--50">
+                    <SectionTitle
+                        title="Trending Collections"
+                        className="mb--0"
+                        disableAnimation
+                    />
                 </div>
-           
+
                 <div className="row">
                     <div className="col-12">
                         <TabContainer defaultActiveKey="nav-home">
@@ -124,46 +132,86 @@ const TrendingArea = ({ className, space }) => {
                                     >
                                         Top
                                     </Nav.Link>
-                                    <div className="shortby-default text-start text-sm-end">
-                                        <NiceSelect
-                                            options={[
-                                                {
-                                                    value: "1 day",
-                                                    text: "1 day",
-                                                },
-                                                {
-                                                    value: "7 days",
-                                                    text: "7 days",
-                                                },
-                                                {
-                                                    value: "30 days",
-                                                    text: "30 days",
-                                                },
-                                                {
-                                                    value: "All time",
-                                                    text: "All time",
-                                                },
-                                            ]}
-                                            defaultCurrent={0}
-                                            name="timeRange"
-                                            onChange={handleTimeRangeChange}
-                                        />
-                                    </div>
-                                    <div className="search-box">
+                                    <div
+                                        className="search-box"
+                                        style={{ display: "flex" }}
+                                    >
                                         <input
+                                            style={{
+                                                borderRadius: "5px",
+                                                padding: "5px",
+                                                border: "1px solid #e5e5e5",
+                                                marginRight: "10px",
+                                            }}
                                             type="text"
                                             placeholder="Search collections"
                                             value={search}
                                             onChange={handleSearchChange}
                                         />
                                     </div>
-                                    <div className="items-per-page">
-                                        <NiceSelect
-                                            options={itemsPerPageOptions}
-                                            defaultCurrent={0}
-                                            name="itemsPerPage"
-                                            onChange={handleItemsPerPageChange}
-                                        />
+                                    <div
+                                        style={{
+                                            marginLeft: "auto",
+                                            display: "flex",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                marginRight: 10,
+                                                cursor: "pointer",
+                                            }}
+                                            onClick={refreshData}
+                                        >
+                                            <RefreshCw
+                                                size={20}
+                                                style={{
+                                                    animation: isRefreshing
+                                                        ? "spin 1s linear infinite"
+                                                        : "none",
+                                                }}
+                                            />
+                                        </div>
+                                        <div
+                                            className="shortby-default text-start text-sm-end"
+                                            style={{ marginRight: 10 }}
+                                        >
+                                            <NiceSelect
+                                                options={[
+                                                    {
+                                                        value: "1 day",
+                                                        text: "1 day",
+                                                    },
+                                                    {
+                                                        value: "7 days",
+                                                        text: "7 days",
+                                                    },
+                                                    {
+                                                        value: "30 days",
+                                                        text: "30 days",
+                                                    },
+                                                    {
+                                                        value: "All time",
+                                                        text: "All time",
+                                                    },
+                                                ]}
+                                                defaultCurrent={timeRange}
+                                                value={timeRange}
+                                                name="timeRange"
+                                                onChange={handleTimeRangeChange}
+                                            />
+                                        </div>
+
+                                        <div className="items-per-page">
+                                            <NiceSelect
+                                                options={itemsPerPageOptions}
+                                                defaultCurrent={0}
+                                                name="itemsPerPage"
+                                                onChange={
+                                                    handleItemsPerPageChange
+                                                }
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </Nav>
@@ -204,92 +252,123 @@ const TrendingArea = ({ className, space }) => {
                                             </thead>
                                             <tbody className="ranking">
                                                 {collections.map(
-                                                    (item, index) => (
-                                                        <tr
-                                                            key={item._id}
-                                                            className={
-                                                                index % 2 === 0
-                                                                    ? "color-light"
-                                                                    : ""
-                                                            }
-                                                        >
-                                                            <td>
-                                                                <span>
-                                                                    {(currentPage -
-                                                                        1) *
-                                                                        itemsPerPage +
-                                                                        index +
-                                                                        1}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <div className="product-wrapper d-flex align-items-center">
-                                                                    <Anchor
-                                                                        path={`/collections/kadena/${item.collectionName}`}
-                                                                        className="thumbnail"
-                                                                    >
-                                                                        <Image
-                                                                            src={
-                                                                                item
-                                                                                    .firstTokenData
-                                                                                    ?.thumbnail ||
-                                                                                "/assets-images/collections/noimagefound.webp"
-                                                                            }
-                                                                            alt={
+                                                    (item, index) => {
+                                                        console.log(
+                                                            `Rendering collection ${
+                                                                index + 1
+                                                            }:`,
+                                                            item
+                                                        ); // Debug log
+                                                        return (
+                                                            <tr
+                                                                key={item._id}
+                                                                className={
+                                                                    index %
+                                                                        2 ===
+                                                                    0
+                                                                        ? "color-light"
+                                                                        : ""
+                                                                }
+                                                            >
+                                                                <td>
+                                                                    <span>
+                                                                        {(currentPage -
+                                                                            1) *
+                                                                            itemsPerPage +
+                                                                            index +
+                                                                            1}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <div className="product-wrapper d-flex align-items-center">
+                                                                        <Anchor
+                                                                            path={`/collections/kadena/${item.collectionName}`}
+                                                                            className="thumbnail"
+                                                                        >
+                                                                            <Image
+                                                                                src={
+                                                                                    item
+                                                                                        .firstTokenData
+                                                                                        ?.thumbnail ||
+                                                                                    "/assets-images/collections/noimagefound.webp"
+                                                                                }
+                                                                                alt={
+                                                                                    item.collectionName
+                                                                                }
+                                                                                width={
+                                                                                    56
+                                                                                }
+                                                                                height={
+                                                                                    56
+                                                                                }
+                                                                            />
+                                                                        </Anchor>
+                                                                        <span>
+                                                                            {
                                                                                 item.collectionName
                                                                             }
-                                                                            width={
-                                                                                56
-                                                                            }
-                                                                            height={
-                                                                                56
-                                                                            }
-                                                                        />
-                                                                    </Anchor>
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
                                                                     <span>
-                                                                        {
-                                                                            item.collectionName
-                                                                        }
+                                                                        {item.statistics?.volume?.toFixed(
+                                                                            2
+                                                                        ) ||
+                                                                            "0"}{" "}
+                                                                        KDA
                                                                     </span>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <span>
-                                                                    {item.totalSupply *
-                                                                        (item.reservePrice ||
-                                                                            0)}{" "}
-                                                                    KDA
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <span>+0%</span>
-                                                            </td>
-                                                            <td>
-                                                                <span>+0%</span>
-                                                            </td>
-                                                            <td>
-                                                                <span>
-                                                                    {item.reservePrice ||
-                                                                        0}{" "}
-                                                                    KDA
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <span>
-                                                                    {item.tokens
-                                                                        ?.length ||
-                                                                        0}
-                                                                </span>
-                                                            </td>
-                                                            <td>
-                                                                <span>
-                                                                    {
-                                                                        item.totalSupply
-                                                                    }
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    )
+                                                                </td>
+                                                                <td>
+                                                                    <span>
+                                                                        {item[
+                                                                            "24hChange"
+                                                                        ]?.toFixed(
+                                                                            2
+                                                                        ) ||
+                                                                            "0"}
+                                                                        %
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>
+                                                                        {item[
+                                                                            "7dChange"
+                                                                        ]?.toFixed(
+                                                                            2
+                                                                        ) ||
+                                                                            "0"}
+                                                                        %
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>
+                                                                        {item.statistics?.floorPrice?.toFixed(
+                                                                            2
+                                                                        ) ||
+                                                                            "0"}{" "}
+                                                                        KDA
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>
+                                                                        {item
+                                                                            .statistics
+                                                                            ?.owners ||
+                                                                            "0"}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span>
+                                                                        {item
+                                                                            .statistics
+                                                                            ?.items ||
+                                                                            "0"}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    }
                                                 )}
                                             </tbody>
                                         </table>
