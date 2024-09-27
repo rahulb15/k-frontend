@@ -6,7 +6,7 @@
 // import SEO from "@components/seo";
 // import CollectionDetailsArea from "@containers/collection-detail";
 // import PriorityPassDetailsArea from "@containers/prioritypass-detail";
-// import Footer from "@layout/footer/footer-03";
+// import Footer from "@layout/footer/footer-main";
 // import Header from "@layout/header/header-01";
 // import Wrapper from "@layout/wrapper";
 // import PropTypes from "prop-types";
@@ -165,7 +165,7 @@ import NftListArea from "@components/nft-list";
 import SEO from "@components/seo";
 import CollectionDetailsArea from "@containers/collection-detail";
 import PriorityPassDetailsArea from "@containers/prioritypass-detail";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import PropTypes from "prop-types";

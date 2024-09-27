@@ -6,11 +6,11 @@ const PriceSort = ({ onChange, value }) => {
         onChange(currentValue);
     };
     return (
-        <div className="nuron-expo-filter-widget widget-shortby mt--30">
+        <div className="kryptomerch-expo-filter-widget widget-shortby mt--30">
             <div className="inner">
                 <h5 className="widget-title">Sort By Price</h5>
                 <div className="content">
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="low-to-high"
@@ -21,7 +21,7 @@ const PriceSort = ({ onChange, value }) => {
                         />
                         <label htmlFor="price-check1">Price: Low to High</label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="high-to-low"

@@ -4,7 +4,7 @@ import LaunchpadChainHeader from "@components/launchpad-chain-header";
 import LaunchpadFilter from "@components/launchpad-filter";
 import SEO from "@components/seo";
 import LaunchpadHeroArea from "@containers/launchpad-hero";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { slideToggle } from "@utils/methods";

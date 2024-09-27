@@ -1,7 +1,7 @@
 import Button from "@ui/button";
 
 const NotificationSetting = () => (
-    <div className="nuron-information">
+    <div className="kryptomerch-information">
         <h5 className="title">Make Sure Your Notification setting </h5>
         <p className="notice-disc">
             Notification Center is where you can find app notifications and

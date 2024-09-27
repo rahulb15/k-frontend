@@ -28,7 +28,7 @@ const UploadVariants = ({ className, space }) => (
                         <div className="variant-preview">
                             <Image
                                 src="/images/upload-variants/single.jpg"
-                                alt="nuron-single"
+                                alt="kryptomerch-single"
                                 width={495}
                                 height={417}
                                 priority
@@ -49,7 +49,7 @@ const UploadVariants = ({ className, space }) => (
                         <div className="variant-preview">
                             <Image
                                 src="/images/upload-variants/multiple.jpg"
-                                alt="nuron-single"
+                                alt="kryptomerch-single"
                                 width={495}
                                 height={417}
                                 priority

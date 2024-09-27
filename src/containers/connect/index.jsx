@@ -22,6 +22,8 @@ import { MutatingDots } from "react-loader-spinner";
 const ConnectArea = ({ className, space }) => {
     const router = useRouter();
     const { connect, accounts } = useWalletConnectClient();
+    const { client: wcClient, session: wcSession } = useWalletConnectClient();
+    console.log("🚀 ~ file: index.jsx ~ line 13 ~ ConnectArea ~ wcClient", wcClient)
     const { eckoWalletConnect } = useEckoWallletClient();
     const { koalaWalletConnect } = useKoalaWallletClient();
     const account = useAccountContext();
@@ -174,7 +176,7 @@ const ConnectArea = ({ className, space }) => {
 
     //Wallet Connect Connect
     const handleConnect = () => {
-        setWalletName("Wallet Connect");
+        setWalletName("WalletConnect");
         connect();
     };
 

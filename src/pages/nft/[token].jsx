@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SEO from "@components/seo";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import PropTypes from "prop-types";

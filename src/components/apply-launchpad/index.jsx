@@ -51,6 +51,7 @@ import {
 import moment from "moment";
 import ConnectModal from "@components/modals/connect-modal";
 import { useRouter } from "next/router";
+import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -115,6 +116,9 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         useCollectionRequestMutation();
     const account = useAccountContext();
     const [step, setStep] = useState(1);
+      // Get WalletConnect client and session
+      const { client: wcClient, session: wcSession } =
+      useWalletConnectClient();
     const [formData, setFormData] = useState({
         creatorName: "",
         twitter: "",
@@ -197,6 +201,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         {
             name: "Chainweaver",
             src: "/wallet/chainweaver.png",
+            width: 100,
+            height: 100,
+        },
+        {
+            name: "WalletConnect",
+            src: "/wallet/walletconnect.svg",
             width: 100,
             height: 100,
         },
@@ -559,6 +569,12 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             "collectionRequestBannerImgUrl",
             collectionRequestBannerImgUrl
         );
+        if (walletName === "WalletConnect") {
+     
+            console.log("🚀 ~ handleWalletSubmit ~ wcClient", wcClient);
+            console.log("🚀 ~ handleWalletSubmit ~ wcSession", wcSession);
+        }
+
         try {
             const result = await collectionRequest({
                 collectionRequestName,
@@ -581,6 +597,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 collectionRequestEnableAirdrop,
                 collectionRequestPolicy,
                 walletName,
+                wcClient,
+                wcSession,
             }).unwrap();
             dispatch(setLastRequestResult(result));
             if (result.result.status === "success") {
@@ -765,7 +783,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     }
                     if (
                         selectedWallet === "EckoWallet" ||
-                        selectedWallet === "Chainweaver"
+                        selectedWallet === "Chainweaver" ||
+                        selectedWallet === "WalletConnect"
                     ) {
                         console.log("EckoWallet");
 

@@ -30,11 +30,11 @@ const LanguageFilter = ({ onChange, languages }) => {
         onChange("language", isCheck);
     }, [isCheck, onChange]);
     return (
-        <div className="nuron-expo-filter-widget widget-shortby mt--30">
+        <div className="kryptomerch-expo-filter-widget widget-shortby mt--30">
             <div className="inner">
                 <h5 className="widget-title">Language</h5>
                 <div className="content">
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="level"
@@ -46,7 +46,7 @@ const LanguageFilter = ({ onChange, languages }) => {
                         <label htmlFor="lang-check1">All Language</label>
                     </div>
                     {list?.map((lng) => (
-                        <div className="nuron-form-check" key={lng}>
+                        <div className="kryptomerch-form-check" key={lng}>
                             <input
                                 type="checkbox"
                                 name="language"

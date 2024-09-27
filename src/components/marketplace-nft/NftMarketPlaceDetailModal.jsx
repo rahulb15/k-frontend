@@ -67,6 +67,8 @@ import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NftImageContainer from "./NftImageContainer";
 import NftPriceHistoryGraph from "@components/NftPriceHistoryGraph";
+import Swal from "sweetalert2";
+
 const mockPriceData = [
     { date: '2023-01', price: 100 },
     { date: '2023-02', price: 120 },
@@ -940,6 +942,19 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
 
     if (!open) return null;
 
+    const copyTokenId = () => {
+        navigator.clipboard.writeText(data.tokenId);
+        Swal.fire({
+            icon: "success",
+            title: "Token ID copied to clipboard",
+            showConfirmButton: false,
+            timer: 1500,
+            customClass: {
+                popup: "my-swal",
+            },
+        });
+    };
+
     return (
         <>
             <Modal open={open} onClose={onClose}>
@@ -1056,7 +1071,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                         paragraph
                                         className="nft-creator-info"
                                     >
-                                        Creator:{" "}
+                                        {/* Creator:{" "}
                                         <strong>
                                             {data?.creator.slice(0, 10)}...
                                             {data?.creator.slice(-10)}
@@ -1067,12 +1082,45 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                     data?.creator
                                                 )
                                             }
-                                        />
+                                        /> */}
+                                              <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "5px",
+                                                // fontSize: "12px",
+                                                // color: "#666",
+                                            }}
+                                        >
+                                            Creator: &nbsp;
+                                            <strong
+                                                className="token-id"
+                                                style={{ marginRight: "5px" }}
+                                            >
+                                                {`${data.creator.slice(
+                                                    0,
+                                                    8
+                                                )}...${data.creator.slice(-6)}`}
+                                            </strong>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <ContentCopyIcon
+                                                    onClick={copyTokenId}
+                                                    style={{
+                                                        fontSize: "16px",
+                                                        color: "#888",
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        </div>
                                     </Typography>
-                                    <Typography variant="h5" paragraph>
+                                    {/* <Typography variant="h5" paragraph>
                                         Collection Type:{" "}
                                         <strong>{data.collectionType}</strong>
-                                    </Typography>
+                                    </Typography> */}
                                     <Typography variant="h5" paragraph>
                                         Price:{" "}
                                         <strong>
@@ -1081,6 +1129,89 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                 : "Not for sale"}
                                         </strong>
                                     </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{ fontSize: 16 }}
+                                    >
+                                        {/* Owner:{" "}
+                                        <strong>{data?.owner}</strong> */}
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "5px",
+                                                // fontSize: "12px",
+                                                // color: "#666",
+                                            }}
+                                        >
+                                            Owner: &nbsp;
+                                            <strong
+                                                className="token-id"
+                                                style={{ marginRight: "5px" }}
+                                            >
+                                                {`${data.owner.slice(
+                                                    0,
+                                                    8
+                                                )}...${data.owner.slice(-6)}`}
+                                            </strong>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <ContentCopyIcon
+                                                    onClick={copyTokenId}
+                                                    style={{
+                                                        fontSize: "16px",
+                                                        color: "#888",
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        </div>
+                                    </Typography>{" "}
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{ fontSize: 16 }}
+                                    >
+                                        {/* Owner:{" "}
+                                        <strong>{data?.owner}</strong> */}
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "5px",
+                                                // fontSize: "12px",
+                                                // color: "#666",
+                                            }}
+                                        >
+                                            Sale ID: &nbsp;
+                                            <strong
+                                                className="token-id"
+                                                style={{ marginRight: "5px" }}
+                                            >
+                                                {/* {`${data.saleId.slice(
+                                                    0,
+                                                    8
+                                                )}...${data.saleId.slice(-6)}`} */}
+                                                {data?.saleId}
+                                            </strong>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <ContentCopyIcon
+                                                    onClick={copyTokenId}
+                                                    style={{
+                                                        fontSize: "16px",
+                                                        color: "#888",
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        </div>
+                                    </Typography>{" "}
                                 </Box>
 
                                 <Box className="nft-action-buttons">

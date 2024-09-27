@@ -1,6 +1,6 @@
 import SEO from "@components/seo";
 import BlogArea from "@containers/blog/layout-02";
-import Footer from "@layout/footer/footer-01";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import PropTypes from "prop-types";

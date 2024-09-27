@@ -6,11 +6,11 @@ const SortWidget = ({ onChange, value }) => {
         onChange(currentValue);
     };
     return (
-        <div className="nuron-expo-filter-widget widget-shortby">
+        <div className="kryptomerch-expo-filter-widget widget-shortby">
             <div className="inner">
                 <h5 className="widget-title">Sort By</h5>
                 <div className="content">
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="newest"
@@ -21,7 +21,7 @@ const SortWidget = ({ onChange, value }) => {
                         />
                         <label htmlFor="short-check1">Newest</label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="oldest"
@@ -32,7 +32,7 @@ const SortWidget = ({ onChange, value }) => {
                         />
                         <label htmlFor="short-check2">Oldest</label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="most-liked"
@@ -43,7 +43,7 @@ const SortWidget = ({ onChange, value }) => {
                         />
                         <label htmlFor="short-check3">Most Liked</label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="radio"
                             value="least-liked"

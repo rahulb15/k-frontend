@@ -3,7 +3,7 @@ import CreatorArea from "@containers/creator/layout-01";
 import ExploreProductArea from "@containers/explore-product/layout-02";
 import ServiceArea from "@containers/services/layout-01";
 import TopCollection from "@containers/top-collection";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";

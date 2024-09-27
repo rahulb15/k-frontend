@@ -16,12 +16,12 @@ const CategoryFilter = ({ categories, onChange }) => {
     }, [isCheck, onChange]);
 
     return (
-        <div className="nuron-expo-filter-widget widget-category mt--30">
+        <div className="kryptomerch-expo-filter-widget widget-category mt--30">
             <div className="inner">
                 <h5 className="widget-title">Categories</h5>
                 <div className="content">
                     {Object.entries(categories).map(([key, value]) => (
-                        <div className="nuron-form-check" key={key}>
+                        <div className="kryptomerch-form-check" key={key}>
                             <input
                                 type="checkbox"
                                 name="categories"

@@ -15,11 +15,11 @@ const RatingFilter = ({ onChange }) => {
         onChange("rating", isCheck);
     }, [isCheck, onChange]);
     return (
-        <div className="nuron-expo-filter-widget widget-shortby mt--30">
+        <div className="kryptomerch-expo-filter-widget widget-shortby mt--30">
             <div className="inner">
                 <h5 className="widget-title">Filter By Rating</h5>
                 <div className="content">
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="rating"
@@ -80,7 +80,7 @@ const RatingFilter = ({ onChange }) => {
                             </svg>
                         </label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="rating"
@@ -141,7 +141,7 @@ const RatingFilter = ({ onChange }) => {
                             </svg>
                         </label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="rating"
@@ -202,7 +202,7 @@ const RatingFilter = ({ onChange }) => {
                             </svg>
                         </label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="rating"
@@ -263,7 +263,7 @@ const RatingFilter = ({ onChange }) => {
                             </svg>
                         </label>
                     </div>
-                    <div className="nuron-form-check">
+                    <div className="kryptomerch-form-check">
                         <input
                             type="checkbox"
                             name="rating"

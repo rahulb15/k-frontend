@@ -4,6 +4,8 @@ import {
     createClient,
     createEckoWalletQuicksign,
     createSignWithChainweaver,
+    createWalletConnectSign,
+    createWalletConnectQuicksign,
 } from "@kadena/client";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import {
@@ -12,6 +14,7 @@ import {
     NETWORKID,
     creationTime,
 } from "src/constants/contextConstants";
+import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 
 const API_HOST = NETWORK;
 const client = createClient(API_HOST);
@@ -280,8 +283,15 @@ export const launchpadApi = createApi({
                     collectionRequestEnableAirdrop,
                     collectionRequestPolicy,
                     walletName,
+                    wcClient,
+                    wcSession,
                 } = args;
                 console.log(args);
+
+                // Get WalletConnect client and session
+                // const { client: wcClient, session: wcSession } = useWalletConnectClient();
+                // console.log("wcClient", wcClient);
+                // console.log("wcSession", wcSession);
 
                 const launchFee = await getLaunchFee();
                 console.log("launchFee", launchFee);
@@ -413,6 +423,18 @@ export const launchpadApi = createApi({
                             console.log("Chainweaver");
 
                             signedTx = await signWithChainweaver(txn);
+                        } else if (walletName === "WalletConnect") {
+                            console.log("WalletConnect");
+                            if (wcClient && wcSession) {
+                                const signWithWalletConnect = createWalletConnectSign(
+                                    wcClient,
+                                    wcSession,
+                                    "kadena:testnet04"
+                                );
+                                signedTx = await signWithWalletConnect(txn);
+                            } else {
+                                return { error: "WalletConnect not initialized" };
+                            }
                         }
 
                         const response = await signFunction(signedTx);
@@ -706,6 +728,8 @@ export const launchpadApi = createApi({
                     reserverAcc,
                     reserveTknAmount,
                     walletName,
+                    wcClient,
+                    wcSession,
                 } = args;
                 console.log(args);
                 // Use the api object to dispatch other mutations
@@ -853,7 +877,19 @@ export const launchpadApi = createApi({
                     }
                     if (walletName == "Chainweaver") {
                         signedTx = await signWithChainweaver(txn);
+                    } else if (walletName == "WalletConnect") {
+                        if (wcClient && wcSession) {
+                            const signWithWalletConnect = createWalletConnectSign(
+                                wcClient,
+                                wcSession,
+                                "kadena:testnet04"
+                            );
+                            signedTx = await signWithWalletConnect(txn);
+                        } else {
+                            return { error: "WalletConnect not initialized" };
+                        }
                     }
+                    
                     console.log("sign1");
                     const response = await signFunction(signedTx);
                     if (response.result.status == "success") {

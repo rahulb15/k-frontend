@@ -296,7 +296,7 @@ const CreateCollectionArea = () => {
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
-                                        <div className="nuron-information mb--30">
+                                        <div className="kryptomerch-information mb--30">
                                             <div className="single-notice-setting">
                                                 <div className="input">
                                                     <input

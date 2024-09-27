@@ -7,7 +7,7 @@ import axios from "axios";  // Make sure to import axios
 
 import CollectionDetailHeader from "@components/collection-detail-header";
 import SEO from "@components/seo";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import NftListArea from "@components/nft-list";
@@ -18,7 +18,7 @@ import collectionService from "src/services/collection.service";
 
 
 import Header2 from "@layout/header/collection-detail-header";
-import Footer2 from "@layout/footer/footer-02";
+import Footer2 from "@layout/footer/footer-main";
 import TopBarArea from "@containers/top-bar-collection";
 import HeroArea from "@containers/hero/layout-07";
 import LiveExploreArea from "@containers/live-explore/layout-03";

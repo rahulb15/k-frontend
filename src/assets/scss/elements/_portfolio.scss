@@ -497,7 +497,7 @@
 .default-exp-expand {
     display: none;
 }
-.nuron-expo-filter-widget {
+.kryptomerch-expo-filter-widget {
     .slider__range--output {
         margin-top: 8px;
     }
@@ -1029,7 +1029,7 @@
     }
 }
 
-.nuron-expo-filter-widget {
+.kryptomerch-expo-filter-widget {
     background: var(--background-color-1);
     padding: 20px 30px 30px;
     border-radius: 5px;
@@ -1052,7 +1052,7 @@
     }
     .content {
         margin-top: 30px;
-        .nuron-form-check {
+        .kryptomerch-form-check {
             position: relative;
             label {
                 font-size: 16px;
@@ -1080,16 +1080,16 @@
     opacity: 0.15;
 }
 
-.nuron-expo-filter-widget .content .nuron-form-check + .nuron-form-check {
+.kryptomerch-expo-filter-widget .content .kryptomerch-form-check + .kryptomerch-form-check {
     margin-top: 15px;
 }
 
-.nuron-expo-filter-widget.widget-category label {
+.kryptomerch-expo-filter-widget.widget-category label {
     display: flex;
     justify-content: space-between;
 }
 
-.nuron-expo-filter-widget .content .nuron-form-check label svg {
+.kryptomerch-expo-filter-widget .content .kryptomerch-form-check label svg {
     margin-right: 4px;
     color: #dd8f1d;
     &.off {

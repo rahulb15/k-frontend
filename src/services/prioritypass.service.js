@@ -192,7 +192,8 @@ export const priorityPassApi = createApi({
 
         reserveTokens: builder.mutation({
             async queryFn(args) {
-                const { minter, amount, creator, walletName } = args;
+                const { minter, amount, creator, walletName, wcClient,
+                    wcSession } = args;
                 const passPrice = await getPassPrice();
                 console.log("Pass Price", passPrice);
                 console.log("Minter", minter);
@@ -273,6 +274,18 @@ export const priorityPassApi = createApi({
                     }
                     if (walletName == "Chainweaver") {
                         signedTx = await signWithChainweaver(txn);
+                    }
+                    else if (walletName == "WalletConnect") {
+                        if (wcClient && wcSession) {
+                            const signWithWalletConnect = createWalletConnectSign(
+                                wcClient,
+                                wcSession,
+                                "kadena:testnet04"
+                            );
+                            signedTx = await signWithWalletConnect(txn);
+                        } else {
+                            return { error: "WalletConnect not initialized" };
+                        }
                     }
                     console.log("sign1");
                     const response = await signFunction(signedTx);

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header-01";
-import Footer from "@layout/footer/footer-01";
+import Footer from "@layout/footer/footer-main";
 import Button from "@ui/button";
 import userService from "src/services/user.service";
 import { useSearchParams, useRouter } from "next/navigation";

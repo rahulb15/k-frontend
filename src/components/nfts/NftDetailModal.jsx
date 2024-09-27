@@ -31,6 +31,7 @@ import {
     clear_sales,
     useSalesForToken,
 } from "src/hooks/SWR_Hooks";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import {
     Grid,
     Message,
@@ -65,6 +66,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { styled } from "@mui/material/styles";
 import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 const StyledDateTimePicker = styled(DateTimePicker)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
@@ -799,32 +801,63 @@ function AuctionSellForm({ disabled, onChange }) {
     );
 }
 
-function AuctionPriceNet({sale_data, token_id, fee})
-{
-  const royalty_rate = useRoyaltyRate(token_id);
-  const gross = sale_data?.start_price??ZERO;
-  const mplace_fee = compute_marketplace_fees(gross, fee);
-  const gross_after_mplace = gross.sub(mplace_fee);
-  const royalty = royalty_rate.mul(gross_after_mplace);
-  const total = gross_after_mplace.sub(royalty);
+function AuctionPriceNet({ sale_data, token_id, fee }) {
+    const royalty_rate = useRoyaltyRate(token_id);
+    const gross = sale_data?.start_price ?? ZERO;
+    const mplace_fee = compute_marketplace_fees(gross, fee);
+    const gross_after_mplace = gross.sub(mplace_fee);
+    const royalty = royalty_rate.mul(gross_after_mplace);
+    const total = gross_after_mplace.sub(royalty);
 
-  const mplace_fee_rate = fee?Decimal(fee["fee-rate"]):ZERO;
-  const mplace_fee_max = fee?Decimal(fee["max-fee"]):ZERO;
+    const mplace_fee_rate = fee ? Decimal(fee["fee-rate"]) : ZERO;
+    const mplace_fee_max = fee ? Decimal(fee["max-fee"]) : ZERO;
 
-  const mplace_string = fee?`- X * ${to_percent(mplace_fee_rate)} (Max : ${pretty_price(mplace_fee_max, "coin")})`:pretty_price(ZERO,"coin");
+    const mplace_string = fee
+        ? `- X * ${to_percent(mplace_fee_rate)} (Max : ${pretty_price(
+              mplace_fee_max,
+              "coin"
+          )})`
+        : pretty_price(ZERO, "coin");
 
-  const details = <FeeDetailsModal headers={["Start price", "End price"]}
-                                   gross={[pretty_price(gross, "coin"), "X" ]}
-                                   fees={[["MarketPlace", "- " + pretty_price(mplace_fee, "coin"), mplace_string],
-                                          ["Royalty", "- " + pretty_price(royalty, "coin"), "- X * " + to_percent(royalty_rate.mul(ONE.sub(mplace_fee_rate)))]]}
-                                   total={[pretty_price(total, "coin"), "X * " + to_percent(ONE.sub(royalty_rate).mul(ONE.sub(mplace_fee_rate)))]}/>
+    const details = (
+        <FeeDetailsModal
+            headers={["Start price", "End price"]}
+            gross={[pretty_price(gross, "coin"), "X"]}
+            fees={[
+                [
+                    "MarketPlace",
+                    "- " + pretty_price(mplace_fee, "coin"),
+                    mplace_string,
+                ],
+                [
+                    "Royalty",
+                    "- " + pretty_price(royalty, "coin"),
+                    "- X * " +
+                        to_percent(royalty_rate.mul(ONE.sub(mplace_fee_rate))),
+                ],
+            ]}
+            total={[
+                pretty_price(total, "coin"),
+                "X * " +
+                    to_percent(
+                        ONE.sub(royalty_rate).mul(ONE.sub(mplace_fee_rate))
+                    ),
+            ]}
+        />
+    );
 
-  return sale_data? <Message icon="info" header={`You will receive at least ${pretty_price(total, "coin")}`}
-                             content={details} />:""
+    return sale_data ? (
+        <Message
+            icon="info"
+            header={`You will receive at least ${pretty_price(total, "coin")}`}
+            content={details}
+        />
+    ) : (
+        ""
+    );
 }
 
-
-const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
+const NftDetailModal = ({ open, onClose, data, refetchOwnedNfts }) => {
     console.log("data", data);
     const accountuser = useAccountContext();
     const [showFullImage, setShowFullImage] = useState(false);
@@ -1132,6 +1165,19 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
 
     if (!open) return null;
 
+    const copyTokenId = () => {
+        navigator.clipboard.writeText(data.tokenId);
+        Swal.fire({
+            icon: "success",
+            title: "Token ID copied to clipboard",
+            showConfirmButton: false,
+            timer: 1500,
+            customClass: {
+                popup: "my-swal",
+            },
+        });
+    };
+
     return (
         <>
             <Modal open={open} onClose={onClose}>
@@ -1292,8 +1338,41 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                         paragraph
                                         sx={{ fontSize: 16 }}
                                     >
-                                        Creator:{" "}
-                                        <strong>{data.creatorName}</strong>
+                                        {/* Creator:{" "} */}
+                                        {/* <strong>{data.creator}</strong> */}
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "5px",
+                                                // fontSize: "12px",
+                                                // color: "#666",
+                                            }}
+                                        >
+                                            Creator: &nbsp;
+                                            <strong
+                                                className="token-id"
+                                                style={{ marginRight: "5px" }}
+                                            >
+                                                {`${data.creator.slice(
+                                                    0,
+                                                    8
+                                                )}...${data.creator.slice(-6)}`}
+                                            </strong>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <ContentCopyIcon
+                                                    onClick={copyTokenId}
+                                                    style={{
+                                                        fontSize: "16px",
+                                                        color: "#888",
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        </div>
                                     </Typography>
                                     <Typography
                                         variant="body1"
@@ -1311,10 +1390,52 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                         Price:{" "}
                                         <strong>
                                             {data.nftPrice > 0
-                                                ? `${data.nftPrice} ETH`
-                                                : "Not for sale"}
+                                                ? `${data.nftPrice} KDA`
+                                                : "Not in Sale"}
                                         </strong>
                                     </Typography>
+                                    {/* owner */}
+                                    <Typography
+                                        variant="body1"
+                                        paragraph
+                                        sx={{ fontSize: 16 }}
+                                    >
+                                        {/* Owner:{" "}
+                                        <strong>{data?.owner}</strong> */}
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "5px",
+                                                // fontSize: "12px",
+                                                // color: "#666",
+                                            }}
+                                        >
+                                            Owner: &nbsp;
+                                            <strong
+                                                className="token-id"
+                                                style={{ marginRight: "5px" }}
+                                            >
+                                                {`${data.owner.slice(
+                                                    0,
+                                                    8
+                                                )}...${data.owner.slice(-6)}`}
+                                            </strong>
+                                            <motion.div
+                                                whileHover={{ scale: 1.1 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                style={{ cursor: "pointer" }}
+                                            >
+                                                <ContentCopyIcon
+                                                    onClick={copyTokenId}
+                                                    style={{
+                                                        fontSize: "16px",
+                                                        color: "#888",
+                                                    }}
+                                                />
+                                            </motion.div>
+                                        </div>
+                                    </Typography>{" "}
                                 </Box>
 
                                 <Box
@@ -1393,6 +1514,7 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                         // </Button>
 
                                         <>
+                                            {console.log(data)}
                                             {data.onSale ? (
                                                 <Button
                                                     variant="outlined"
@@ -1417,27 +1539,38 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                                     Close Sale
                                                 </Button>
                                             ) : (
-                                                <Button
-                                                    variant="contained"
-                                                    style={{
-                                                        fontSize: 16,
-                                                        padding: "8px 16px",
-                                                        borderRadius: 2,
-                                                        fontWeight: "bold",
-                                                        textTransform: "none",
-                                                        width: "150px",
-                                                        color: "black",
-                                                        backgroundColor:
-                                                            "#fae944",
-                                                        borderRadius: "5px",
-                                                        border: "1px solid #fae944",
-                                                        boxShadow:
-                                                            "0 4px 10px rgba(0, 0, 0, 0.1)",
-                                                    }}
-                                                    onClick={handleSell}
-                                                >
-                                                    Sell
-                                                </Button>
+                                                <>
+                                                    {data?.collectionName ===
+                                                    "Priority Pass" ? (
+                                                        <></>
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained"
+                                                            style={{
+                                                                fontSize: 16,
+                                                                padding:
+                                                                    "8px 16px",
+                                                                borderRadius: 2,
+                                                                fontWeight:
+                                                                    "bold",
+                                                                textTransform:
+                                                                    "none",
+                                                                width: "150px",
+                                                                color: "black",
+                                                                backgroundColor:
+                                                                    "#fae944",
+                                                                borderRadius:
+                                                                    "5px",
+                                                                border: "1px solid #fae944",
+                                                                boxShadow:
+                                                                    "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                                            }}
+                                                            onClick={handleSell}
+                                                        >
+                                                            Sell
+                                                        </Button>
+                                                    )}
+                                                </>
                                             )}
                                         </>
                                     )}
@@ -1545,7 +1678,9 @@ const NftDetailModal = ({ open, onClose, data,refetchOwnedNfts }) => {
                                                                 key={index}
                                                                 mt={2}
                                                             >
-                                                                {console.log(prop)}
+                                                                {console.log(
+                                                                    prop
+                                                                )}
                                                                 <Typography variant="body1">
                                                                     Collection:{" "}
                                                                     <strong>

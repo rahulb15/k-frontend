@@ -81,7 +81,7 @@ const PersonalInformation = (props) => {
     };
 
     return (
-        <div className="nuron-information">
+        <div className="kryptomerch-information">
             <div className="profile-form-wrapper">
                 <div className="input-two-wrapper mb--15">
                     <div className="first-name half-wid">

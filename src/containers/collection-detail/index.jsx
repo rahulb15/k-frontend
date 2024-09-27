@@ -686,12 +686,15 @@ import collectionService from "src/services/collection.service";
 import { useCollectionTypeFunctions } from "src/hooks/useCollectionTypeFunctions";
 import { useCreateNFTMutation } from "src/services/nft.service";
 import Loader from "@components/loader";
+import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 
 const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
     const [isLoading, setIsLoading] = useState(false);
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
-
+     // Get WalletConnect client and session
+     const { client: wcClient, session: wcSession } =
+     useWalletConnectClient();
     const { checkIsPublic, checkPrice, reserveTokensFunction } = useCollectionTypeFunctions(product.collectionType);
 
     const [stageInfo, setStageInfo] = useState({
@@ -804,6 +807,8 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                 reserverAcc: account?.user?.walletAddress,
                 reserveTknAmount: parseInt(reservePrice),
                 walletName: account?.user?.walletName,
+                wcClient,
+                wcSession
             });
             console.log("Reserve Tokens Response:", response);
 

@@ -20,7 +20,7 @@ const ChangePassword = () => {
         reset();
     };
     return (
-        <div className="nuron-information">
+        <div className="kryptomerch-information">
             <div className="condition">
                 <h5 className="title">Create Your Password</h5>
                 <p className="condition">

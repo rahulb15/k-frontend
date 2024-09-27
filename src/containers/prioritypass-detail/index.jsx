@@ -22,6 +22,7 @@ import { useReserveTokensMutation } from "src/services/prioritypass.service";
 import axios from "axios";
 import Loader from "@components/loader";
 import { useCreateNFTMutation } from "src/services/nft.service";
+import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 
 const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
     console.log("Product:", product);
@@ -76,6 +77,9 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
     const [checkPresale] = useCheckPresaleMutation();
     const [checkPresalePrice] = useCheckPresalePriceMutation();
     const [reserveTokens] = useReserveTokensMutation();
+       // Get WalletConnect client and session
+       const { client: wcClient, session: wcSession } =
+       useWalletConnectClient();
     const [createNFT, { isError, data, error }] = useCreateNFTMutation();
     const account = useAccountContext();
 
@@ -187,6 +191,9 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
                 amount: parseInt(reservePrice),
                 creator: product.creatorWallet,
                 walletName: account?.user?.walletName,
+                wcClient,
+                wcSession,
+                
                 // walletName: account?.user?.walletName,
             });
             console.log("Reserve Tokens Response:", response);

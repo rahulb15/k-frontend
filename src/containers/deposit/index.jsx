@@ -26,6 +26,7 @@ import ConnectModal from "@components/modals/connect-modal";
 import Loader from "@components/loader";
 import { useAccountContext } from "src/contexts";
 
+
 const DarkPaper = styled(Paper)(({ theme }) => ({
     backgroundColor: "#1E1E1E",
     color: "white",
@@ -99,7 +100,18 @@ const DepositArea = () => {
     const account = useAccountContext();
 
     const [depositHistory, setDepositHistory] = useState([]);
-
+ // Add this function to show toast notifications
+ const showToast = (icon, title) => {
+    Swal.fire({
+        icon,
+        title,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+    });
+};
     const balance = useSelector((state) => state.balance.value);
     console.log(balance, "balance");
 
@@ -159,10 +171,7 @@ const DepositArea = () => {
         if (searchParams.get("status") === "success") {
             fetchCollection();
 
-            Toast.fire({
-                icon: "success",
-                title: "Transaction successful",
-            });
+            showToast("success", "Transaction successful");
 
             setTimeout(() => {
                 router.push("/deposit");
@@ -171,23 +180,12 @@ const DepositArea = () => {
         if (searchParams.get("status") === "cancel") {
             fetchCollection();
 
-            Toast.fire({
-                icon: "error",
-                title: "Transaction failed",
-            });
-            // router.push("/deposit");
+            showToast("error", "Transaction failed");
+
             setTimeout(() => {
                 router.push("/deposit");
             }, 3000);
         }
-
-        // const fetchCollection = async () => {
-        //     const response = await collectionService.checkTransaction(
-        //         searchParams.get("session_id")
-        //     );
-        //     console.log("response", response);
-        // };
-        // fetchCollection();
     }, [searchParams.get("status")]);
 
     const handleChange = (event, newValue) => {
@@ -213,13 +211,8 @@ const DepositArea = () => {
 
     const copyWalletAddress = () => {
         navigator.clipboard.writeText(address);
-        Swal.fire({
-            icon: "success",
-            title: "Copied",
-            text: "Wallet address copied to clipboard",
-            showConfirmButton: false,
-            timer: 1500,
-        });
+        showToast("success", "Wallet address copied to clipboard");
+
     };
 
     const deposit = async () => {

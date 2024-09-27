@@ -1,7 +1,7 @@
 import SEO from "@components/seo";
 import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header-01";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import AuthorIntroArea from "@containers/author-intro";
 import AuthorProfileArea from "@containers/author-profile";
 

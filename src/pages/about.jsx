@@ -3,7 +3,7 @@ import AboutArea from "@containers/about/layout-02";
 import CTAArea from "@containers/cta";
 import FunfactArea from "@containers/funfact";
 import QuoteArea from "@containers/quote-area";
-import Footer from "@layout/footer/footer-03";
+import Footer from "@layout/footer/footer-main";
 import Header from "@layout/header/header-01";
 import Wrapper from "@layout/wrapper";
 import { normalizedData } from "@utils/methods";
