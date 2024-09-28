@@ -1097,10 +1097,10 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                 className="token-id"
                                                 style={{ marginRight: "5px" }}
                                             >
-                                                {`${data.creator.slice(
+                                                {`${data?.creator?.slice(
                                                     0,
                                                     8
-                                                )}...${data.creator.slice(-6)}`}
+                                                )}...${data?.creator?.slice(-6)}`}
                                             </strong>
                                             <motion.div
                                                 whileHover={{ scale: 1.1 }}
@@ -1150,10 +1150,10 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
                                                 className="token-id"
                                                 style={{ marginRight: "5px" }}
                                             >
-                                                {`${data.owner.slice(
+                                                {`${data?.owner?.slice(
                                                     0,
                                                     8
-                                                )}...${data.owner.slice(-6)}`}
+                                                )}...${data?.owner?.slice(-6)}`}
                                             </strong>
                                             <motion.div
                                                 whileHover={{ scale: 1.1 }}
