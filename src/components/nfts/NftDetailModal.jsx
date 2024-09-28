@@ -281,10 +281,14 @@ function FixedPriceNet({ sale_data, token_id, fee }) {
     console.log("sale_data", sale_data);
     const royalty_rate = useRoyaltyRate(token_id);
     const gross = sale_data?.price ?? ZERO;
+    console.log("gross", gross);
+    console.log("fee", fee);
     const mplace_fee = compute_marketplace_fees(gross, fee);
+    console.log("mplace_fee", mplace_fee);
     const gross_after_mplace = gross.sub(mplace_fee);
 
-    const royalty = royalty_rate.mul(gross_after_mplace);
+    const royalty = royalty_rate.mul(gross);
+    // const royalty = royalty_rate.mul(gross_after_mplace);
     const total = gross_after_mplace.sub(royalty);
 
     console.log("gross", gross);
@@ -806,7 +810,8 @@ function AuctionPriceNet({ sale_data, token_id, fee }) {
     const gross = sale_data?.start_price ?? ZERO;
     const mplace_fee = compute_marketplace_fees(gross, fee);
     const gross_after_mplace = gross.sub(mplace_fee);
-    const royalty = royalty_rate.mul(gross_after_mplace);
+    // const royalty = royalty_rate.mul(gross_after_mplace);
+    const royalty = royalty_rate.mul(gross);
     const total = gross_after_mplace.sub(royalty);
 
     const mplace_fee_rate = fee ? Decimal(fee["fee-rate"]) : ZERO;

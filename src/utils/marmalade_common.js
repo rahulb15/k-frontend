@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 
-const PRICE_DIGITS = 2
+const PRICE_DIGITS = 3
 
 const NO_TIMEOUT = new Date("0000-01-01T00:00:00Z").getTime()
 
