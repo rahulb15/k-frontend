@@ -262,7 +262,7 @@ const EditProfileImage = (props) => {
                             ) : (
                                 <Image
                                     id="rbtinput1"
-                                    src="/images/profile/profile-01.jpg"
+                                    src="/assets-images/NoDATA/noimage.jpg"
                                     alt="Profile-NFT"
                                     priority
                                     fill
@@ -307,7 +307,7 @@ const EditProfileImage = (props) => {
                             ) : (
                                 <Image
                                     id="rbtinput2"
-                                    src="/images/profile/cover-01.jpg"
+                                    src="/assets-images/NoDATA/Designer1.jpeg"
                                     alt="Profile-NFT"
                                     priority
                                     fill

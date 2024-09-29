@@ -96,10 +96,14 @@ export function ClientContextProvider({ children }) {
 
     const disconnect = useCallback(async () => {
         if (typeof client === "undefined") {
-            throw new Error("WalletConnect is not initialized");
+            // throw new Error("WalletConnect is not initialized");
+            console.warn("WalletConnect client is not initialized");
+            return;
         }
         if (typeof session === "undefined") {
             // throw new Error("Session is not connected");
+            console.warn("No active session to disconnect");
+            return;
         }
 
         try {
@@ -107,14 +111,14 @@ export function ClientContextProvider({ children }) {
                 topic: session.topic,
                 reason: getSdkError("USER_DISCONNECTED"),
             });
-            localStorage.removeItem("accountType");
+            // localStorage.removeItem("accountType");
         } catch (error) {
             console.error("SignClient.disconnect failed:", error);
         } finally {
             // Reset app state after disconnect.
             reset();
         }
-    }, [client, session]);
+    }, [client, session, reset]);
 
     const _subscribeToEvents = useCallback(
         async (_client) => {

@@ -1192,7 +1192,7 @@ export default function ProfileBar({ container }) {
         const response = await userService.logout();
         console.log(response, "response");
         account.logoutWalletConnect();
-        disconnect();
+        await disconnect();
     };
 
     const getUser = async () => {
@@ -1221,7 +1221,7 @@ export default function ProfileBar({ container }) {
                         <Avatar
                             src={
                                 account?.user?.profileImage ||
-                                "/assets-images/client-logo3.png"
+                                ""
                             }
                             alt="user photo"
                             sx={{
@@ -1297,7 +1297,7 @@ export default function ProfileBar({ container }) {
                             component="img"
                             src={
                                 account?.user?.coverImage ||
-                                "/assets-images/default-cover.jpg"
+                                "/assets-images/NoDATA/Designer1.jpeg"
                             }
                             alt="Cover"
                             sx={{
@@ -1321,7 +1321,7 @@ export default function ProfileBar({ container }) {
                             <MotionAvatar
                                 src={
                                     account?.user?.profileImage ||
-                                    "/assets-images/client-logo3.png"
+                                    ""
                                 }
                                 alt="user photo"
                                 sx={{

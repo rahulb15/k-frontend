@@ -83,7 +83,7 @@ const EditProfile = () => {
                                             as="button"
                                         >
                                             <i className="feather-check-circle" />
-                                            Verification
+                                            Account Verification
                                         </Nav.Link>
 
                                         <Nav.Link

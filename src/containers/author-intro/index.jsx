@@ -1,5 +1,6 @@
 /* eslint-disable */
 import ShareModal from "@components/modals/share-modal";
+import { Avatar } from "@mui/material";
 import Anchor from "@ui/anchor";
 import { ImageType } from "@utils/types";
 import clsx from "clsx";
@@ -8,7 +9,6 @@ import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import userService from "src/services/user.service";
-
 const AuthorIntroArea = ({ className, space, data }) => {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
@@ -68,7 +68,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
                     />
                 ) : (
                     <Image
-                        src="/images/bg/bg-image-9.jpg"
+                        src="/assets-images/NoDATA/Designer1.jpeg"
                         alt="Slider BG"
                         quality={100}
                         priority
@@ -107,26 +107,47 @@ const AuthorIntroArea = ({ className, space, data }) => {
 
                                     {user?.profileImage ? (
                                         <div className="user-thumbnail">
-                                            <Image
+                                            {/* <Image
                                                 src={user?.profileImage}
                                                 alt={user?.name}
                                                 width={140}
                                                 height={140}
+                                            /> */}
+                                            <Avatar
+                                                name={user?.name}
+                                                src={user?.profileImage}
+                                                sx={{
+                                                    width: 140,
+                                                    height: 140,
+                                                    borderRadius: "0%",
+                                                }}
                                             />
+                                            
                                         </div>
                                     ) : (
                                         <>
                                             {data?.image?.src && (
                                                 <div className="user-thumbnail">
-                                                    <Image
-                                                        src={data.image.src}
+                                                    {/* <Image
+                                                        src="/assets-images/NoDATA/Designer1.jpeg"
                                                         alt={
                                                             data.image?.alt ||
                                                             data.name
                                                         }
                                                         width={140}
                                                         height={140}
+                                                    /> */}
+                                                    <Avatar
+                                                        name={user?.name}
+                                                        sx={{
+                                                            width: 140,
+                                                            height: 140,
+                                                            borderRadius: "0%",
+                                                            
+                                                        }}
+                                                        
                                                     />
+
                                                 </div>
                                             )}
                                         </>

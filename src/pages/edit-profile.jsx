@@ -12,7 +12,7 @@ const EditProfile = () => (
     <Wrapper>
         <SEO pageTitle="Edit Profile" />
         <Header />
-        <main id="main-content">
+        <main id="main-content" style={{ marginBottom: "200px" }}>
             {/* <Breadcrumb pageTitle="Edit Profile" currentPage="Edit Profile" /> */}
             <EditProfileArea />
         </main>

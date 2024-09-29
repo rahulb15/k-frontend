@@ -1,24 +1,72 @@
+import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
+import { AccountContext } from "src/contexts/AccountContext";
 
 const ChangePassword = () => {
+    const { user, refreshUserData } = useContext(AccountContext);
+    console.log("🚀 ~ ChangePassword ~ user", user);
     const {
         register,
         handleSubmit,
         formState: { errors },
         getValues,
         reset,
+        watch,
+        setError,
+        clearErrors,
     } = useForm({
-        mode: "onChange",
+        mode: "onChange", // Validates on each change
     });
+
     const notify = () => toast("Your password has changed");
+
     const onSubmit = (_data, e) => {
         e.preventDefault();
-        notify();
-        reset();
+        console.log("🚀 ~ onSubmit ~ _data", _data);
+        // notify();
+        // reset();
     };
+
+    useEffect(() => {
+        if (user?.email) {
+            reset({
+                email: user.email,
+            });
+        }
+    }, [user]);
+
+    // Watch password fields
+    const newPassword = watch("NewPass");
+    const oldPassword = watch("oldPass");
+    const rePassword = watch("rePass");
+
+    // Validate that the new password is not the same as the old password
+    useEffect(() => {
+        if (newPassword && oldPassword && newPassword === oldPassword) {
+            setError("NewPass", {
+                type: "manual",
+                message: "New password and old password cannot be the same",
+            });
+        } else if (newPassword !== oldPassword) {
+            clearErrors("NewPass");
+        }
+    }, [newPassword, oldPassword, setError, clearErrors]);
+
+    // Validate that the new password matches the confirmation password
+    useEffect(() => {
+        if (newPassword && rePassword && newPassword !== rePassword) {
+            setError("rePass", {
+                type: "manual",
+                message: "Passwords do not match",
+            });
+        } else {
+            clearErrors("rePass");
+        }
+    }, [newPassword, rePassword, setError, clearErrors]);
+
     return (
         <div className="kryptomerch-information">
             <div className="condition">
@@ -43,7 +91,7 @@ const ChangePassword = () => {
                             required: "Email is required",
                             pattern: {
                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                                message: "invalid email address",
+                                message: "Invalid email address",
                             },
                         })}
                     />
@@ -57,7 +105,6 @@ const ChangePassword = () => {
                             Enter Old Password
                         </label>
                         <input
-                            name="pass"
                             id="oldPass"
                             type="password"
                             {...register("oldPass", {
@@ -73,7 +120,6 @@ const ChangePassword = () => {
                             Create New Password
                         </label>
                         <input
-                            name="password"
                             id="NewPass"
                             type="password"
                             {...register("NewPass", {
@@ -90,7 +136,6 @@ const ChangePassword = () => {
                         Confirm Password
                     </label>
                     <input
-                        name="Password"
                         id="rePass"
                         type="password"
                         {...register("rePass", {

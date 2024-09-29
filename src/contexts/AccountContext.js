@@ -184,11 +184,14 @@ export const AccountProvider = (props) => {
     };
 
     const logoutWalletConnect = async () => {
+        console.log("logoutWalletConnect");
         clearCookie("connect.sid");
         sessionStorage.clear();
         setWalletAddressContect("");
+        setUser({});  // Clear user data
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("token");
+        localStorage.removeItem("accountType");  // Remove accountType as well
     };
 
     useEffect(() => {
