@@ -26,14 +26,47 @@ function CopyHeader({children, ...other})
           </Header>
 }
 
-const CopyLink = ({val, onClick}) => <> <Link onClick={onClick}>{val}</Link> <CopyButton fontsize={13} value={val} /></>
+// const CopyLink = ({val, onClick}) => <> <Link onClick={onClick}>{val}</Link> <CopyButton fontsize={13} value={val} /></>
+const CopyLink = ({val, onClick, href = "/"}) => (
+  <> 
+    <Link href={href} onClick={onClick}>
+      <a>{val}</a>
+    </Link> 
+    <CopyButton fontsize={13} value={val} />
+  </>
+)
 
-const TransactionLink = ({trx}) => <> <Link rel="noopener noreferrer" target="_blank" to={tx_detail(trx)}>{trx}</Link> <CopyButton fontsize={13} value={trx} /></>
+// const TransactionLink = ({trx}) => <> <Link rel="noopener noreferrer" target="_blank" to={tx_detail(trx)}>{trx}</Link> <CopyButton fontsize={13} value={trx} /></>
+const TransactionLink = ({trx}) => {
+  const href = trx ? tx_detail(trx) : '';
+  
+  if (!href) {
+    return <span>{trx || 'Invalid transaction'}</span>;
+  }
 
-const AccountRef = ({account}) => <Link to={"/account/"+account}>{account.substring(0,24)+"..."} </Link>
+  return (
+    <> 
+      <Link href={href} rel="noopener noreferrer" target="_blank">
+        <a>{trx}</a>
+      </Link> 
+      <CopyButton fontsize={13} value={trx} />
+    </>
+  );
+}
+// const AccountRef = ({account}) => <Link to={"/account/"+account}>{account.substring(0,24)+"..."} </Link>
+const AccountRef = ({account}) => (
+  <Link href={`/account/${account}`}>
+    <a>{account.substring(0,24)+"..."}</a>
+  </Link>
+)
 const CopyAccountRef = ({account}) => <><AccountRef account={account} /><CopyButton fontsize={13} value={account} /> </>
 
-const TokenRef = ({token}) => <Link to={"/token/"+token}>{token.substring(0,24)+"..."} </Link>
+// const TokenRef = ({token}) => <Link to={"/token/"+token}>{token.substring(0,24)+"..."} </Link>
+const TokenRef = ({token}) => (
+  <Link href={`/token/${token}`}>
+    <a>{token.substring(0,24)+"..."}</a>
+  </Link>
+)
 const CopyTokenRef = ({token}) => <><TokenRef token={token} /><CopyButton fontsize={13} value={token} /> </>
 const CopyToken = ({token}) => <>{token.substring(0,24)+"..."} <CopyButton fontsize={13} value={token} /> </>
 

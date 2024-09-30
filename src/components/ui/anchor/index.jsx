@@ -46,7 +46,7 @@ const Anchor = ({
     return (
         <Link
             rel="preload"
-            href={path}
+            href={path || "/"}
             className={className}
             aria-label={label}
             {...rest}

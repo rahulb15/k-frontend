@@ -7,8 +7,6 @@ import QrCodeIcon from '@mui/icons-material/QrCode';
 const NftImageContainer = ({ data, handleImageClick, setIsFlipped, isFlipped }) => {
   return (
     <Box
-      className="nft-image-container"
-      id="nft-image-container"
       sx={{
         width: '100%',
         height: '400px',

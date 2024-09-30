@@ -3,18 +3,16 @@
 // import PropTypes from "prop-types";
 // import Image from "next/image";
 // import clsx from "clsx";
-// import { motion } from "framer-motion";
+// import Anchor from "@ui/anchor";
 // import ClientAvatar from "@ui/client-avatar";
+// import ProductBid from "@components/product-bid";
 // import Button from "@ui/button";
+// import { ImageType } from "@utils/types";
 // import PlaceBidModal from "@components/modals/placebid-modal";
-// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-// import Swal from "sweetalert2";
-// import NftMarketPlaceDetailModal from "@components/marketplace-nft/NftMarketPlaceDetailModal";
+// import NftDetailModal from "./NftMarketPlaceDetailModal";
 // import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 // import { IconButton } from "@mui/material";
-// import { useDispatch } from "react-redux";
-// import { addToCart } from "src/features/cartSlice";
-// import { toast } from "react-toastify";
+
 // const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
 //     ssr: false,
 // });
@@ -23,219 +21,185 @@
 //     ssr: false,
 // });
 
-// const Product = ({ nft }) => {
-//     console.log(nft);
-//     const dispatch = useDispatch();
+// const Nft = ({
+//     overlay,
+//     title,
+//     slug,
+//     latestBid,
+//     price,
+//     likeCount,
+//     auction_date,
+//     image,
+//     bitCount,
+//     authors,
+//     placeBid,
+//     data,
+//     disableShareDropdown,
+//     sellable,
+// }) => {
 //     const [showBidModal, setShowBidModal] = useState(false);
 //     const [showDetailModal, setShowDetailModal] = useState(false);
+//     const [isHovered, setIsHovered] = useState(false);
 
-//     const handleBidModal = () => {
-//         setShowBidModal((prev) => !prev);
+//     const handleOpenModal = () => {
+//         setShowDetailModal(true);
 //     };
 
 //     const handleCloseModal = () => {
 //         setShowDetailModal(false);
 //     };
 
-//     const handleImageClick = () => {
-//         setShowDetailModal(true);
+//     const handleBidModal = () => {
+//         setShowBidModal((prev) => !prev);
 //     };
 
-//     const copyTokenId = () => {
-//         navigator.clipboard.writeText(nft.tokenId);
-//         Swal.fire({
-//             icon: "success",
-//             title: "Token ID copied to clipboard",
-//             showConfirmButton: false,
-//             timer: 1500,
-//         });
-//     };
-
-//     const send = (e) => {
-//         console.log(e);
-//         dispatch(addToCart(e));
-//         // toast.success("Item added In Your Cart");
-//       };
+//     const isRevealed = data?.isRevealed;
+//     const isOnMarketplace = data?.onMarketplace;
+//     const isOnSale = data?.onSale;
+//     const isOnAuction = data?.onAuction;
 
 //     return (
 //         <>
-//             <motion.div
+//             <div
 //                 className={clsx(
 //                     "product-style-one",
-//                     nft.onSale && "with-placeBid"
+//                     !overlay && "no-overlay",
+//                     placeBid && "with-placeBid"
 //                 )}
-//                 whileHover={{ scale: 1.02 }}
-//                 transition={{ duration: 0.3 }}
+//                 onMouseEnter={() => setIsHovered(true)}
+//                 onMouseLeave={() => setIsHovered(false)}
 //             >
-//             {/* <div className={clsx("product-style-one", nft.onSale && "with-placeBid")}> */}
-//                 <div className="card-thumbnail" onClick={handleImageClick}>
-//                     {nft.tokenImage && (
+//                 <div className="card-thumbnail" onClick={handleOpenModal}>
+//                     {isRevealed ? (
 //                         <Image
-//                             src={nft.tokenImage}
-//                             alt={nft.collectionName || "NFT_portfolio"}
+//                             src={image}
+//                             alt={data?.title}
 //                             width={533}
 //                             height={533}
-//                             className="nft-image"
+//                         />
+//                     ) : (
+//                         <Image
+//                             src="/assets-images/nft/nft2.jpeg"
+//                             alt="NFT_portfolio"
+//                             width={533}
+//                             height={533}
 //                         />
 //                     )}
-//                     {nft.duration && <CountdownTimer date={nft.duration} />} 
-                 
+
+//                     {isOnAuction && isRevealed && (
+//                         <CountdownTimer date={auction_date} />
+//                     )}
+
+//                     {isRevealed && isOnMarketplace && isHovered && (
+//                         <div className="sell-button-overlay">
+//                             {isOnSale && (
+//                                 <Button
+//                                     onClick={() => console.log("Buy clicked")}
+//                                     size="small"
+//                                 >
+//                                     Buy
+//                                 </Button>
+//                             )}
+//                             {isOnAuction && (
+//                                 <Button onClick={handleBidModal} size="small">
+//                                     Place Bid
+//                                 </Button>
+//                             )}
+//                         </div>
+//                     )}
 //                 </div>
 //                 <div className="product-share-wrapper">
 //                     <div className="profile-share">
-//                         {nft.properties[0]?.authors?.map((author) => (
-//                             <ClientAvatar
-//                                 key={author.name}
-//                                 slug={author.name}
-//                                 name={author.name}
-//                                 image={{ src: nft.user.profileImage }}
-//                             />
-//                         ))}
+//                         {!isRevealed ? (
+//                             <span className="latest-bid">Not Revealed</span>
+//                         ) : (
+//                             <>
+//                                 {isOnMarketplace && (
+//                                     <IconButton
+//                                         onClick={() => console.log("Add to cart", data)}
+//                                         style={{
+//                                             color: "white",
+//                                             backgroundColor: "#a5c600",
+//                                         }}
+//                                     >
+//                                         <ShoppingCartIcon />
+//                                     </IconButton>
+//                                 )}
+//                             </>
+//                         )}
 //                     </div>
-//                     <ShareDropdown />
+//                     {!disableShareDropdown && <ShareDropdown />}
 //                 </div>
-//                 <div
-//                     style={{
-//                         display: "flex",
-//                         alignItems: "center",
-//                         justifyContent: "center",
-//                         gap: "5px",
-//                     }}
-//                 >
-//                     <span className="product-name">
-//                         {nft.tokenId.slice(0, 10)}...{nft.tokenId.slice(-10)}{" "}
+//                 <Anchor path={`/product/${slug}`}>
+//                     <span className="product-name">{title}</span>
+//                 </Anchor>
+//                 {data?.tokenId && (
+//                     <span className="token-id">
+//                         {data.tokenId.slice(0, 10)}...{data.tokenId.slice(-10)}
 //                     </span>
-//                     <div
-//                         style={{
-//                             display: "flex",
-//                             alignItems: "center",
-//                             marginLeft: "5px",
-//                             marginTop: "10px",
-//                         }}
-//                     >
-//                         <ContentCopyIcon onClick={copyTokenId} />
-//                     </div>
-//                 </div>
-//                  <IconButton
-//                         onClick={() => send(nft)}
-//                         style={{
-//                         position: "absolute",
-//                         bottom: "10px",
-//                         right: "10px",
-//                         backgroundColor: "rgba(255, 255, 255, 0.8)",
-//                         border: "none",
-//                         borderRadius: "50%",
-//                         padding: "8px",
-//                         display: "flex",
-//                         alignItems: "center",
-//                         justifyContent: "center",
-//                         cursor: "pointer",
-//                         width: "40px",
-//                         height: "40px",
-//                     }}
-//                 >
-//                         <ShoppingCartIcon />
-//                     </IconButton>
-//             </motion.div>
-//             {/* </div> */}
-
-//             <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
+//                 )}
+//                 <span className="latest-bid">
+//                     {isOnAuction
+//                         ? `Highest bid ${latestBid}`
+//                         : isOnSale
+//                         ? `Price: ${price.amount} ${price.currency}`
+//                         : "Not for sale"}
+//                 </span>
+//             </div>
 //             {showDetailModal && (
-//                 <NftMarketPlaceDetailModal
+//                 <NftDetailModal
 //                     open={showDetailModal}
 //                     onClose={handleCloseModal}
-//                     data={nft}
+//                     data={data}
 //                 />
 //             )}
-//             <style jsx>{`
-//                 .card-thumbnail {
-//                     position: relative;
-//                     overflow: hidden;
-//                     cursor: pointer;
-//                 }
-//                 .nft-image {
-//                     display: block;
-//                     width: 100%;
-//                     height: auto;
-//                 }
-//                 .buy-now-container {
-//                     position: absolute;
-//                     top: 50%;
-//                     left: 50%;
-//                     transform: translate(-50%, -50%);
-//                     display: flex;
-//                     justify-content: center;
-//                     align-items: center;
-//                     opacity: 0;
-//                     transition: opacity 0.3s ease, transform 0.3s ease;
-//                 }
-//                 .buy-now-button {
-//                     background: linear-gradient(90deg, #ff8a00, #e52e71);
-//                     border-radius: 5px;
-//                     padding: 10px 20px;
-//                     font-size: 14px;
-//                     color: #fff;
-//                 }
-//                 .product-style-one:hover .buy-now-container {
-//                     opacity: 1;
-//                     transform: translate(-50%, -50%);
-//                 }
-//                 .cart-button {
-//                     position: absolute;
-//                     bottom: 10px;
-//                     right: 10px;
-//                     background-color: rgba(255, 255, 255, 0.8);
-//                     border: none;
-//                     border-radius: 50%;
-//                     padding: 8px;
-//                     display: flex;
-//                     align-items: center;
-//                     justify-content: center;
-//                     cursor: pointer;
-//                     opacity: 0;
-//                     transition: opacity 0.3s ease, transform 0.3s ease;
-//                 }
-//                 .product-style-one:hover .cart-button {
-//                     opacity: 1;
-//                     transform: translateY(0);
-//                 }
-//             `}</style>
+//             {showBidModal && (
+//                 <PlaceBidModal
+//                     show={showBidModal}
+//                     handleModal={handleBidModal}
+//                     data={data}
+//                 />
+//             )}
 //         </>
 //     );
 // };
 
-// Product.propTypes = {
-//     nft: PropTypes.shape({
-//         tokenId: PropTypes.string.isRequired,
-//         tokenImage: PropTypes.string.isRequired,
-//         collectionName: PropTypes.string.isRequired,
-//         duration: PropTypes.string,
-//         onSale: PropTypes.bool.isRequired,
-//         properties: PropTypes.arrayOf(
-//             PropTypes.shape({
-//                 collection: PropTypes.shape({
-//                     name: PropTypes.string.isRequired,
-//                     family: PropTypes.string.isRequired,
-//                 }).isRequired,
-//                 authors: PropTypes.arrayOf(
-//                     PropTypes.shape({
-//                         name: PropTypes.string.isRequired,
-//                     }).isRequired
-//                 ).isRequired,
-//             }).isRequired
-//         ).isRequired,
-//         bidInfo: PropTypes.array.isRequired,
-//         likes: PropTypes.number.isRequired,
-//         nftPrice: PropTypes.number.isRequired,
-//         user: PropTypes.shape({
-//             profileImage: PropTypes.string.isRequired,
-//         }).isRequired,
+// Nft.propTypes = {
+//     overlay: PropTypes.bool,
+//     title: PropTypes.string.isRequired,
+//     slug: PropTypes.string.isRequired,
+//     latestBid: PropTypes.string,
+//     price: PropTypes.shape({
+//         amount: PropTypes.number.isRequired,
+//         currency: PropTypes.string.isRequired,
+//     }),
+//     likeCount: PropTypes.number,
+//     auction_date: PropTypes.string,
+//     image: ImageType.isRequired,
+//     authors: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             name: PropTypes.string.isRequired,
+//             slug: PropTypes.string.isRequired,
+//             image: ImageType.isRequired,
+//         })
+//     ),
+//     bitCount: PropTypes.number,
+//     placeBid: PropTypes.bool,
+//     disableShareDropdown: PropTypes.bool,
+//     data: PropTypes.shape({
+//         isRevealed: PropTypes.bool,
+//         onMarketplace: PropTypes.bool,
+//         onSale: PropTypes.bool,
+//         onAuction: PropTypes.bool,
+//         tokenId: PropTypes.string,
 //     }).isRequired,
 // };
 
-// export default Product;
+// Nft.defaultProps = {
+//     overlay: false,
+// };
 
-
+// export default Nft;
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -243,15 +207,15 @@ import PropTypes from "prop-types";
 import Image from "next/image";
 import clsx from "clsx";
 import Anchor from "@ui/anchor";
+import Button from "@ui/button";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { IconButton } from "@mui/material";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import NftMarketPlaceDetailModal from "@components/marketplace-nft/NftMarketPlaceDetailModal";
+import NftDetailModal from "./NftMarketPlaceDetailModal";
 import { addToCart, selectIsInCart } from "src/features/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
 });
@@ -260,12 +224,14 @@ const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
     ssr: false,
 });
 
-const Product = ({ nft, disableShareDropdown }) => {
+const Nft = ({ data, disableShareDropdown }) => {
+    console.log(data, "data");
     const [showBidModal, setShowBidModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const dispatch = useDispatch();
-    const isItemInCart = useSelector((state) => selectIsInCart(state, nft._id));
+    const isItemInCart = useSelector((state) => selectIsInCart(state, data._id));
+
 
     const handleOpenModal = () => {
         setShowDetailModal(true);
@@ -280,7 +246,7 @@ const Product = ({ nft, disableShareDropdown }) => {
     };
 
     const copyTokenId = () => {
-        navigator.clipboard.writeText(nft.tokenId);
+        navigator.clipboard.writeText(data.tokenId);
         Swal.fire({
             icon: "success",
             title: "Token ID copied to clipboard",
@@ -293,13 +259,13 @@ const Product = ({ nft, disableShareDropdown }) => {
     };
 
     const handleAddToCart = () => {
-        dispatch(addToCart(nft));
+        dispatch(addToCart(data));
     };
 
-    const isRevealed = nft.isRevealed;
-    const isOnMarketplace = nft.onMarketplace;
-    const isOnSale = nft.onSale;
-    const isOnAuction = nft.onAuction;
+    const isRevealed = data.isRevealed;
+    const isOnMarketplace = data.onMarketplace;
+    const isOnSale = data.onSale;
+    const isOnAuction = data.onAuction;
 
     const buttonStyle = {
         height: "40px",
@@ -340,14 +306,24 @@ const Product = ({ nft, disableShareDropdown }) => {
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="card-thumbnail" onClick={handleOpenModal}>
-                    <Image
-                        src={nft.tokenImage}
-                        alt={nft?.nftData?.name || "NFT"}
-                        width={533}
-                        height={533}
-                    />
-                    {isOnAuction && (
-                        <CountdownTimer date={nft.timeout} />
+                    {isRevealed ? (
+                        <Image
+                            src={data.tokenImage}
+                            alt={data.nftData.name}
+                            width={533}
+                            height={533}
+                        />
+                    ) : (
+                        <Image
+                            src="/assets-images/nft/nft2.jpeg"
+                            alt="NFT_portfolio"
+                            width={533}
+                            height={533}
+                        />
+                    )}
+
+                    {isOnAuction && isRevealed && (
+                        <CountdownTimer date={data.timeout} />
                     )}
 
                     {isRevealed && isOnMarketplace && isHovered && (
@@ -374,7 +350,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                             {isOnSale && (
                                 <motion.button
                                     onClick={() =>
-                                        console.log("Buy clicked", nft)
+                                        console.log("Buy clicked", data)
                                     }
                                     style={buyButtonStyle}
                                     whileHover={{
@@ -393,7 +369,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                             )}
                             {isOnAuction && (
                                 <motion.button
-                                    onClick={handleOpenModal}
+                                    onClick={handleBidModal}
                                     style={bidButtonStyle}
                                     whileHover={{
                                         scale: 1.05,
@@ -414,22 +390,28 @@ const Product = ({ nft, disableShareDropdown }) => {
                 </div>
                 <div className="product-share-wrapper">
                     <div className="profile-share">
-                        {isOnMarketplace && (
-                            <IconButton
-                                onClick={handleAddToCart}
-                                style={{
-                                    color: "white",
-                                    backgroundColor: isItemInCart ? "#cccccc" : "#a5c600",
-                                }}
-                                disabled={isItemInCart}
-                            >
-                                <ShoppingCartIcon />
-                            </IconButton>
+                        {!isRevealed ? (
+                            <span className="latest-bid">Not Revealed</span>
+                        ) : (
+                            <>
+                                  {isOnMarketplace && (
+                                <IconButton
+                                    onClick={handleAddToCart}
+                                    style={{
+                                        color: "white",
+                                        backgroundColor: isItemInCart ? "#cccccc" : "#a5c600",
+                                    }}
+                                    disabled={isItemInCart}
+                                >
+                                    <ShoppingCartIcon />
+                                </IconButton>
+                            )}
+                            </>
                         )}
                     </div>
                     {!disableShareDropdown && <ShareDropdown />}
                 </div>
-                <Anchor path={`/product/${nft.tokenId}`}>
+                <Anchor path={`/product/${data.tokenId}`}>
                     <span
                         className="product-name"
                         style={{
@@ -439,7 +421,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                             marginBottom: "5px",
                         }}
                     >
-                        {nft?.nftData?.name || "Not available"}
+                        {data.nftData.name}
                     </span>
                 </Anchor>
                 <div
@@ -452,7 +434,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                     }}
                 >
                     <span className="token-id" style={{ marginRight: "5px" }}>
-                        {`${nft.tokenId.slice(0, 6)}...${nft.tokenId.slice(
+                        {`${data.tokenId.slice(0, 6)}...${data.tokenId.slice(
                             -4
                         )}`}
                     </span>
@@ -477,73 +459,91 @@ const Product = ({ nft, disableShareDropdown }) => {
                                 Highest bid:
                             </span>{" "}
                             <span style={{ fontWeight: "bold" }}>
-                                {nft.currentPrice}
+                                {data.nftPrice}
                             </span>{" "}
-                            {nft.currency}
+                            {data.currency}
                         </>
                     ) : isOnSale ? (
                         <>
                             <span style={{ fontWeight: "bold" }}>Price:</span>{" "}
                             <span style={{ fontWeight: "bold" }}>
-                                {nft.nftPrice}
+                                {data.nftPrice}
                             </span>{" "}
-                            {nft.currency}
+                            {data.currency}
                         </>
                     ) : (
                         "Not for sale"
                     )}
                 </span>
-                <div className="collection-info">
-                    <span>Collection: {nft.collectionName}</span>
-                </div>
+                {/* <div className="collection-info">
+                    <span>Collection: {data.collectionName}</span>
+                </div> */}
             </div>
             {showDetailModal && (
-                <NftMarketPlaceDetailModal
+                <NftDetailModal
                     open={showDetailModal}
                     onClose={handleCloseModal}
-                    data={nft}
+                    data={data}
                 />
             )}
             {showBidModal && (
                 <PlaceBidModal
                     show={showBidModal}
                     handleModal={handleBidModal}
-                    data={nft}
+                    data={data}
                 />
             )}
         </>
     );
 };
 
-Product.propTypes = {
-    nft: PropTypes.shape({
-        _id: PropTypes.string.isRequired,
+Nft.propTypes = {
+    data: PropTypes.shape({
+        id: PropTypes.string.isRequired,
         tokenId: PropTypes.string.isRequired,
-        tokenImage: PropTypes.string.isRequired,
-        collectionName: PropTypes.string.isRequired,
-        isRevealed: PropTypes.bool.isRequired,
-        onMarketplace: PropTypes.bool.isRequired,
-        onSale: PropTypes.bool.isRequired,
-        onAuction: PropTypes.bool.isRequired,
-        nftPrice: PropTypes.number.isRequired,
-        currency: PropTypes.string.isRequired,
-        timeout: PropTypes.string,
+        amount: PropTypes.string,
+        bidInfo: PropTypes.array,
+        collection: PropTypes.object,
+        collectionName: PropTypes.string,
+        creator: PropTypes.string,
+        currency: PropTypes.string,
+        enabled: PropTypes.bool,
+        escrowAccount: PropTypes.string,
+        isPlatform: PropTypes.bool,
+        isRevealed: PropTypes.bool,
+        lastUpdated: PropTypes.string,
         nftData: PropTypes.shape({
-            name: PropTypes.string.isRequired,
+            name: PropTypes.string,
             description: PropTypes.string,
             image: PropTypes.string,
             authors: PropTypes.arrayOf(
                 PropTypes.shape({
-                    name: PropTypes.string.isRequired,
+                    name: PropTypes.string,
                 })
             ),
             collection: PropTypes.shape({
                 name: PropTypes.string,
                 family: PropTypes.string,
             }),
-        }).isRequired,
+        }),
+        nftPrice: PropTypes.number,
+        onAuction: PropTypes.bool,
+        onMarketplace: PropTypes.bool,
+        onSale: PropTypes.bool,
+        policies: PropTypes.array,
+        price: PropTypes.string,
+        properties: PropTypes.array,
+        recipient: PropTypes.string,
+        saleId: PropTypes.string,
+        saleType: PropTypes.string,
+        seller: PropTypes.string,
+        sellingType: PropTypes.string,
+        supply: PropTypes.object,
+        timeout: PropTypes.string,
+        tokenImage: PropTypes.string,
+        uri: PropTypes.string,
     }).isRequired,
     disableShareDropdown: PropTypes.bool,
 };
 
-export default Product;
+export default Nft;

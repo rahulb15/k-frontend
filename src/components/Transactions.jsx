@@ -25,7 +25,7 @@ import nftServices from "src/services/nftServices";
 import Swal from "sweetalert2";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 import { createWalletConnectSign } from "@kadena/client";
-
+import { useAccountContext } from "src/contexts";
 const ecko_account = (networkId) =>
     window.kadena
         .request({ method: "kda_checkStatus", networkId })
@@ -194,7 +194,7 @@ function TransactionResult({ result, hash }) {
                         </Message.Item>
                         <Message.Item>
                             {" "}
-                            <TransactionLink trx={hash} />{" "}
+                            {/* <TransactionLink trx={hash} />{" "} */}
                         </Message.Item>
                     </Message.List>
                 </Message.Content>
@@ -228,28 +228,30 @@ function TransactionManager({
     const [statusResult, setStatusResult] = useState(null);
     const [signatureModal, setSignatureModal] = useState(false);
     const [signer, setSigner] = useState(null);
+    const accountuser = useAccountContext();
+    console.log(accountuser);
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
     console.log(wcClient, wcSession);
 
     useEffect(() => {
-        try{
-        const updateSigner = () => {
-            if (wallet === "Other" && wcClient && wcSession) {
-                const signWithWalletConnect = createWalletConnectSign(
-                    wcClient,
-                    wcSession,
-                    "kadena:testnet04"
-                );
-                setSigner(() => signWithWalletConnect);
-            } else {
-                setSigner(() => SIGNERS[wallet]);
-            }
-        };
+        try {
+            const updateSigner = () => {
+                if (wallet === "Other" && wcClient && wcSession) {
+                    const signWithWalletConnect = createWalletConnectSign(
+                        wcClient,
+                        wcSession,
+                        "kadena:testnet04"
+                    );
+                    setSigner(() => signWithWalletConnect);
+                } else {
+                    setSigner(() => SIGNERS[wallet]);
+                }
+            };
 
-        updateSigner();
-    } catch (error) {
-        console.log(error);
-    }
+            updateSigner();
+        } catch (error) {
+            console.log(error);
+        }
     }, [wallet, wcClient, wcSession]);
 
     const do_sign = async () => {
@@ -264,7 +266,7 @@ function TransactionManager({
                 setStatusResult(null);
                 const status = await m_client.status(trx);
                 // Handle post-transaction logic (e.g., updating NFT status)
-                await handlePostTransaction(status, type, data, amount);
+                await handlePostTransaction(status, type, data, amount,accountuser.user );
                 setStatusResult(status.result);
                 if (onConfirm) onConfirm();
             } catch (error) {
@@ -465,7 +467,10 @@ function TransactionManager({
 export { TransactionManager, WalletAccountManager };
 
 // Helper function to handle post-transaction logic
-async function handlePostTransaction(status, type, data, amount) {
+async function handlePostTransaction(status, type, data, amount, user) {
+    console.log("data", data);
+    console.log("accountuser", user);
+    const bidderAddress = user.walletAddress;
     switch (type) {
         case "sell":
             await handleSellNFT(data);
@@ -474,7 +479,7 @@ async function handlePostTransaction(status, type, data, amount) {
             await handleCloseNFTSale(data);
             break;
         case "bid":
-            await handlePlaceBid(data, amount);
+            await handlePlaceBid(data, amount, bidderAddress);
             break;
         case "buy":
             await handleBuyNFT(data);
@@ -498,10 +503,10 @@ async function handleCloseNFTSale(data) {
     );
 }
 
-async function handlePlaceBid(data, amount) {
+async function handlePlaceBid(data, amount, bidderAddress) {
     const bidBody = {
         nftId: data._id,
-        bidderAddress: data.owner,
+        bidderAddress: bidderAddress,
         bidAmount: parseFloat(amount),
     };
     const response = await nftServices.placeBid(bidBody);

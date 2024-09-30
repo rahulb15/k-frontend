@@ -142,7 +142,7 @@ const TVChartContainer = dynamic(
             />
         </main>
         <div className="header-right-fixed">
-            <NotificationArea data={{ notifications: notificationData }} collectionId={collection.data.data._id} />
+            <NotificationArea data={{ notifications: notificationData }} collectionId={collection?.data.data?._id} />
             {/* <CreatorArea
                 data={{
                     creators: sellerData,
