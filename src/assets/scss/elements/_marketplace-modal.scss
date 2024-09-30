@@ -325,6 +325,44 @@
     color: white;
 }
 
+/* NFT Sell Options Styling */
+.nft-sell-options {
+    margin-top: 24px;
+}
+
+.sell-option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.sell-option-box {
+    background-color: var(--background-color-3);
+    border: 2px solid var(--border-color-1);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.sell-option-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(243, 251, 63, 0.2);
+}
+
+.sell-option-box:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(243, 251, 63, 0.1);
+}
+
+.sell-option-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color-1);
+}
+
 @media (max-width: 768px) {
     .nft-modal-content {
         flex-direction: column;

@@ -76,17 +76,10 @@ const policies = [
     "FIXED-SALE",
     "AUCTION-SALE",
     "ADJUSTABLE-ROYALTY",
-    "BLACKLIST",
     "DISABLE-BURN",
-    "DISABLE-TRANSFER",
-    "DISABLE-SALE",
     "DUTCH-AUCTION-SALE",
-    "EXTRA-POLICIES",
-    "FIXED-ISSUANCE",
-    "GUARDS",
     "NON-FUNGIBLE",
     "ROYALTY",
-    "TRUSTED-CUSTODY",
 ];
 
 function getStyles(name, personName, theme) {
@@ -116,9 +109,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         useCollectionRequestMutation();
     const account = useAccountContext();
     const [step, setStep] = useState(1);
-      // Get WalletConnect client and session
-      const { client: wcClient, session: wcSession } =
-      useWalletConnectClient();
+    // Get WalletConnect client and session
+    const { client: wcClient, session: wcSession } = useWalletConnectClient();
     const [formData, setFormData] = useState({
         creatorName: "",
         twitter: "",
@@ -170,6 +162,16 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [mintEndDateTime, setMintEndDateTime] = useState(null);
     const [haveSufficientBalance, setHaveSufficientBalance] = useState(false);
     console.log(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES);
+    const [disabledPolicies, setDisabledPolicies] = useState([]);
+
+    const [connectedWallet, setConnectedWallet] = useState(null);
+    console.log("connectedWallet", connectedWallet);
+
+useEffect(() => {
+  if (account?.user?.walletName) {
+    setConnectedWallet(account.user.walletName);
+  }
+}, [account]);
 
     useEffect(() => {
         if (balance >= parseFloat(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES)) {
@@ -183,13 +185,46 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         setShowConnectModal((prev) => !prev);
     };
 
+    // const handlePolicyChange = (event) => {
+    //     const {
+    //         target: { value },
+    //     } = event;
+    //     setPolicy(typeof value === "string" ? value.split(",") : value);
+    // };
+
     const handlePolicyChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPolicy(typeof value === "string" ? value.split(",") : value);
-    };
+        
+        let newValue = typeof value === 'string' ? value.split(',') : value;
+        
+        // Check if ADJUSTABLE-ROYALTY or ROYALTY is being added or removed
+        const isAdjustableRoyaltyChanged = newValue.includes('ADJUSTABLE-ROYALTY') !== policy.includes('ADJUSTABLE-ROYALTY');
+        const isRoyaltyChanged = newValue.includes('ROYALTY') !== policy.includes('ROYALTY');
 
+        if (isAdjustableRoyaltyChanged) {
+            if (newValue.includes('ADJUSTABLE-ROYALTY')) {
+                // If ADJUSTABLE-ROYALTY is added, remove and disable ROYALTY
+                newValue = newValue.filter(item => item !== 'ROYALTY');
+                setDisabledPolicies(['ROYALTY']);
+            } else {
+                // If ADJUSTABLE-ROYALTY is removed, enable ROYALTY
+                setDisabledPolicies([]);
+            }
+        } else if (isRoyaltyChanged) {
+            if (newValue.includes('ROYALTY')) {
+                // If ROYALTY is added, remove and disable ADJUSTABLE-ROYALTY
+                newValue = newValue.filter(item => item !== 'ADJUSTABLE-ROYALTY');
+                setDisabledPolicies(['ADJUSTABLE-ROYALTY']);
+            } else {
+                // If ROYALTY is removed, enable ADJUSTABLE-ROYALTY
+                setDisabledPolicies([]);
+            }
+        }
+
+        setPolicy(newValue);
+    };
     const wallets = [
         { name: "Stripe", src: "/wallet/Stripe.svg", width: 200, height: 200 },
         {
@@ -570,7 +605,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             collectionRequestBannerImgUrl
         );
         if (walletName === "WalletConnect") {
-     
             console.log("🚀 ~ handleWalletSubmit ~ wcClient", wcClient);
             console.log("🚀 ~ handleWalletSubmit ~ wcSession", wcSession);
         }
@@ -1673,7 +1707,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                 <h5> Note: </h5>
                                 <span>
                                     {" "}
-                                    Service fee : <strong>2.5%</strong>{" "}
+                                    Service fee : <strong>1.5%</strong>{" "}
                                 </span>{" "}
                                 <br />
                             </div>
@@ -1762,14 +1796,19 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             <input
                                                 id="mintPrice"
                                                 type="number"
+                                                min="0"
+                                                step="any"
                                                 {...register("mintPrice", {
-                                                    pattern: {
-                                                        value: /^[0-9]+(\.[0-9]{1,18})?$/,
-                                                        message:
-                                                            "Please enter a valid number",
-                                                    },
                                                     required:
                                                         "Mint Price is required",
+                                                    min: {
+                                                        value: 0,
+                                                        message:
+                                                            "Mint Price must be non-negative",
+                                                    },
+                                                    validate: (value) =>
+                                                        value >= 0 ||
+                                                        "Mint Price must be non-negative",
                                                 })}
                                             />
 
@@ -1941,7 +1980,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         </div>
                                     </div>
 
-                                    <div className="col-md-12">
+                                    {/* <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
                                                 htmlFor="policy"
@@ -2014,7 +2053,63 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 ))}
                                             </Select>
                                         </div>
-                                    </div>
+                                    </div> */}
+
+<div className="col-md-12">
+            <div className="input-box pb--20">
+                <label htmlFor="policy" className="form-label">
+                    Policy
+                </label>
+                <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    style={{
+                        width: "100%",
+                        backgroundColor: "#242435",
+                        color: "#fff",
+                        borderRadius: 5,
+                    }}
+                    multiple
+                    value={policy}
+                    onChange={handlePolicyChange}
+                    input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                    renderValue={(selected) => (
+                        <Box sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 0.5,
+                            alignItems: "center",
+                            p: 0.5,
+                            bgcolor: "#242435",
+                            borderRadius: 5,
+                        }}>
+                            {selected.map((value) => (
+                                <Chip
+                                    key={value}
+                                    label={value}
+                                    style={{
+                                        color: "#fff",
+                                        backgroundColor: "#363545",
+                                    }}
+                                />
+                            ))}
+                        </Box>
+                    )}
+                    MenuProps={MenuProps}
+                >
+                    {policies.map((name) => (
+                        <MenuItem
+                            key={name}
+                            value={name}
+                            style={getStyles(name, policy, theme)}
+                            disabled={disabledPolicies.includes(name)}
+                        >
+                            {name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </div>
+        </div>
 
                                     <div className="col-md-12">
                                         {/* <div className="input-box pb--20">
@@ -2094,17 +2189,28 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             <input
                                                 id="royaltyPercentage"
                                                 type="number"
+                                                min="0"
+                                                max="100"
+                                                step="0.01"
                                                 {...register(
                                                     "royaltyPercentage",
                                                     {
-                                                        pattern: {
-                                                            // only number with deciimal is allowed
-                                                            value: /^[0-9]+(\.[0-9]{1,18})?$/,
-                                                            message:
-                                                                "Please enter a valid number",
-                                                        },
                                                         required:
                                                             "Royalty Percentage is required",
+                                                        min: {
+                                                            value: 0,
+                                                            message:
+                                                                "Royalty Percentage must be non-negative",
+                                                        },
+                                                        max: {
+                                                            value: 100,
+                                                            message:
+                                                                "Royalty Percentage cannot exceed 100%",
+                                                        },
+                                                        validate: (value) =>
+                                                            (value >= 0 &&
+                                                                value <= 100) ||
+                                                            "Royalty Percentage must be between 0 and 100",
                                                     }
                                                 )}
                                             />
@@ -2307,54 +2413,83 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         </label>
                                     </div>
                                     <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "start",
-                                            gap: "20px",
-                                            marginBottom: "30px",
-                                        }}
-                                    >
-                                        {wallets.map((wallet) => (
-                                            <motion.div
-                                                key={wallet.name}
-                                                className="rn-check-box"
-                                                whileHover={{
-                                                    scale: 1.03,
-                                                    transition: {
-                                                        duration: 0.3,
-                                                    },
-                                                }}
-                                                onClick={() =>
-                                                    setSelectedWallet(
-                                                        wallet.name
-                                                    )
-                                                }
-                                                style={{
-                                                    border: `2px solid ${
-                                                        selectedWallet ===
-                                                        wallet.name
-                                                            ? "#00ff00"
-                                                            : selectedWallet ===
-                                                              null
-                                                            ? // ? '#ff0000'
-                                                              // : '#363545'
-                                                              ""
-                                                            : "#363545"
-                                                    }`,
-                                                    padding: "10px",
-                                                    borderRadius: "5px",
-                                                    cursor: "pointer",
-                                                }}
-                                            >
-                                                <Image
-                                                    src={wallet.src}
-                                                    alt={wallet.name}
-                                                    width={wallet.width}
-                                                    height={wallet.height}
-                                                />
-                                            </motion.div>
-                                        ))}
-                                    </div>
+    style={{
+        display: "flex",
+        justifyContent: "start",
+        gap: "20px",
+        marginBottom: "30px",
+    }}
+>
+    {/* Stripe - Always shown */}
+    <motion.div
+        className="rn-check-box"
+        whileHover={{
+            scale: 1.03,
+            transition: {
+                duration: 0.3,
+            },
+        }}
+        onClick={() => setSelectedWallet("Stripe")}
+        style={{
+            border: `2px solid ${
+                selectedWallet === "Stripe"
+                    ? "#00ff00"
+                    : "#363545"
+            }`,
+            padding: "10px",
+            borderRadius: "5px",
+            cursor: "pointer",
+        }}
+    >
+        <Image
+            src="/wallet/Stripe.svg"
+            alt="Stripe"
+            width={200}
+            height={200}
+        />
+    </motion.div>
+
+    {/* Connected wallet or all wallets */}
+    {wallets
+        .filter(wallet => wallet.name !== "Stripe")
+        .filter(wallet =>{ 
+            console.log(connectedWallet.split(" ").join(""))
+           return !connectedWallet || 
+            wallet.name === connectedWallet.split(" ").join("")
+            || 
+            connectedWallet === "WalletConnect"
+})
+        .map((wallet) => (
+            <motion.div
+                key={wallet.name}
+                className="rn-check-box"
+                whileHover={{
+                    scale: 1.03,
+                    transition: {
+                        duration: 0.3,
+                    },
+                }}
+                onClick={() => setSelectedWallet(wallet.name)}
+                style={{
+                    border: `2px solid ${
+                        selectedWallet === wallet.name
+                            ? "#00ff00"
+                            : "#363545"
+                    }`,
+                    padding: "10px",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                }}
+            >
+                <Image
+                    src={wallet.src}
+                    alt={wallet.name}
+                    width={wallet.width}
+                    height={wallet.height}
+                />
+            </motion.div>
+        ))}
+</div>
 
                                     <div className="col-md-12 col-xl-4">
                                         <div className="input-box">

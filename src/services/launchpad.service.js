@@ -312,6 +312,25 @@ export const launchpadApi = createApi({
                 const primeRoleArray = primeRole.split(" ");
                 const discountRoleArray = discountRole.split(" ");
 
+                let decimalPrice;
+                const calculateDecimal = (price) => {
+                  const priceString = price.toString();
+                  const priceArray = priceString.split(".");
+                  if (priceArray.length === 1) {
+                    decimalPrice = `${priceArray[0]}.0`;
+                  } else {
+                    decimalPrice = priceString;
+                  }
+                };
+                calculateDecimal(collectionRequestMintPrice);
+                console.log("decimalPrice", decimalPrice);
+
+
+                let royalityPercentage;
+                const calculateRoyalityPercentage = (royality) => {
+                    royalityPercentage = royality / 100;
+                };
+                calculateRoyalityPercentage(collectionRequestRoyalityPerc);
 
 
                 const publicKey = account.slice(2, account.length);
@@ -327,8 +346,8 @@ export const launchpadApi = createApi({
                 ${JSON.stringify(collectionRequestCategory)}
                 ${collectionRequestSupply}
                 ${JSON.stringify(collectionRequestUriList)}
-                ${collectionRequestMintPrice}
-                ${collectionRequestRoyalityPerc}
+                ${decimalPrice}
+                ${royalityPercentage}
                 ${JSON.stringify(collectionRequestRoyalityAddress)}
                 ${JSON.stringify(collectionRequestCoverImgUrl)}
                 ${JSON.stringify(collectionRequestBannerImgUrl)}
