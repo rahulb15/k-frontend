@@ -19,6 +19,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { motion } from "framer-motion";
 import { Box } from "@mui/material";
 import collectionService from "src/services/collection.service";
 import { useAccountContext } from "src/contexts";
@@ -37,23 +38,36 @@ const MenuProps = {
     },
 };
 
+// const policies = [
+//     "COLLECTION",
+//     "INSTANT-MINT",
+//     "MARKETPLACE",
+//     "FIXED-SALE",
+//     "AUCTION-SALE",
+//     "BLACKLIST",
+//     "DISABLE-BURN",
+//     "DISABLE-TRANSFER",
+//     "DISABLE-SALE",
+//     "DUTCH-AUCTION-SALE",
+//     "EXTRA-POLICIES",
+//     "FIXED-ISSUANCE",
+//     "GUARDS",
+//     "NON-FUNGIBLE",
+//     "ROYALTY",
+//     "TRUSTED-CUSTODY",
+// ];
+
 const policies = [
     "COLLECTION",
     "INSTANT-MINT",
     "MARKETPLACE",
     "FIXED-SALE",
     "AUCTION-SALE",
-    "BLACKLIST",
+    "ADJUSTABLE-ROYALTY",
     "DISABLE-BURN",
-    "DISABLE-TRANSFER",
-    "DISABLE-SALE",
     "DUTCH-AUCTION-SALE",
-    "EXTRA-POLICIES",
-    "FIXED-ISSUANCE",
-    "GUARDS",
     "NON-FUNGIBLE",
     "ROYALTY",
-    "TRUSTED-CUSTODY",
 ];
 
 function getStyles(name, personName, theme) {
@@ -64,6 +78,28 @@ function getStyles(name, personName, theme) {
                 : theme.typography.fontWeightMedium,
     };
 }
+
+const wallets = [
+    { name: "Stripe", src: "/wallet/Stripe.svg", width: 200, height: 200 },
+    {
+        name: "EckoWallet",
+        src: "/wallet/eckowallet.png",
+        width: 100,
+        height: 100,
+    },
+    {
+        name: "Chainweaver",
+        src: "/wallet/chainweaver.png",
+        width: 100,
+        height: 100,
+    },
+    {
+        name: "WalletConnect",
+        src: "/wallet/walletconnect.svg",
+        width: 100,
+        height: 100,
+    },
+];
 
 const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const theme = useTheme();
@@ -78,8 +114,17 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const [imageBannerLoading, setImageBannerLoading] = useState(false);
     const [tokenCount, setTokenCount] = useState(0);
     const [policy, setPolicy] = useState([]);
+    const [disabledPolicies, setDisabledPolicies] = useState([]);
     const account = useAccountContext();
     console.log("Account:", account);
+    const [selectedWallet, setSelectedWallet] = useState(null);
+    const [connectedWallet, setConnectedWallet] = useState(null);
+
+    useEffect(() => {
+        if (account?.user?.walletName) {
+            setConnectedWallet(account.user.walletName);
+        }
+    }, [account]);
 
     const {
         register,
@@ -109,11 +154,45 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
         }
     }, [tokenList, setValue]);
 
+    // const handlePolicyChange = (event) => {
+    //     const {
+    //         target: { value },
+    //     } = event;
+    //     setPolicy(typeof value === "string" ? value.split(",") : value);
+    // };
+
     const handlePolicyChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPolicy(typeof value === "string" ? value.split(",") : value);
+
+        let newValue = typeof value === "string" ? value.split(",") : value;
+
+        const isAdjustableRoyaltyChanged =
+            newValue.includes("ADJUSTABLE-ROYALTY") !==
+            policy.includes("ADJUSTABLE-ROYALTY");
+        const isRoyaltyChanged =
+            newValue.includes("ROYALTY") !== policy.includes("ROYALTY");
+
+        if (isAdjustableRoyaltyChanged) {
+            if (newValue.includes("ADJUSTABLE-ROYALTY")) {
+                newValue = newValue.filter((item) => item !== "ROYALTY");
+                setDisabledPolicies(["ROYALTY"]);
+            } else {
+                setDisabledPolicies([]);
+            }
+        } else if (isRoyaltyChanged) {
+            if (newValue.includes("ROYALTY")) {
+                newValue = newValue.filter(
+                    (item) => item !== "ADJUSTABLE-ROYALTY"
+                );
+                setDisabledPolicies(["ADJUSTABLE-ROYALTY"]);
+            } else {
+                setDisabledPolicies([]);
+            }
+        }
+
+        setPolicy(newValue);
     };
 
     const uploadImage = async (name, file) => {
@@ -220,84 +299,99 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
         try {
             console.log(policy);
 
-            const result = await launchCollection(collectionData).unwrap();
-            if (result.result.status === "success") {
-                Swal.fire({
-                    title: "Success",
-                    text: "Collection Synced Successfully with the blockchain",
-                    icon: "success",
-                    confirmButtonText: "Cool",
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        const body = {
-                            collectionName: data.collectionName,
-                            creatorName: account?.user?.name,
-                            creatorEmail: account?.user?.email,
-                            creatorWallet: data.creatorWallet,
-                            projectDescription: data.projectDescription,
-                            projectCategory: data.projectCategory.toUpperCase(),
-                            expectedLaunchDate: mintStartDate,
-                            // contractType: formData.contractType,
-                            totalSupply: data.totalSupply,
-                            collectionCoverImage: selectedImage,
-                            collectionBannerImage: selectedBannerImage,
-                            mintPrice: data.mintPrice,
-                            royaltyPercentage: data.royaltyPercentage,
-                            mintStartDate: mintStartDate,
-                            mintStartTime: formattedStartDate,
-                            mintEndDate: mintEndDate,
-                            mintEndTime: formattedEndDate,
-                            allowFreeMints: data.allowFreeMints,
-                            enableWhitelist: data.enableWhitelist,
-                            enablePresale: data.enablePresale,
-                            enableAirdrop: data.enableAirdrop,
-                            royaltyAddress: data.royaltyAddress,
-                            policy: policy,
-                            collectionType: "marketplace",
-                            collectionId: Math.floor(Math.random() * 1000000),
-                            tokenList: data.tokenList
-                                .split(",")
-                                .map((token) => token.replace(/"/g, "").trim()),
-                        };
+            if (selectedWallet === "Stripe") {
+                // Implement Stripe payment logic here
+                console.log("Proceeding with Stripe payment");
+                
+            } else {
+                const result = await launchCollection(collectionData).unwrap();
+                if (result.result.status === "success") {
+                    Swal.fire({
+                        title: "Success",
+                        text: "Collection Synced Successfully with the blockchain",
+                        icon: "success",
+                        confirmButtonText: "Cool",
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            const body = {
+                                collectionName: data.collectionName,
+                                creatorName: account?.user?.name,
+                                creatorEmail: account?.user?.email,
+                                creatorWallet: data.creatorWallet,
+                                projectDescription: data.projectDescription,
+                                projectCategory:
+                                    data.projectCategory.toUpperCase(),
+                                expectedLaunchDate: mintStartDate,
+                                // contractType: formData.contractType,
+                                totalSupply: data.totalSupply,
+                                collectionCoverImage: selectedImage,
+                                collectionBannerImage: selectedBannerImage,
+                                mintPrice: data.mintPrice,
+                                royaltyPercentage: data.royaltyPercentage,
+                                mintStartDate: mintStartDate,
+                                mintStartTime: formattedStartDate,
+                                mintEndDate: mintEndDate,
+                                mintEndTime: formattedEndDate,
+                                allowFreeMints: data.allowFreeMints,
+                                enableWhitelist: data.enableWhitelist,
+                                enablePresale: data.enablePresale,
+                                enableAirdrop: data.enableAirdrop,
+                                royaltyAddress: data.royaltyAddress,
+                                policy: policy,
+                                collectionType: "marketplace",
+                                collectionId: Math.floor(
+                                    Math.random() * 1000000
+                                ),
+                                tokenList: data.tokenList
+                                    .split(",")
+                                    .map((token) =>
+                                        token.replace(/"/g, "").trim()
+                                    ),
+                            };
 
-                        console.log(
-                            "🚀 ~ createCollectionRequest ~ body",
-                            body
-                        );
+                            console.log(
+                                "🚀 ~ createCollectionRequest ~ body",
+                                body
+                            );
 
-                        const response =
-                            await collectionService.launchCollection(body);
-                        console.log(
-                            "🚀 ~ createCollectionRequest ~ response",
-                            response
-                        );
-                        if (response?.data?.status === "success") {
-                            Swal.fire({
-                                title: "Success",
-                                text: "Collection Created Successfully",
-                                icon: "success",
-                                confirmButtonText: "Cool",
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    reset();
-                                    router.push("/");
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Error",
-                                text:
-                                    response?.data?.message ||
-                                    "An error occurred while creating the collection",
-                                icon: "error",
-                                confirmButtonText: "Ok",
-                            });
+                            const response =
+                                await collectionService.launchCollection(body);
+                            console.log(
+                                "🚀 ~ createCollectionRequest ~ response",
+                                response
+                            );
+                            if (response?.data?.status === "success") {
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Collection Created Successfully",
+                                    icon: "success",
+                                    confirmButtonText: "Cool",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        reset();
+                                        router.push("/");
+                                    }
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text:
+                                        response?.data?.message ||
+                                        "An error occurred while creating the collection",
+                                    icon: "error",
+                                    confirmButtonText: "Ok",
+                                });
+                            }
+
+                            // reset();
+                            // router.push("/");
                         }
-
-                        // reset();
-                        // router.push("/");
-                    }
-                });
+                    });
+                } else {
+                    toast.error(
+                        "Failed to launch collection. Please try again."
+                    );
+                }
             }
         } catch (err) {
             console.log("Launch Collection Error:", err);
@@ -650,7 +744,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="col-md-6">
+                                    {/* <div className="col-md-6">
                                         <div className="input-box pb--20">
                                             <label
                                                 htmlFor="royaltyPercentage"
@@ -689,6 +783,48 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 </ErrorText>
                                             )}
                                         </div>
+                                    </div> */}
+
+                                    <div className="col-md-6">
+                                        <label
+                                            htmlFor="royaltyPercentage"
+                                            className="form-label"
+                                        >
+                                            Royalty Percentage
+                                        </label>
+                                        <input
+                                            id="royaltyPercentage"
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            max="100"
+                                            placeholder="e.g. 2.5 (Max 100)"
+                                            {...register("royaltyPercentage", {
+                                                required:
+                                                    "Royalty Percentage is required",
+                                                min: {
+                                                    value: 0,
+                                                    message:
+                                                        "Royalty must be non-negative",
+                                                },
+                                                max: {
+                                                    value: 100,
+                                                    message:
+                                                        "Royalty cannot exceed 100%",
+                                                },
+                                                validate: (value) =>
+                                                    parseFloat(value) <= 100 ||
+                                                    "Royalty cannot exceed 100%",
+                                            })}
+                                        />
+                                        {errors.royaltyPercentage && (
+                                            <ErrorText>
+                                                {
+                                                    errors.royaltyPercentage
+                                                        .message
+                                                }
+                                            </ErrorText>
+                                        )}
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
@@ -848,6 +984,65 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                             )}
                                         </div>
                                     </div>
+                                    {/* <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="policy"
+                                                className="form-label"
+                                            >
+                                                Policy
+                                            </label>
+                                            <Select
+                                                labelId="policy-multiple-chip-label"
+                                                id="policy-multiple-chip"
+                                                className={
+                                                    styles["form-select"]
+                                                }
+                                                multiple
+                                                value={policy}
+                                                onChange={handlePolicyChange}
+                                                input={
+                                                    <OutlinedInput id="select-multiple-chip" />
+                                                }
+                                                renderValue={(selected) => (
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: 0.5,
+                                                        }}
+                                                    >
+                                                        {selected.map(
+                                                            (value) => (
+                                                                <Chip
+                                                                    key={value}
+                                                                    label={
+                                                                        value
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {policies.map((name) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                        style={getStyles(
+                                                            name,
+                                                            policy,
+                                                            theme
+                                                        )}
+                                                    >
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div> */}
+
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
@@ -898,6 +1093,9 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                             name,
                                                             policy,
                                                             theme
+                                                        )}
+                                                        disabled={disabledPolicies.includes(
+                                                            name
                                                         )}
                                                     >
                                                         {name}
@@ -969,6 +1167,102 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 Enable Airdrop
                                             </label>
                                         </div>
+                                    </div>
+                                    <div className="col-md-12 col-xl-4 mt--20 mb--20">
+                                        <label
+                                            className="rn-check-box-label"
+                                            htmlFor="payment-option"
+                                        >
+                                            Payment Options
+                                        </label>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "start",
+                                            gap: "20px",
+                                            marginBottom: "30px",
+                                        }}
+                                    >
+                                        {/* Always show Stripe */}
+                                        <motion.div
+                                            key="Stripe"
+                                            className="rn-check-box"
+                                            whileHover={{
+                                                scale: 1.03,
+                                                transition: { duration: 0.3 },
+                                            }}
+                                            onClick={() =>
+                                                setSelectedWallet("Stripe")
+                                            }
+                                            style={{
+                                                border: `2px solid ${
+                                                    selectedWallet === "Stripe"
+                                                        ? "#00ff00"
+                                                        : "#363545"
+                                                }`,
+                                                padding: "10px",
+                                                borderRadius: "5px",
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            <Image
+                                                src="/wallet/Stripe.svg"
+                                                alt="Stripe"
+                                                width={200}
+                                                height={200}
+                                            />
+                                        </motion.div>
+
+                                        {/* Show connected wallet or all options if no wallet is connected */}
+                                        {wallets
+                                            .filter(
+                                                (wallet) =>
+                                                    wallet.name !== "Stripe"
+                                            )
+                                            .filter(
+                                                (wallet) =>
+                                                    !connectedWallet ||
+                                                    wallet.name ===
+                                                        connectedWallet ||
+                                                    connectedWallet ===
+                                                        "WalletConnect"
+                                            )
+                                            .map((wallet) => (
+                                                <motion.div
+                                                    key={wallet.name}
+                                                    className="rn-check-box"
+                                                    whileHover={{
+                                                        scale: 1.03,
+                                                        transition: {
+                                                            duration: 0.3,
+                                                        },
+                                                    }}
+                                                    onClick={() =>
+                                                        setSelectedWallet(
+                                                            wallet.name
+                                                        )
+                                                    }
+                                                    style={{
+                                                        border: `2px solid ${
+                                                            selectedWallet ===
+                                                            wallet.name
+                                                                ? "#00ff00"
+                                                                : "#363545"
+                                                        }`,
+                                                        padding: "10px",
+                                                        borderRadius: "5px",
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={wallet.src}
+                                                        alt={wallet.name}
+                                                        width={wallet.width}
+                                                        height={wallet.height}
+                                                    />
+                                                </motion.div>
+                                            ))}
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box">

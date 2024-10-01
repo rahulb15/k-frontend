@@ -542,7 +542,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     })
                     .map((category, index) => (
                         <div key={index}>
-                            <div className="row mb--30">
+                            <div className="row mb--30 mt--30">
                                 <div className="col-12">
                                     <SectionTitle
                                         title={category.categoryName}
@@ -569,7 +569,7 @@ const LaunchpadCategory = ({ className, space }) => {
                                                         whileTap={{ scale: 1 }}
                                                     >
                                                         <Link
-                                                            href={`/launchpad/${prod.collectionName}`}
+                                                            href={`/launchpad/kadena/${prod.collectionName}`}
                                                         >
                                                             <div className="image">
                                                                 <img

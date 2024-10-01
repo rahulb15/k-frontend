@@ -926,6 +926,27 @@ export const marketplaceApi = createApi({
                 } = args;
                 console.log(args);
 
+                let decimalPrice;
+                const calculateDecimal = (price) => {
+                  const priceString = price.toString();
+                  const priceArray = priceString.split(".");
+                  if (priceArray.length === 1) {
+                    decimalPrice = `${priceArray[0]}.0`;
+                  } else {
+                    decimalPrice = priceString;
+                  }
+                };
+                calculateDecimal(nftPrice);
+                console.log("decimalPrice", decimalPrice);
+
+
+                let royalityPercentage;
+                const calculateRoyalityPercentage = (royality) => {
+                    royalityPercentage = royality / 100;
+                };
+                calculateRoyalityPercentage(royaltyPerc);
+
+
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
@@ -935,8 +956,8 @@ export const marketplaceApi = createApi({
                     ${JSON.stringify(nftName)}
                     ${JSON.stringify(nftUri)}
                     ${JSON.stringify(nftPolicy)}
-                    ${nftPrice}
-                    ${royaltyPerc}
+                    ${decimalPrice}
+                    ${royalityPercentage}
                     ${JSON.stringify(royaltyAccount)})`;
 
                 const txn = Pact.builder

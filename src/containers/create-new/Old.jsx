@@ -409,7 +409,7 @@
 
 // export default CreateNewArea;
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "@ui/button";
 import ErrorText from "@ui/error-text";
@@ -430,8 +430,6 @@ import styles from "./ApplyLaunchpadWrapper.module.css";
 import collectionService from "src/services/collection.service";
 import { MutatingDots } from "react-loader-spinner";
 import singleNftService from "src/services/singleNft.service";
-import Image from "next/image";
-import { motion } from "framer-motion";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -457,8 +455,6 @@ const policies = [
     "DISABLE-BURN",
     "DISABLE-TRANSFER",
     "DISABLE-SALE",
-    "ROYALTY",
-    "NON-FUNGIBLE"
 ];
 
 function getStyles(name, policy, theme) {
@@ -470,45 +466,14 @@ function getStyles(name, policy, theme) {
     };
 }
 
-const wallets = [
-    { name: "Stripe", src: "/wallet/Stripe.svg", width: 200, height: 200 },
-    {
-        name: "EckoWallet",
-        src: "/wallet/eckowallet.png",
-        width: 100,
-        height: 100,
-    },
-    {
-        name: "Chainweaver",
-        src: "/wallet/chainweaver.png",
-        width: 100,
-        height: 100,
-    },
-    {
-        name: "WalletConnect",
-        src: "/wallet/walletconnect.svg",
-        width: 100,
-        height: 100,
-    },
-];
-
 const CreateSingleNFTArea = ({ onBack }) => {
     const [selectedImage, setSelectedImage] = useState();
     const [hasImageError, setHasImageError] = useState(false);
     const [policy, setPolicy] = useState([]);
-    const [disabledPolicies, setDisabledPolicies] = useState([]);
     const [imageLoading, setImageLoading] = useState(false);
     const account = useAccountContext();
     const [launchSingleNft, { isLoading }] = useLaunchSingleNftMutation();
     const theme = useTheme();
-    const [selectedWallet, setSelectedWallet] = useState(null);
-    const [connectedWallet, setConnectedWallet] = useState(null);
-
-    useEffect(() => {
-        if (account?.user?.walletName) {
-            setConnectedWallet(account.user.walletName);
-        }
-    }, [account]);
 
     const {
         register,
@@ -558,50 +523,11 @@ const CreateSingleNFTArea = ({ onBack }) => {
         }
     };
 
-    // const handlePolicyChange = (event) => {
-    //     const {
-    //         target: { value },
-    //     } = event;
-    //     setPolicy(typeof value === "string" ? value.split(",") : value);
-    // };
-
     const handlePolicyChange = (event) => {
         const {
             target: { value },
         } = event;
-
-        let newValue = typeof value === "string" ? value.split(",") : value;
-
-        // Check if ADJUSTABLE-ROYALTY or ROYALTY is being added or removed
-        const isAdjustableRoyaltyChanged =
-            newValue.includes("ADJUSTABLE-ROYALTY") !==
-            policy.includes("ADJUSTABLE-ROYALTY");
-        const isRoyaltyChanged =
-            newValue.includes("ROYALTY") !== policy.includes("ROYALTY");
-
-        if (isAdjustableRoyaltyChanged) {
-            if (newValue.includes("ADJUSTABLE-ROYALTY")) {
-                // If ADJUSTABLE-ROYALTY is added, remove and disable ROYALTY
-                newValue = newValue.filter((item) => item !== "ROYALTY");
-                setDisabledPolicies(["ROYALTY"]);
-            } else {
-                // If ADJUSTABLE-ROYALTY is removed, enable ROYALTY
-                setDisabledPolicies([]);
-            }
-        } else if (isRoyaltyChanged) {
-            if (newValue.includes("ROYALTY")) {
-                // If ROYALTY is added, remove and disable ADJUSTABLE-ROYALTY
-                newValue = newValue.filter(
-                    (item) => item !== "ADJUSTABLE-ROYALTY"
-                );
-                setDisabledPolicies(["ADJUSTABLE-ROYALTY"]);
-            } else {
-                // If ROYALTY is removed, enable ADJUSTABLE-ROYALTY
-                setDisabledPolicies([]);
-            }
-        }
-
-        setPolicy(newValue);
+        setPolicy(typeof value === "string" ? value.split(",") : value);
     };
 
     const onSubmit = async (data) => {
@@ -624,41 +550,35 @@ const CreateSingleNFTArea = ({ onBack }) => {
                 walletName: account?.user?.walletName,
             };
 
-            if (selectedWallet === "Stripe") {
-                // Implement Stripe payment logic here
-                console.log("Proceeding with Stripe payment");
-                // You'll need to integrate with your backend to create a Stripe session
-            } else {
-                const resultData = await launchSingleNft(nftData).unwrap();
-                console.log("Launch Single NFT Result:", resultData);
-                if (resultData.result.status === "success") {
-                    const body = {
-                        user: account?.user?._id,
-                        nftName: data.name,
-                        creator: account?.user?._id,
-                        creatorName: account?.user?.name,
-                        tokenImage: selectedImage,
-                        nftPrice: parseFloat(data.price),
-                        policies: policy,
-                        uri: data.uri,
-                        royaltyAccount: data.royaltyAddress,
-                        royaltyPercentage: parseFloat(data.royaltyPercentage),
-                    };
-                    console.log("Create Single NFT Body:", body);
+            const resultData = await launchSingleNft(nftData).unwrap();
+            console.log("Launch Single NFT Result:", resultData);
+            if (resultData.result.status === "success") {
+                const body = {
+                    user: account?.user?._id,
+                    nftName: data.name,
+                    creator: account?.user?._id,
+                    creatorName: account?.user?.name,
+                    tokenImage: selectedImage,
+                    nftPrice: parseFloat(data.price),
+                    policies: policy,
+                    uri: data.uri,
+                    royaltyAccount: data.royaltyAddress,
+                    royaltyPercentage: parseFloat(data.royaltyPercentage),
+                };
+                console.log("Create Single NFT Body:", body);
 
-                    const result = await singleNftService.createSingleNFT(body);
-                    console.log("Create Single NFT Result:", result);
-                    if (result.status === "success") {
-                        toast.success("NFT launched successfully!");
-                        reset();
-                        setSelectedImage(null);
-                        setPolicy([]);
-                    } else {
-                        toast.error("Failed to launch NFT. Please try again.");
-                    }
+                const result = await singleNftService.createSingleNFT(body);
+                console.log("Create Single NFT Result:", result);
+                if (result.status === "success") {
+                    toast.success("NFT launched successfully!");
+                    reset();
+                    setSelectedImage(null);
+                    setPolicy([]);
                 } else {
                     toast.error("Failed to launch NFT. Please try again.");
                 }
+            } else {
+                toast.error("Failed to launch NFT. Please try again.");
             }
         } catch (err) {
             console.error("Launch Single NFT Error:", err);
@@ -772,7 +692,6 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                 id="price"
                                                 type="number"
                                                 step="0.000000000000000001"
-                                                min="0"
                                                 placeholder="e. g. `20`"
                                                 {...register("price", {
                                                     required:
@@ -803,9 +722,7 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                 id="royaltyPercentage"
                                                 type="number"
                                                 step="0.01"
-                                                min="0"
-                                                max="100"
-                                                placeholder="e.g. 2.5 (Max 100)"
+                                                placeholder="e. g. `2.5`"
                                                 {...register(
                                                     "royaltyPercentage",
                                                     {
@@ -819,22 +736,10 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                         max: {
                                                             value: 100,
                                                             message:
-                                                                "Royalty cannot exceed 100%",
+                                                                "Royalty must be 100 or less",
                                                         },
-                                                        validate: (value) =>
-                                                            parseFloat(value) <=
-                                                                100 ||
-                                                            "Royalty cannot exceed 100%",
                                                     }
                                                 )}
-                                                onChange={(e) => {
-                                                    const value = parseFloat(
-                                                        e.target.value
-                                                    );
-                                                    if (value > 100) {
-                                                        e.target.value = 100;
-                                                    }
-                                                }}
                                             />
                                             {errors.royaltyPercentage && (
                                                 <ErrorText>
@@ -989,112 +894,12 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                             policy,
                                                             theme
                                                         )}
-                                                        disabled={disabledPolicies.includes(
-                                                            name
-                                                        )}
                                                     >
                                                         {name}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
                                         </div>
-                                    </div>
-
-                                    <div className="col-md-12 col-xl-4 mt--20 mb--20">
-                                        <label
-                                            className="rn-check-box-label"
-                                            htmlFor="payment-option"
-                                        >
-                                            Payment Options
-                                        </label>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "start",
-                                            gap: "20px",
-                                            marginBottom: "30px",
-                                        }}
-                                    >
-                                        {/* Always show Stripe */}
-                                        <motion.div
-                                            key="Stripe"
-                                            className="rn-check-box"
-                                            whileHover={{
-                                                scale: 1.03,
-                                                transition: { duration: 0.3 },
-                                            }}
-                                            onClick={() =>
-                                                setSelectedWallet("Stripe")
-                                            }
-                                            style={{
-                                                border: `2px solid ${
-                                                    selectedWallet === "Stripe"
-                                                        ? "#00ff00"
-                                                        : "#363545"
-                                                }`,
-                                                padding: "10px",
-                                                borderRadius: "5px",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            <Image
-                                                src="/wallet/Stripe.svg"
-                                                alt="Stripe"
-                                                width={200}
-                                                height={200}
-                                            />
-                                        </motion.div>
-
-                                        {/* Show connected wallet or all options if no wallet is connected */}
-                                        {wallets
-                                            .filter(
-                                                (wallet) =>
-                                                    wallet.name !== "Stripe"
-                                            )
-                                            .filter(
-                                                (wallet) =>
-                                                    !connectedWallet ||
-                                                    wallet.name ===
-                                                        connectedWallet ||
-                                                    connectedWallet ===
-                                                        "WalletConnect"
-                                            )
-                                            .map((wallet) => (
-                                                <motion.div
-                                                    key={wallet.name}
-                                                    className="rn-check-box"
-                                                    whileHover={{
-                                                        scale: 1.03,
-                                                        transition: {
-                                                            duration: 0.3,
-                                                        },
-                                                    }}
-                                                    onClick={() =>
-                                                        setSelectedWallet(
-                                                            wallet.name
-                                                        )
-                                                    }
-                                                    style={{
-                                                        border: `2px solid ${
-                                                            selectedWallet ===
-                                                            wallet.name
-                                                                ? "#00ff00"
-                                                                : "#363545"
-                                                        }`,
-                                                        padding: "10px",
-                                                        borderRadius: "5px",
-                                                        cursor: "pointer",
-                                                    }}
-                                                >
-                                                    <Image
-                                                        src={wallet.src}
-                                                        alt={wallet.name}
-                                                        width={wallet.width}
-                                                        height={wallet.height}
-                                                    />
-                                                </motion.div>
-                                            ))}
                                     </div>
                                     <div className="col-md-12">
                                         <div className="input-box">
