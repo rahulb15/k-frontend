@@ -60,7 +60,7 @@ const AuthorProfileArea = ({ className }) => {
             if (account?.user?.walletAddress) {
                 try {
                     const response = await getTokenDetailsMutation({
-                        account: account.user.walletAddress,
+                        account: account?.user?.walletAddress || "",
                     }).unwrap();
                     console.log("Token details:", response);
                     const body = { reveledData: response };
@@ -73,7 +73,7 @@ const AuthorProfileArea = ({ className }) => {
         };
 
         fetchTokenDetails();
-    }, [account.user.walletAddress, getTokenDetailsMutation, refetchOwnedNfts]);
+    }, [account?.user?.walletAddress, getTokenDetailsMutation, refetchOwnedNfts]);
 
     // Fetch Priority Pass NFTs
 
@@ -82,7 +82,7 @@ const AuthorProfileArea = ({ className }) => {
             console.log("Fetching Priority Pass NFTs...");
             try {
                 const response = await nftServices.getOwnedPriorityPassNfts({
-                    walletAddress: account.user.walletAddress,
+                    walletAddress: account?.user?.walletAddress || "",
                     pageNo,
                     limit,
                     search,
@@ -95,7 +95,7 @@ const AuthorProfileArea = ({ className }) => {
     };
     useEffect(() => {
         fetchPriorityPassNfts();
-    }, [activeTab, pageNo, limit, search, account.user.walletAddress]);
+    }, [activeTab, pageNo, limit, search, account?.user?.walletAddress]);
 
     const fetchCreatedItems = async () => {
         if (activeTab === "nav-contact") {
@@ -137,7 +137,7 @@ const AuthorProfileArea = ({ className }) => {
     }, [
         activeTab,
         createdActiveTab,
-        account.user.walletAddress,
+        account?.user?.walletAddress,
         pageNo,
         limit,
         search,
@@ -148,7 +148,7 @@ const AuthorProfileArea = ({ className }) => {
         if (activeTab === "nav-liked") {
             try {
                 const response = await nftServices.getLikedNfts({
-                    walletAddress: account.user.walletAddress,
+                    walletAddress: account?.user?.walletAddress || "",
                     pageNo,
                     limit,
                     search,
@@ -162,7 +162,7 @@ const AuthorProfileArea = ({ className }) => {
 
     useEffect(() => {
         fetchLikedNfts();
-    }, [activeTab, pageNo, limit, search, account.user.walletAddress]);
+    }, [activeTab, pageNo, limit, search, account?.user?.walletAddress]);
 
     const fetchMarketplaceNfts = async () => {
         if (activeTab === "nav-home") {

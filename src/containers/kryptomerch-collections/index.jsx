@@ -51,7 +51,7 @@ const CollectionArea = ({ className, space, id, data }) => {
         };
 
         fetchCreatedItems();
-    }, [account.user.walletAddress, pageNo, limit, search]);
+    }, [account?.user?.walletAddress, pageNo, limit, search]);
 
     console.log("collections", createdCollections);
 

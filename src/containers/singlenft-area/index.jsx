@@ -40,7 +40,7 @@ const SingleNftArea = ({ className, space, id }) => {
         };
 
         fetchCreatedItems();
-    }, [account.user.walletAddress, pageNo, limit, search]);
+    }, [account?.user?.walletAddress, pageNo, limit, search]);
 
 
     return (

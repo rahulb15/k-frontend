@@ -65,7 +65,7 @@ const NftContent = ({
     };
 
     return (
-        <Box className="nft-modal-content">
+        <Box className="nft-modal-content custom-scrollbar">
             <Box className="nft-image-and-graph-section">
                 <ReactCardFlip isFlipped={isFlipped} flipDirection="horizontal">
                     <NftImageContainer
@@ -272,68 +272,97 @@ const NftContent = ({
                         </motion.div>
                     )} */}
 
-{showSellOptions && (
-    <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="nft-sell-options"
-    >
-        <Typography variant="h5" gutterBottom>
-            Choose Sale Type
-        </Typography>
-        <Box className="sell-option-grid">
-            {has_fixed(policies) && (
-                <Box
-                    className="sell-option-box"
-                    onClick={() => handleSellTypeSelect("FIXED-SALE")}
-                >
-                    <Typography
-                        variant="body1"
-                        className="sell-option-title"
-                    >
-                        Fixed Price
-                    </Typography>
-                </Box>
-            )}
+                    {showSellOptions && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="nft-sell-options"
+                        >
+                            <Typography variant="h5" gutterBottom>
+                                Choose Sale Type
+                            </Typography>
+                            <Box className="sell-option-grid">
+                                {has_fixed(policies) && (
+                                    <Box
+                                        className="sell-option-box"
+                                        onClick={() =>
+                                            handleSellTypeSelect("FIXED-SALE")
+                                        }
+                                    >
+                                        <Typography
+                                            variant="body1"
+                                            className="sell-option-title"
+                                        >
+                                            Fixed Price
+                                        </Typography>
+                                    </Box>
+                                )}
 
-            {has_auction(policies) && (
-                <Box
-                    className="sell-option-box"
-                    onClick={() => handleSellTypeSelect("AUCTION-SALE")}
-                >
-                    <Typography
-                        variant="body1"
-                        className="sell-option-title"
-                    >
-                        Auction
-                    </Typography>
-                </Box>
-            )}
+                                {has_auction(policies) && (
+                                    <Box
+                                        className="sell-option-box"
+                                        onClick={() =>
+                                            handleSellTypeSelect("AUCTION-SALE")
+                                        }
+                                    >
+                                        <Typography
+                                            variant="body1"
+                                            className="sell-option-title"
+                                        >
+                                            Auction
+                                        </Typography>
+                                    </Box>
+                                )}
 
-            {has_dutch_auction(policies) && (
-                <Box
-                    className="sell-option-box"
-                    onClick={() => handleSellTypeSelect("DUTCH-AUCTION-SALE")}
-                >
-                    <Typography
-                        variant="body1"
-                        className="sell-option-title"
-                    >
-                        Dutch Auction
-                    </Typography>
-                </Box>
-            )}
-        </Box>
-        <Button
-            variant="outlined"
-            onClick={handleCancelSell}
-            className="sell-cancel-button"
-        >
-            Cancel
-        </Button>
-    </motion.div>
-)}
+                                {has_dutch_auction(policies) && (
+                                    <Box
+                                        className="sell-option-box"
+                                        onClick={() =>
+                                            handleSellTypeSelect(
+                                                "DUTCH-AUCTION-SALE"
+                                            )
+                                        }
+                                    >
+                                        <Typography
+                                            variant="body1"
+                                            className="sell-option-title"
+                                        >
+                                            Dutch Auction
+                                        </Typography>
+                                    </Box>
+                                )}
+                            </Box>
+                            {!selectedSellType && (
+                                <Button
+                                    variant="outlined"
+                                    onClick={handleCancelSell}
+                                    className="sell-cancel-button"
+                                    style={{
+                                        marginTop: "20px",
+                                        backgroundColor: "#fae944",
+                                        color: "#000",
+                                        border: "1px solid #fae944",
+                                        width: "100%",
+                                        height: 40,
+                                        borderRadius: 2,
+                                        padding: 2,
+                                        textAlign: "center",
+                                        transition:
+                                            "transform 0.2s, box-shadow 0.2s",
+                                        "&:hover": {
+                                            transform: "translateY(-5px)",
+                                            boxShadow:
+                                                "0 4px 10px rgba(0, 0, 0, 0.1)",
+                                        },
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Cancel
+                                </Button>
+                            )}
+                        </motion.div>
+                    )}
 
                     {selectedSellType && (
                         <NftSaleOptions

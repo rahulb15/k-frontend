@@ -141,7 +141,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     useEffect(() => {
         console.log("Account:", account?.user?.walletAddress);
         if (account?.user?.walletAddress) {
-            setValue("creatorWallet", account.user.walletAddress);
+            setValue("creatorWallet", account?.user?.walletAddress);
         }
     }, [account, setValue]);
     useEffect(() => {

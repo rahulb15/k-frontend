@@ -106,7 +106,7 @@ const Header = ({ className }) => {
                 if (account?.walletAddressContect?.length > 0) {
                     dispatch(setLoading(true));
                     const response = await balanceMutation({
-                        account: account.walletAddressContect,
+                        account: account?.walletAddressContect || "",
                     }).unwrap();
                     dispatch(setBalance(response));
                 }
@@ -118,7 +118,7 @@ const Header = ({ className }) => {
         };
 
         fetchBalance();
-    }, [account.walletAddressContect, balanceMutation, dispatch]);
+    }, [account?.walletAddressContect, balanceMutation, dispatch]);
 
     const getUser = async () => {
         const response = await userService.getUserInit();
@@ -235,7 +235,7 @@ const Header = ({ className }) => {
 
                             <div className="setting-option header-btn">
                                 <div className="icon-box">
-                                    {account.walletAddressContect.length > 0 ? (
+                                    {account?.walletAddressContect?.length > 0 ? (
                                         <>
                                             <ProfileBar />
                                         </>

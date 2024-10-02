@@ -1377,10 +1377,10 @@ export default function ProfileBar({ container }) {
                             variant="body2"
                             sx={{ mt: 1, opacity: 0.8, fontSize: "1.5rem" }}
                         >
-                            {`${account.walletAddressContect.slice(
+                            {`${account?.walletAddressContect?.slice(
                                 0,
                                 8
-                            )}...${account.walletAddressContect.slice(-4)}`}
+                            )}...${account?.walletAddressContect?.slice(-4)}`}
                         </Typography>
                     </Box>
 

@@ -157,8 +157,8 @@ export const AccountProvider = (props) => {
             }
             if (response?.data?.status === "success") {
                 console.log("success");
-                setWalletAddressContect(response.data.data.walletAddress);
-                setUser(response.data.data);
+                setWalletAddressContect(response?.data?.data?.walletAddress);
+                setUser(response?.data?.data);
             }
         }
     };
