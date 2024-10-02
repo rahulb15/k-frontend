@@ -695,7 +695,14 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
      // Get WalletConnect client and session
      const { client: wcClient, session: wcSession } =
      useWalletConnectClient();
-    const { checkIsPublic, checkPrice, reserveTokensFunction } = useCollectionTypeFunctions(product.collectionType);
+     const { 
+        checkIsPublic, 
+        checkIsWhitelist, 
+        checkIsPresale, 
+        checkPrice, 
+        reserveTokensFunction 
+      } = useCollectionTypeFunctions(product.collectionType);
+
 
     const [stageInfo, setStageInfo] = useState({
         currentStage: null,
@@ -711,30 +718,58 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
         const checkStages = async () => {
             setIsLoading(true);
             try {
-                if (product.enablePresale) {
-                    // Handle presale logic (implementation needed)
-                    console.log("Presale enabled, implement presale logic");
-                } else if (product.enableWhitelist) {
-                    // Handle whitelist logic (implementation needed)
-                    console.log("Whitelist enabled, implement whitelist logic");
-                } else {
-                    const publicResponse = await checkIsPublic(product.collectionName);
-                    console.log("Public Response:", publicResponse);
-                    if (publicResponse.data) {
-                        const priceResponse = await checkPrice(product.collectionName);
-                        setStageInfo({
-                            currentStage: "Public",
-                            isLive: true,
-                            price: priceResponse.data,
-                        });
-                    } else {
-                        setStageInfo({
-                            currentStage: "Not Started",
-                            isLive: false,
-                            price: 0,
-                        });
-                    }
-                }
+                // if (product.enablePresale) {
+                //     // Handle presale logic (implementation needed)
+                //     console.log("Presale enabled, implement presale logic");
+                // } else if (product.enableWhitelist) {
+                //     // Handle whitelist logic (implementation needed)
+                //     console.log("Whitelist enabled, implement whitelist logic");
+                // } else {
+                //     const publicResponse = await checkIsPublic(product.collectionName);
+                //     console.log("Public Response:", publicResponse);
+                //     if (publicResponse.data) {
+                //         const priceResponse = await checkPrice(product.collectionName);
+                //         setStageInfo({
+                //             currentStage: "Public",
+                //             isLive: true,
+                //             price: priceResponse.data,
+                //         });
+                //     } else {
+                //         setStageInfo({
+                //             currentStage: "Not Started",
+                //             isLive: false,
+                //             price: 0,
+                //         });
+                //     }
+                // }
+                if (await checkIsPresale(product.collectionName)) {
+                    const price = await checkPrice(product.collectionName, 'presale');
+                    setStageInfo({
+                      currentStage: "Presale",
+                      isLive: true,
+                      price: price.data,
+                    });
+                  } else if (await checkIsWhitelist(product.collectionName)) {
+                    const price = await checkPrice(product.collectionName, 'whitelist');
+                    setStageInfo({
+                      currentStage: "Whitelist",
+                      isLive: true,
+                      price: price.data,
+                    });
+                  } else if (await checkIsPublic(product.collectionName)) {
+                    const price = await checkPrice(product.collectionName, 'public');
+                    setStageInfo({
+                      currentStage: "Public",
+                      isLive: true,
+                      price: price.data,
+                    });
+                  } else {
+                    setStageInfo({
+                      currentStage: "Not Started",
+                      isLive: false,
+                      price: 0,
+                    });
+                  }
             } catch (error) {
                 console.error("Error checking stages:", error);
                 Swal.fire({
@@ -748,7 +783,7 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
         };
 
         checkStages();
-    }, [product, checkIsPublic, checkPrice]);
+    }, [product, checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
 
     useEffect(() => {
         axios

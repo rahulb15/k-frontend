@@ -580,17 +580,67 @@ export const marketplaceApi = createApi({
                 }
             },
         }),
+        // checkMarketPublic: builder.mutation({
+        //     async queryFn(args) {
+        //         const { colName } = args;
+        //         console.log(args);
+        //         const pactCode = `(free.mp-ng-003.check-public ${JSON.stringify(
+        //             colName
+        //         )})`;
+
+        //         const transaction = Pact.builder
+        //             .execution(pactCode)
+        //             .setMeta({ chainId: "1" })
+        //             .createTransaction();
+
+        //         const response = await client.local(transaction, {
+        //             preflight: false,
+        //             signatureVerification: false,
+        //         });
+
+        //         if (response.result.status === "success") {
+        //             return { data: response.result.data };
+        //         } else {
+        //             return { error: response.result.error };
+        //         }
+        //     },
+        // }),
+        // checkMarketPublicPrice: builder.mutation({
+        //     async queryFn(args) {
+        //         const { colName } = args;
+        //         console.log(args);
+        //         const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(
+        //             colName
+        //         )})`;
+
+        //         const transaction = Pact.builder
+        //             .execution(pactCode)
+        //             .setMeta({ chainId: "1" })
+        //             .createTransaction();
+
+        //         const response = await client.local(transaction, {
+        //             preflight: false,
+        //             signatureVerification: false,
+        //         });
+
+        //         if (response.result.status === "success") {
+        //             return { data: response.result.data };
+        //         } else {
+        //             return { error: response.result.error };
+        //         }
+        //     },
+        // }),
+
         checkMarketPublic: builder.mutation({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.mp-ng-003.check-public ${JSON.stringify(
-                    colName
-                )})`;
+                const pactCode = `(free.mp-ng-003.check-public ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -605,17 +655,67 @@ export const marketplaceApi = createApi({
                 }
             },
         }),
+
+        checkMarketWl: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.mp-ng-003.check-whitelist ${JSON.stringify(colName)})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        checkMarketPresale: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.mp-ng-003.check-presale ${JSON.stringify(colName)})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
         checkMarketPublicPrice: builder.mutation({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(
-                    colName
-                )})`;
+                const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -630,6 +730,209 @@ export const marketplaceApi = createApi({
                 }
             },
         }),
+
+        checkMarketWlPrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.mp-ng-003.get-wl-price ${JSON.stringify(colName)})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
+        checkMarketPresalePrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                const pactCode = `(free.mp-ng-003.get-presale-price ${JSON.stringify(colName)})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+    //     marketReserveTokens: builder.mutation({
+    //         async queryFn(args, api, extraOptions, baseQuery) {
+    //             const {
+    //                 reseveTknColName,
+    //                 reserverAcc,
+    //                 reserveTknAmount,
+    //                 walletName,
+    //                 wcClient,
+    //                 wcSession,
+    //             } = args;
+    //             console.log(args);
+
+    //             const chkPublic = await api.dispatch(
+    //                 marketplaceApi.endpoints.checkMarketPublic.initiate({
+    //                     colName: reseveTknColName,
+    //                 })
+    //             ).unwrap();
+    //             console.log("chkPublic", chkPublic);
+
+    //             const chkWl = await api.dispatch(
+    //                 marketplaceApi.endpoints.checkMarketWl.initiate({
+    //                     colName: reseveTknColName,
+    //                 })
+    //             ).unwrap();
+    //             console.log("chkWl", chkWl);
+
+    //             const chkPresale = await api.dispatch(
+    //                 marketplaceApi.endpoints.checkMarketPresale.initiate({
+    //                     colName: reseveTknColName,
+    //                 })
+    //             ).unwrap();
+    //             console.log("chkPresale", chkPresale);
+
+    //             let price;
+    //             if (chkPresale) {
+    //                 price = await api.dispatch(
+    //                     marketplaceApi.endpoints.checkMarketPresalePrice.initiate({
+    //                         colName: reseveTknColName,
+    //                     })
+    //                 ).unwrap();
+    //             } else if (chkWl) {
+    //                 price = await api.dispatch(
+    //                     marketplaceApi.endpoints.checkMarketWlPrice.initiate({
+    //                         colName: reseveTknColName,
+    //                     })
+    //                 ).unwrap();
+    //             } else if (chkPublic) {
+    //                 price = await api.dispatch(
+    //                     marketplaceApi.endpoints.checkMarketPublicPrice.initiate({
+    //                         colName: reseveTknColName,
+    //                     })
+    //                 ).unwrap();
+    //             } else {
+    //                 throw new Error("Sale is not live");
+    //             }
+
+    //             console.log("Determined price:", price);
+
+    //             const account = reserverAcc;
+    //             const creator = await api.dispatch(
+    //                 marketplaceApi.endpoints.getColCreator.initiate({
+    //                     colName: reseveTknColName,
+    //                 })
+    //             ).unwrap();
+    //             console.log("creator", creator);
+
+    //             const publicKey = account.slice(2, account.length);
+    //             const guard = { keys: [publicKey], pred: "keys-all" };
+
+    //             let mintPrice = reserveTknAmount * price;
+
+    //             const pactCode = `(free.mp-ng-003.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
+
+    //             let txn;
+    //             if (account === creator) {
+    //                 txn = Pact.builder
+    //                     .execution(pactCode)
+    //                     .addData("guard", guard)
+    //                     .addSigner(publicKey, (withCapability) => [
+    //                         withCapability("coin.GAS"),
+    //                         withCapability("free.mp-ng-003.MINT-NFT", account),
+    //                     ])
+    //                     .setMeta({
+    //                         creationTime: creationTime(),
+    //                         sender: account,
+    //                         gasLimit: 150000,
+    //                         chainId: CHAIN_ID,
+    //                         ttl: 28800,
+    //                     })
+    //                     .setNetworkId(NETWORKID)
+    //                     .createTransaction();
+    //             } else {
+    //                 txn = Pact.builder
+    //                 .execution(pactCode)
+    //                 .addData("guard", guard)
+    //                 .addSigner(publicKey, (withCapability) => [
+    //                     withCapability("coin.GAS"),
+    //                     withCapability("free.mp-ng-003.MINT-NFT", account),
+    //                     withCapability(
+    //                         "coin.TRANSFER",
+    //                         account,
+    //                         creator,
+    //                         mintPrice
+    //                     ),
+    //                 ])
+    //                 .setMeta({
+    //                     creationTime: creationTime(),
+    //                     sender: account,
+    //                     gasLimit: 150000,
+    //                     chainId: CHAIN_ID,
+    //                     ttl: 28800,
+    //                 })
+    //                 .setNetworkId(NETWORKID)
+    //                 .createTransaction();
+    //         }
+
+    //         console.log("transaction", txn);
+
+    //         try {
+    //             const localResponse = await client.local(txn, {
+    //                 preflight: false,
+    //                 signatureVerification: false,
+    //             });
+
+    //             if (localResponse.result.status === "success") {
+    //                 let signedTx;
+    //                 if (walletName === "Ecko Wallet") {
+    //                     signedTx = await eckoWallet(txn);
+    //                 } else if (walletName === "Chainweaver") {
+    //                     signedTx = await signWithChainweaver(txn);
+    //                 } else if (walletName === "WalletConnect") {
+    //                     if (wcClient && wcSession) {
+    //                         const signWithWalletConnect = createWalletConnectSign(
+    //                             wcClient,
+    //                             wcSession,
+    //                             "kadena:testnet04"
+    //                         );
+    //                         signedTx = await signWithWalletConnect(txn);
+    //                     } else {
+    //                         return { error: "WalletConnect not initialized" };
+    //                     }
+    //                 }
+                    
+    //                 const response = await signFunction(signedTx);
+    //                 return { data: response };
+    //             } else {
+    //                 return { error: localResponse.result.error };
+    //             }
+    //         } catch (error) {
+    //             return { error: error.message };
+    //         }
+    //     },
+    // }),
 
         getRoyaltyAddress: builder.mutation({
             async queryFn(args) {
@@ -1412,7 +1715,11 @@ export const {
     useMarketReserveTokensMutation,
     useUnrevealedTokensMutation,
     useCheckMarketPublicMutation,
+    useCheckMarketWlMutation,
+    useCheckMarketPresaleMutation,
     useCheckMarketPublicPriceMutation,
+    useCheckMarketWlPriceMutation,
+    useCheckMarketPresalePriceMutation,
     useGetRoyaltyAddressMutation,
     useGetRoyaltyPercMutation,
     useSyncWithNgMutation,

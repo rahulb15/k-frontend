@@ -16,13 +16,13 @@ const NftProperties = ({ data }) => {
         <Typography variant="h5" gutterBottom className="nft-properties-heading">
           Properties
         </Typography>
-        {data.properties.map((prop, index) => (
+        {data?.properties?.map((prop, index) => (
           <Box key={index} mt={2}>
             <Typography variant="body1">
-              Collection: <strong>{prop.collection.name}</strong> ({prop.collection.family})
+              Collection: <strong>{prop?.collection?.name}</strong> ({prop?.collection?.family})
             </Typography>
             <Typography variant="body1">
-              Authors: <strong>{prop.authors.map((author) => author.name).join(", ")}</strong>
+              Authors: <strong>{prop?.authors?.map((author) => author?.name).join(", ")}</strong>
             </Typography>
           </Box>
         ))}
