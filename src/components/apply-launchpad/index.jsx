@@ -1864,7 +1864,7 @@ useEffect(() => {
                                                 htmlFor="mintStartDate"
                                                 className="form-label"
                                             >
-                                                Mint Start Date
+                                                Public Mint Start Date
                                             </label>
                                             <input
                                                 id="mintStartDate"

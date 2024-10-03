@@ -81,7 +81,7 @@ const NftDetailsSection = ({ data }) => {
                     </Typography>
 
                     <Typography variant="h5" paragraph>
-                        <CopyableText label="Last Bid Auction ID" text={data?.currentBuyer} />
+                        <CopyableText label="Last Bid Account ID" text={data?.currentBuyer || "N/A"} />
                     </Typography>
 
                 </>
