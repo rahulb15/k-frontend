@@ -167,11 +167,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [connectedWallet, setConnectedWallet] = useState(null);
     console.log("connectedWallet", connectedWallet);
 
-useEffect(() => {
-  if (account?.user?.walletName) {
-    setConnectedWallet(account.user.walletName);
-  }
-}, [account]);
+    useEffect(() => {
+        if (account?.user?.walletName) {
+            setConnectedWallet(account.user.walletName);
+        }
+    }, [account]);
 
     useEffect(() => {
         if (balance >= parseFloat(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES)) {
@@ -196,27 +196,32 @@ useEffect(() => {
         const {
             target: { value },
         } = event;
-        
-        let newValue = typeof value === 'string' ? value.split(',') : value;
-        
+
+        let newValue = typeof value === "string" ? value.split(",") : value;
+
         // Check if ADJUSTABLE-ROYALTY or ROYALTY is being added or removed
-        const isAdjustableRoyaltyChanged = newValue.includes('ADJUSTABLE-ROYALTY') !== policy.includes('ADJUSTABLE-ROYALTY');
-        const isRoyaltyChanged = newValue.includes('ROYALTY') !== policy.includes('ROYALTY');
+        const isAdjustableRoyaltyChanged =
+            newValue.includes("ADJUSTABLE-ROYALTY") !==
+            policy.includes("ADJUSTABLE-ROYALTY");
+        const isRoyaltyChanged =
+            newValue.includes("ROYALTY") !== policy.includes("ROYALTY");
 
         if (isAdjustableRoyaltyChanged) {
-            if (newValue.includes('ADJUSTABLE-ROYALTY')) {
+            if (newValue.includes("ADJUSTABLE-ROYALTY")) {
                 // If ADJUSTABLE-ROYALTY is added, remove and disable ROYALTY
-                newValue = newValue.filter(item => item !== 'ROYALTY');
-                setDisabledPolicies(['ROYALTY']);
+                newValue = newValue.filter((item) => item !== "ROYALTY");
+                setDisabledPolicies(["ROYALTY"]);
             } else {
                 // If ADJUSTABLE-ROYALTY is removed, enable ROYALTY
                 setDisabledPolicies([]);
             }
         } else if (isRoyaltyChanged) {
-            if (newValue.includes('ROYALTY')) {
+            if (newValue.includes("ROYALTY")) {
                 // If ROYALTY is added, remove and disable ADJUSTABLE-ROYALTY
-                newValue = newValue.filter(item => item !== 'ADJUSTABLE-ROYALTY');
-                setDisabledPolicies(['ADJUSTABLE-ROYALTY']);
+                newValue = newValue.filter(
+                    (item) => item !== "ADJUSTABLE-ROYALTY"
+                );
+                setDisabledPolicies(["ADJUSTABLE-ROYALTY"]);
             } else {
                 // If ROYALTY is removed, enable ADJUSTABLE-ROYALTY
                 setDisabledPolicies([]);
@@ -1892,7 +1897,7 @@ useEffect(() => {
                                                 htmlFor="mintEndDate"
                                                 className="form-label"
                                             >
-                                                Mint End Date
+                                                Public Mint End Date
                                             </label>
                                             <input
                                                 id="mintEndDate"
@@ -1920,7 +1925,7 @@ useEffect(() => {
                                                 htmlFor="mintStartTime"
                                                 className="form-label"
                                             >
-                                                Mint Start Time
+                                                PublicMint Start Time
                                             </label>
                                             <input
                                                 id="mintStartTime"
@@ -1953,7 +1958,7 @@ useEffect(() => {
                                                 htmlFor="mintEndTime"
                                                 className="form-label"
                                             >
-                                                Mint End Time
+                                                Public Mint End Time
                                             </label>
                                             <input
                                                 id="mintEndTime"
@@ -2055,61 +2060,83 @@ useEffect(() => {
                                         </div>
                                     </div> */}
 
-<div className="col-md-12">
-            <div className="input-box pb--20">
-                <label htmlFor="policy" className="form-label">
-                    Policy
-                </label>
-                <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    style={{
-                        width: "100%",
-                        backgroundColor: "#242435",
-                        color: "#fff",
-                        borderRadius: 5,
-                    }}
-                    multiple
-                    value={policy}
-                    onChange={handlePolicyChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                    renderValue={(selected) => (
-                        <Box sx={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: 0.5,
-                            alignItems: "center",
-                            p: 0.5,
-                            bgcolor: "#242435",
-                            borderRadius: 5,
-                        }}>
-                            {selected.map((value) => (
-                                <Chip
-                                    key={value}
-                                    label={value}
-                                    style={{
-                                        color: "#fff",
-                                        backgroundColor: "#363545",
-                                    }}
-                                />
-                            ))}
-                        </Box>
-                    )}
-                    MenuProps={MenuProps}
-                >
-                    {policies.map((name) => (
-                        <MenuItem
-                            key={name}
-                            value={name}
-                            style={getStyles(name, policy, theme)}
-                            disabled={disabledPolicies.includes(name)}
-                        >
-                            {name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </div>
-        </div>
+                                    <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="policy"
+                                                className="form-label"
+                                            >
+                                                Policy
+                                            </label>
+                                            <Select
+                                                labelId="demo-multiple-chip-label"
+                                                id="demo-multiple-chip"
+                                                style={{
+                                                    width: "100%",
+                                                    backgroundColor: "#242435",
+                                                    color: "#fff",
+                                                    borderRadius: 5,
+                                                }}
+                                                multiple
+                                                value={policy}
+                                                onChange={handlePolicyChange}
+                                                input={
+                                                    <OutlinedInput
+                                                        id="select-multiple-chip"
+                                                        label="Chip"
+                                                    />
+                                                }
+                                                renderValue={(selected) => (
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: 0.5,
+                                                            alignItems:
+                                                                "center",
+                                                            p: 0.5,
+                                                            bgcolor: "#242435",
+                                                            borderRadius: 5,
+                                                        }}
+                                                    >
+                                                        {selected.map(
+                                                            (value) => (
+                                                                <Chip
+                                                                    key={value}
+                                                                    label={
+                                                                        value
+                                                                    }
+                                                                    style={{
+                                                                        color: "#fff",
+                                                                        backgroundColor:
+                                                                            "#363545",
+                                                                    }}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {policies.map((name) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                        style={getStyles(
+                                                            name,
+                                                            policy,
+                                                            theme
+                                                        )}
+                                                        disabled={disabledPolicies.includes(
+                                                            name
+                                                        )}
+                                                    >
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
 
                                     <div className="col-md-12">
                                         {/* <div className="input-box pb--20">
@@ -2413,83 +2440,102 @@ useEffect(() => {
                                         </label>
                                     </div>
                                     <div
-    style={{
-        display: "flex",
-        justifyContent: "start",
-        gap: "20px",
-        marginBottom: "30px",
-    }}
->
-    {/* Stripe - Always shown */}
-    <motion.div
-        className="rn-check-box"
-        whileHover={{
-            scale: 1.03,
-            transition: {
-                duration: 0.3,
-            },
-        }}
-        onClick={() => setSelectedWallet("Stripe")}
-        style={{
-            border: `2px solid ${
-                selectedWallet === "Stripe"
-                    ? "#00ff00"
-                    : "#363545"
-            }`,
-            padding: "10px",
-            borderRadius: "5px",
-            cursor: "pointer",
-        }}
-    >
-        <Image
-            src="/wallet/Stripe.svg"
-            alt="Stripe"
-            width={200}
-            height={200}
-        />
-    </motion.div>
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "start",
+                                            gap: "20px",
+                                            marginBottom: "30px",
+                                        }}
+                                    >
+                                        {/* Stripe - Always shown */}
+                                        <motion.div
+                                            className="rn-check-box"
+                                            whileHover={{
+                                                scale: 1.03,
+                                                transition: {
+                                                    duration: 0.3,
+                                                },
+                                            }}
+                                            onClick={() =>
+                                                setSelectedWallet("Stripe")
+                                            }
+                                            style={{
+                                                border: `2px solid ${
+                                                    selectedWallet === "Stripe"
+                                                        ? "#00ff00"
+                                                        : "#363545"
+                                                }`,
+                                                padding: "10px",
+                                                borderRadius: "5px",
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            <Image
+                                                src="/wallet/Stripe.svg"
+                                                alt="Stripe"
+                                                width={200}
+                                                height={200}
+                                            />
+                                        </motion.div>
 
-    {/* Connected wallet or all wallets */}
-    {wallets
-        .filter(wallet => wallet.name !== "Stripe")
-        .filter(wallet =>{ 
-            console.log(connectedWallet.split(" ").join(""))
-           return !connectedWallet || 
-            wallet.name === connectedWallet.split(" ").join("")
-            || 
-            connectedWallet === "WalletConnect"
-})
-        .map((wallet) => (
-            <motion.div
-                key={wallet.name}
-                className="rn-check-box"
-                whileHover={{
-                    scale: 1.03,
-                    transition: {
-                        duration: 0.3,
-                    },
-                }}
-                onClick={() => setSelectedWallet(wallet.name)}
-                style={{
-                    border: `2px solid ${
-                        selectedWallet === wallet.name
-                            ? "#00ff00"
-                            : "#363545"
-                    }`,
-                    padding: "10px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                }}
-            >
-                <Image
-                    src={wallet.src}
-                    alt={wallet.name}
-                    width={wallet.width}
-                    height={wallet.height}
-                />
-            </motion.div>
-        ))}
-</div>
+                                        {/* Connected wallet or all wallets */}
+                                        {wallets
+                                            .filter(
+                                                (wallet) =>
+                                                    wallet.name !== "Stripe"
+                                            )
+                                            .filter((wallet) => {
+                                                console.log(
+                                                    connectedWallet
+                                                        .split(" ")
+                                                        .join("")
+                                                );
+                                                return (
+                                                    !connectedWallet ||
+                                                    wallet.name ===
+                                                        connectedWallet
+                                                            .split(" ")
+                                                            .join("") ||
+                                                    connectedWallet ===
+                                                        "WalletConnect"
+                                                );
+                                            })
+                                            .map((wallet) => (
+                                                <motion.div
+                                                    key={wallet.name}
+                                                    className="rn-check-box"
+                                                    whileHover={{
+                                                        scale: 1.03,
+                                                        transition: {
+                                                            duration: 0.3,
+                                                        },
+                                                    }}
+                                                    onClick={() =>
+                                                        setSelectedWallet(
+                                                            wallet.name
+                                                        )
+                                                    }
+                                                    style={{
+                                                        border: `2px solid ${
+                                                            selectedWallet ===
+                                                            wallet.name
+                                                                ? "#00ff00"
+                                                                : "#363545"
+                                                        }`,
+                                                        padding: "10px",
+                                                        borderRadius: "5px",
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={wallet.src}
+                                                        alt={wallet.name}
+                                                        width={wallet.width}
+                                                        height={wallet.height}
+                                                    />
+                                                </motion.div>
+                                            ))}
+                                    </div>
 
                                     <div className="col-md-12 col-xl-4">
                                         <div className="input-box">
