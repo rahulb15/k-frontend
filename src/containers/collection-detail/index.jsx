@@ -728,6 +728,7 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                     });
                 } else {
                     const whitelistCheck = await checkIsWhitelist(product.collectionName);
+                    console.log("Whitelist Check:", whitelistCheck);
                     if (whitelistCheck.data === true) {
                         const price = await checkPrice(product.collectionName, 'whitelist');
                         setStageInfo({

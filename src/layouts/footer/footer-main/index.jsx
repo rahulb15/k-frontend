@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 import { FaChevronDown, FaChevronUp, FaLink } from "react-icons/fa";
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import Foote from "@layout/footer/footer-main";
+import Foote from "@layout/footer/footer-01";
 import ChatBot from "@containers/chatbot";
 import { useAccountContext } from "src/contexts";
 

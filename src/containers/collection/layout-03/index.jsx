@@ -152,6 +152,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                                         image={collection.image}
                                         thumbnails={collection.thumbnails}
                                         profile_image={collection.profile_image}
+                                        data={collection}
                                     />
                                 </div>
                             ))}
@@ -172,6 +173,7 @@ const CollectionArea = ({ className, space, id, data }) => {
                                         image={collection.image}
                                         thumbnails={collection.thumbnails}
                                         profile_image={collection.profile_image}
+                                        data={collection}
                                     />
                                 </div>
                             ))}
