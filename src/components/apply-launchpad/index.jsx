@@ -1925,7 +1925,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 htmlFor="mintStartTime"
                                                 className="form-label"
                                             >
-                                                PublicMint Start Time
+                                                Public Mint Start Time
                                             </label>
                                             <input
                                                 id="mintStartTime"

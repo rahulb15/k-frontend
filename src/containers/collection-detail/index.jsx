@@ -500,7 +500,7 @@
 //                                                             width: "100%",
 //                                                             borderRadius: "4px",
 //                                                             background: `linear-gradient(to right,
-//                                                             #FF0000 0%,     
+//                                                             #FF0000 0%,
 //                                                             #FFFF00 ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -520,7 +520,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%, 
+//                                                             }%,
 //                                                             #0000FF ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -530,7 +530,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%, 
+//                                                             }%,
 //                                                             rgb(204, 204, 204) ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -665,8 +665,6 @@
 
 // export default CollectionDetailsArea;
 
-
-
 // src/components/CollectionDetailsArea.js
 
 import React, { useEffect, useState } from "react";
@@ -687,22 +685,21 @@ import { useCollectionTypeFunctions } from "src/hooks/useCollectionTypeFunctions
 import { useCreateNFTMutation } from "src/services/nft.service";
 import Loader from "@components/loader";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
+import { useGetPriorityUsersQuery, useGetPassBalanceQuery, useGetPassClaimQuery } from "src/services/launchpad.service";
 
-const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
+const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     const [isLoading, setIsLoading] = useState(false);
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
-     // Get WalletConnect client and session
-     const { client: wcClient, session: wcSession } =
-     useWalletConnectClient();
-     const { 
-        checkIsPublic, 
-        checkIsWhitelist, 
-        checkIsPresale, 
-        checkPrice, 
-        reserveTokensFunction 
-      } = useCollectionTypeFunctions(product.collectionType);
-
+    // Get WalletConnect client and session
+    const { client: wcClient, session: wcSession } = useWalletConnectClient();
+    const {
+        checkIsPublic,
+        checkIsWhitelist,
+        checkIsPresale,
+        checkPrice,
+        reserveTokensFunction,
+    } = useCollectionTypeFunctions(product.collectionType);
 
     const [stageInfo, setStageInfo] = useState({
         currentStage: null,
@@ -713,33 +710,74 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
     const [iagree, setIagree] = useState(false);
     const [swap, setSwap] = useState(false);
     const [reservePrice, setReservePrice] = useState(0);
+    const { data: priorityUsers } = useGetPriorityUsersQuery();
+    const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
+    const { data: passClaimed } = useGetPassClaimQuery({ 
+        colName: product?.collectionName, 
+        account: account?.user?.walletAddress 
+    });
+    console.log("Priority Users:", priorityUsers);
+
+    const [passInfo, setPassInfo] = useState({
+        isPriorityUser: false,
+        passBalance: 0,
+        passClaimed: false,
+        passAccFlag: false,
+    });
+
+
+    useEffect(() => {
+        if (priorityUsers && passBalance !== undefined && passClaimed !== undefined) {
+            setPassInfo({
+                isPriorityUser: priorityUsers.includes(account?.user?.walletAddress),
+                passBalance,
+                passClaimed,
+                passAccFlag: priorityUsers.includes(account?.user?.walletAddress) && passBalance > 0 && !passClaimed,
+            });
+        }
+    }, [priorityUsers, passBalance, passClaimed, account?.user?.walletAddress]);
 
     useEffect(() => {
         const checkStages = async () => {
             setIsLoading(true);
             try {
-                const presaleCheck = await checkIsPresale(product.collectionName);
+                const presaleCheck = await checkIsPresale(
+                    product.collectionName
+                );
                 if (presaleCheck.data === true) {
-                    const price = await checkPrice(product.collectionName, 'presale');
+                    const price = await checkPrice(
+                        product.collectionName,
+                        "presale"
+                    );
                     setStageInfo({
                         currentStage: "Presale",
                         isLive: true,
                         price: price.data,
                     });
                 } else {
-                    const whitelistCheck = await checkIsWhitelist(product.collectionName);
+                    const whitelistCheck = await checkIsWhitelist(
+                        product.collectionName
+                    );
                     console.log("Whitelist Check:", whitelistCheck);
                     if (whitelistCheck.data === true) {
-                        const price = await checkPrice(product.collectionName, 'whitelist');
+                        const price = await checkPrice(
+                            product.collectionName,
+                            "whitelist"
+                        );
                         setStageInfo({
                             currentStage: "Whitelist",
                             isLive: true,
                             price: price.data,
                         });
                     } else {
-                        const publicCheck = await checkIsPublic(product.collectionName);
+                        const publicCheck = await checkIsPublic(
+                            product.collectionName
+                        );
                         if (publicCheck.data === true) {
-                            const price = await checkPrice(product.collectionName, 'public');
+                            const price = await checkPrice(
+                                product.collectionName,
+                                "public"
+                            );
                             setStageInfo({
                                 currentStage: "Public",
                                 isLive: true,
@@ -770,7 +808,9 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
     }, [product, checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
     useEffect(() => {
         axios
-            .get("https://api.coingecko.com/api/v3/simple/price?ids=kadena&vs_currencies=usd")
+            .get(
+                "https://api.coingecko.com/api/v3/simple/price?ids=kadena&vs_currencies=usd"
+            )
             .then((response) => setKdatoUsd(response.data.kadena.usd))
             .catch((error) => console.log(error));
     }, []);
@@ -801,7 +841,8 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
         try {
             if (
                 parseInt(reservePrice) <= 0 ||
-                parseInt(reservePrice) > parseInt(product.totalSupply) - product.reservePrice
+                parseInt(reservePrice) >
+                    parseInt(product.totalSupply) - product.reservePrice
             ) {
                 Swal.fire({
                     icon: "error",
@@ -826,7 +867,7 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                 reserveTknAmount: parseInt(reservePrice),
                 walletName: account?.user?.walletName,
                 wcClient,
-                wcSession
+                wcSession,
             });
             console.log("Reserve Tokens Response:", response);
 
@@ -936,7 +977,8 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                         <div className="mint-stage" key={index}>
                                             <h3>
                                                 {stage}
-                                                {stageInfo.currentStage === stage ? (
+                                                {stageInfo.currentStage ===
+                                                stage ? (
                                                     <span className="live">
                                                         <div className="d-flex justify-content-start">
                                                             <Rings
@@ -946,7 +988,8 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                                             />
                                                             <span
                                                                 style={{
-                                                                    fontWeight: "bold",
+                                                                    fontWeight:
+                                                                        "bold",
                                                                     color: "green",
                                                                 }}
                                                             >
@@ -955,13 +998,18 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                                         </div>
                                                     </span>
                                                 ) : (
-                                                    <span className="ended">ENDED</span>
+                                                    <span className="ended">
+                                                        ENDED
+                                                    </span>
                                                 )}
                                             </h3>
                                             <p>
                                                 Price{" "}
-                                                {stageInfo.currentStage === stage
-                                                    ? parseFloat(stageInfo.price).toFixed(2)
+                                                {stageInfo.currentStage ===
+                                                stage
+                                                    ? parseFloat(
+                                                          stageInfo.price
+                                                      ).toFixed(2)
                                                     : "0"}
                                             </p>
                                         </div>
@@ -970,24 +1018,50 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                             </div>
                             <div className="mint-info">
                                 <div className="total-minted">
-                                    <div className="range-slider" style={{ width: "100%" }}>
+                                    <div
+                                        className="range-slider"
+                                        style={{ width: "100%" }}
+                                    >
                                         <div className="d-flex justify-content-start">
-                                            <Rings color="green" height={20} width={20} />
-                                            <span style={{ fontWeight: "bold", color: "green" }}>
+                                            <Rings
+                                                color="green"
+                                                height={20}
+                                                width={20}
+                                            />
+                                            <span
+                                                style={{
+                                                    fontWeight: "bold",
+                                                    color: "green",
+                                                }}
+                                            >
                                                 Live
                                             </span>
                                         </div>
                                         <p>
-                                            Total Minted {product?.reservePrice || 0} /{" "}
+                                            Total Minted{" "}
+                                            {product?.reservePrice || 0} /{" "}
                                             {parseInt(product.totalSupply)}
                                         </p>
                                         <Range
-                                            values={[product ? product.reservePrice : 0]}
+                                            values={[
+                                                product
+                                                    ? product.reservePrice
+                                                    : 0,
+                                            ]}
                                             step={1}
                                             min={0}
-                                            max={product ? parseInt(product.totalSupply) : 100}
+                                            max={
+                                                product
+                                                    ? parseInt(
+                                                          product.totalSupply
+                                                      )
+                                                    : 100
+                                            }
                                             onChange={() => {}}
-                                            renderTrack={({ props, children }) => (
+                                            renderTrack={({
+                                                props,
+                                                children,
+                                            }) => (
                                                 <div
                                                     {...props}
                                                     style={{
@@ -1008,28 +1082,40 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                                             #FFFF00 ${
                                                                 product
                                                                     ? (product.reservePrice /
-                                                                          (parseInt(product.totalSupply) || 1)) *
+                                                                          (parseInt(
+                                                                              product.totalSupply
+                                                                          ) ||
+                                                                              1)) *
                                                                       100
                                                                     : 0
                                                             }%,
                                                             #00FF00 ${
                                                                 product
                                                                     ? (product.reservePrice /
-                                                                          (parseInt(product.totalSupply) || 1)) *
+                                                                          (parseInt(
+                                                                              product.totalSupply
+                                                                          ) ||
+                                                                              1)) *
                                                                       100
                                                                     : 0
                                                             }%, 
                                                             #0000FF ${
                                                                 product
                                                                     ? (product.reservePrice /
-                                                                          (parseInt(product.totalSupply) || 1)) *
+                                                                          (parseInt(
+                                                                              product.totalSupply
+                                                                          ) ||
+                                                                              1)) *
                                                                       100
                                                                     : 0
                                                             }%, 
                                                             rgb(204, 204, 204) ${
                                                                 product
                                                                     ? (product.reservePrice /
-                                                                          (parseInt(product.totalSupply) || 1)) *
+                                                                          (parseInt(
+                                                                              product.totalSupply
+                                                                          ) ||
+                                                                              1)) *
                                                                       100
                                                                     : 100
                                                             }%)`,
@@ -1048,7 +1134,8 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                 </div>
                                 <div className="price">
                                     <h2>
-                                        {parseFloat(stageInfo.price).toFixed(2)} KDA
+                                        {parseFloat(stageInfo.price).toFixed(2)}{" "}
+                                        KDA
                                     </h2>
                                     <p>
                                         (${" "}
@@ -1058,6 +1145,18 @@ const CollectionDetailsArea = ({ space, className, product ,refresh}) => {
                                         )
                                     </p>
                                 </div>
+                                {passInfo.isPriorityUser && (
+                                    <div className="pass-info">
+                                        <h3>Pass Information</h3>
+                                        <p>Pass Balance: {passInfo.passBalance}</p>
+                                        <p>Pass Claimed: {passInfo.passClaimed ? "Yes" : "No"}</p>
+                                        {passInfo.passAccFlag && (
+                                            <p className="free-mint-info">
+                                                Your next mint will be free due to your unclaimed pass!
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                             <div className="mint-form">
                                 <div className="terms">
@@ -1148,7 +1247,8 @@ CollectionDetailsArea.propTypes = {
         reservePrice: PropTypes.number.isRequired,
         enablePresale: PropTypes.bool.isRequired,
         enableWhitelist: PropTypes.bool.isRequired,
-        collectionType: PropTypes.oneOf(['marketplace', 'launchpad']).isRequired,
+        collectionType: PropTypes.oneOf(["marketplace", "launchpad"])
+            .isRequired,
     }).isRequired,
 };
 
