@@ -1,6 +1,8 @@
+
 // import React, { useEffect, useState } from "react";
 // import PropTypes from "prop-types";
 // import clsx from "clsx";
+// import axios from "axios";
 // import Sticky from "@ui/sticky";
 // import CollectionDetailTab from "@components/product-details/collection-detail-tab";
 // import ProductTitle from "@components/product-details/title";
@@ -10,80 +12,26 @@
 // import Swal from "sweetalert2";
 // import { useAccountContext } from "src/contexts";
 // import collectionService from "src/services/collection.service";
-// import {
-//     useCheckPublicMutation,
-//     useCheckPublicPriceMutation,
-//     useCheckWlMutation,
-//     useCheckWlPriceMutation,
-//     useCheckPresaleMutation,
-//     useCheckPresalePriceMutation,
-//     useReserveTokensMutation,
-// } from "src/services/launchpad.service";
-// import {
-//     useCheckMarketPublicMutation,
-//     useCheckMarketPublicPriceMutation,
-//     useMarketReserveTokensMutation,
-// } from "src/services/marketplace.service";
-// import axios from "axios";
-// import Loader from "@components/loader";
+// // import { useCollectionTypeFunctions } from "../hooks/useCollectionTypeFunctions";
+// import { useCollectionTypeFunctions } from "src/hooks/useCollectionTypeFunctions";
 // import { useCreateNFTMutation } from "src/services/nft.service";
+// import Loader from "@components/loader";
+// import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
+// import { useGetPriorityUsersQuery, useGetPassBalanceQuery, useGetPassClaimQuery } from "src/services/launchpad.service";
 
-// const CollectionDetailsArea = ({ space, className, product }) => {
-//     console.log("Product:", product);
+// const CollectionDetailsArea = ({ space, className, product, refresh }) => {
 //     const [isLoading, setIsLoading] = useState(false);
-
-//     // {
-//     //     _id: '66a0dfd4e6d44576141be399',
-//     //     collectionName: 'monkeyaz7',
-//     //     creatorName: 'Rahul',
-//     //     creatorWallet:
-//     //       'k:d1d47937b0ec42efa859048d0fb5f51707639ddad991e58ae9efcff5f4ff9dbe',
-//     //     creatorEmail: 'rahulb@yopmail.com',
-//     //     projectDescription: 'Hello',
-//    // collectionType: 'marketplace',
-//     //     projectCategory: 'ART',
-//     //     expectedLaunchDate: '2024-07-31',
-//     //     twitter: '',
-//     //     discord: '',
-//     //     instagram: '',
-//     //     website: '',
-//     //     totalSupply: '4',
-//     //     contractType: 'ng',
-//     //     royaltyPercentage: '0.5',
-//     //     mintPrice: '1.0',
-//     //     mintPriceCurrency: 'kda',
-//     //     tokenList: [
-//     //       'ipfs://QmVdXq6EjDEQq6U5cDqab2xvaMzHLgpQKjW56iVJYbji7a', 'ipfs://QmRPqajKGNCtKyA7oE5Lx3H8YijyfopS8oaVcdZCSUDyEP',
-//     //       'ipfs://QmPJAuW9MpZwcdzw86ECFyBqVb9HvTfHsaqAQiKCvPmSPD', 'ipfs://QmXHR1BFLd8MYMEYbrhMkboLc1oEG2tbygomaxCknosQNN'
-//     //     ],
-//     //     policy: [ 'INSTANT-MINT MARKETPLACE FIXED-SALE COLLECTION' ],
-//     //     collectionCoverImage:
-//     //       'https://res.cloudinary.com/dh187xay8/image/upload/v1721817315/collectionCoverImage/file.jpg',
-//     //     collectionBannerImage:
-//     //       'https://res.cloudinary.com/dh187xay8/image/upload/v1721817316/collectionBannerImage/file.jpg',
-//     //     mintStartDate: '2024-07-31T11:03:00.000Z',
-//     //     mintStartTime: 'time "2024-07-31T11:03:00Z"',
-//     //     mintEndDate: '2025-07-31T11:03:00.000Z',
-//     //     mintEndTime: 'time "2025-07-31T11:03:00Z"',
-//     //     allowFreeMints: false,
-//     //     enableWhitelist: true,
-//     //     whitelistAddresses: [],
-//     //     reservePrice: 0,
-//     //     enablePresale: true,
-//     //     presaleAddressess: [],
-//     //     enableAirdrop: false,
-//     //     createdAt: '2024-07-24T11:04:52.182Z',
-//     //     updatedAt: '2024-07-24T11:04:52.182Z'
-//     //   }
-//     const [checkPublic] = useCheckPublicMutation();
-//     const [checkPublicPrice] = useCheckPublicPriceMutation();
-//     const [checkWl] = useCheckWlMutation();
-//     const [checkWlPrice] = useCheckWlPriceMutation();
-//     const [checkPresale] = useCheckPresaleMutation();
-//     const [checkPresalePrice] = useCheckPresalePriceMutation();
-//     const [reserveTokens] = useReserveTokensMutation();
-//     const [createNFT, { isError, data, error }] = useCreateNFTMutation();
 //     const account = useAccountContext();
+//     const [createNFT] = useCreateNFTMutation();
+//     // Get WalletConnect client and session
+//     const { client: wcClient, session: wcSession } = useWalletConnectClient();
+//     const {
+//         checkIsPublic,
+//         checkIsWhitelist,
+//         checkIsPresale,
+//         checkPrice,
+//         reserveTokensFunction,
+//     } = useCollectionTypeFunctions(product.collectionType);
 
 //     const [stageInfo, setStageInfo] = useState({
 //         currentStage: null,
@@ -94,64 +42,87 @@
 //     const [iagree, setIagree] = useState(false);
 //     const [swap, setSwap] = useState(false);
 //     const [reservePrice, setReservePrice] = useState(0);
+//     const { data: priorityUsers } = useGetPriorityUsersQuery();
+//     const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
+//     const { data: passClaimed } = useGetPassClaimQuery({ 
+//         colName: product?.collectionName, 
+//         account: account?.user?.walletAddress 
+//     });
+//     console.log("Priority Users:", priorityUsers);
+
+//     const [passInfo, setPassInfo] = useState({
+//         isPriorityUser: false,
+//         passBalance: 0,
+//         passClaimed: false,
+//         passAccFlag: false,
+//     });
+
+
+//     useEffect(() => {
+//         if (priorityUsers && passBalance !== undefined && passClaimed !== undefined) {
+//             setPassInfo({
+//                 isPriorityUser: priorityUsers.includes(account?.user?.walletAddress),
+//                 passBalance,
+//                 passClaimed,
+//                 passAccFlag: priorityUsers.includes(account?.user?.walletAddress) && passBalance > 0 && !passClaimed,
+//             });
+//         }
+//     }, [priorityUsers, passBalance, passClaimed, account?.user?.walletAddress]);
 
 //     useEffect(() => {
 //         const checkStages = async () => {
 //             setIsLoading(true);
 //             try {
-//                 if (product.enablePresale) {
-//                     const presaleResponse = await checkPresale({
-//                         colName: product.collectionName,
+//                 const presaleCheck = await checkIsPresale(
+//                     product.collectionName
+//                 );
+//                 if (presaleCheck.data === true) {
+//                     const price = await checkPrice(
+//                         product.collectionName,
+//                         "presale"
+//                     );
+//                     setStageInfo({
+//                         currentStage: "Presale",
+//                         isLive: true,
+//                         price: price.data,
 //                     });
-//                     console.log("Presale Response:", presaleResponse);
-//                     if (presaleResponse.data) {
-//                         const priceResponse = await checkPresalePrice({
-//                             colName: product.collectionName,
-//                         });
-//                         setStageInfo({
-//                             currentStage: "Presale",
-//                             isLive: true,
-//                             price: priceResponse.data,
-//                         });
-//                         return;
-//                     }
-//                 }
-//                 if (product.enableWhitelist) {
-//                     const wlResponse = await checkWl({
-//                         colName: product.collectionName,
-//                     });
-//                     console.log("Whitelist Response:", wlResponse);
-//                     if (wlResponse.data) {
-//                         const priceResponse = await checkWlPrice({
-//                             colName: product.collectionName,
-//                         });
+//                 } else {
+//                     const whitelistCheck = await checkIsWhitelist(
+//                         product.collectionName
+//                     );
+//                     console.log("Whitelist Check:", whitelistCheck);
+//                     if (whitelistCheck.data === true) {
+//                         const price = await checkPrice(
+//                             product.collectionName,
+//                             "whitelist"
+//                         );
 //                         setStageInfo({
 //                             currentStage: "Whitelist",
 //                             isLive: true,
-//                             price: priceResponse.data,
+//                             price: price.data,
 //                         });
-//                         return;
+//                     } else {
+//                         const publicCheck = await checkIsPublic(
+//                             product.collectionName
+//                         );
+//                         if (publicCheck.data === true) {
+//                             const price = await checkPrice(
+//                                 product.collectionName,
+//                                 "public"
+//                             );
+//                             setStageInfo({
+//                                 currentStage: "Public",
+//                                 isLive: true,
+//                                 price: price.data,
+//                             });
+//                         } else {
+//                             setStageInfo({
+//                                 currentStage: "Not Started",
+//                                 isLive: false,
+//                                 price: 0,
+//                             });
+//                         }
 //                     }
-//                 }
-//                 const publicResponse = await checkPublic({
-//                     colName: product.collectionName,
-//                 });
-//                 console.log("Public Response:", publicResponse);
-//                 if (publicResponse.data) {
-//                     const priceResponse = await checkPublicPrice({
-//                         colName: product.collectionName,
-//                     });
-//                     setStageInfo({
-//                         currentStage: "Public",
-//                         isLive: true,
-//                         price: priceResponse.data,
-//                     });
-//                 } else {
-//                     setStageInfo({
-//                         currentStage: "Not Started",
-//                         isLive: false,
-//                         price: 0,
-//                     });
 //                 }
 //             } catch (error) {
 //                 console.error("Error checking stages:", error);
@@ -166,16 +137,7 @@
 //         };
 
 //         checkStages();
-//     }, [
-//         product,
-//         checkPresale,
-//         checkWl,
-//         checkPublic,
-//         checkPresalePrice,
-//         checkWlPrice,
-//         checkPublicPrice,
-//     ]);
-
+//     }, [product, checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
 //     useEffect(() => {
 //         axios
 //             .get(
@@ -231,71 +193,20 @@
 //                 return;
 //             }
 
-//             const response = await reserveTokens({
+//             const response = await reserveTokensFunction({
 //                 reseveTknColName: product.collectionName,
 //                 reserverAcc: account?.user?.walletAddress,
 //                 reserveTknAmount: parseInt(reservePrice),
 //                 walletName: account?.user?.walletName,
+//                 wcClient,
+//                 wcSession,
 //             });
 //             console.log("Reserve Tokens Response:", response);
-
-//             // {
-//             //     data: {
-//             //       gas: 42251,
-//             //       result: { status: 'success', data: true },
-//             //       reqKey: 'KCXU3jTWmmQmIc4xQa-_w1TFWlz-LADjTTRDW85sxHY',
-//             //       logs: 'L1lnmLd3bzQ_fU0RSm9ZpEVYZbJuZuHVi4A5TkUEnvg',
-//             //       events: [
-//             //         {
-//             //           params: [
-//             //             'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069', 'k:db776793be0fcf8e76c75bdb35a36e67f298111dc6145c66693b0133192e2616',
-//             //             0.00042251
-//             //           ],
-//             //           name: 'TRANSFER',
-//             //           module: { namespace: null, name: 'coin' },
-//             //           moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-//             //         },
-//             //         {
-//             //           params: [ 'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069' ],
-//             //           name: 'MINT-NFT',
-//             //           module: { namespace: 'free', name: 'lptest001' },
-//             //           moduleHash: 'z4eKB4zFUKbHMt4msXtEfw6wPFEPqHMJz02ULTGy0qM'
-//             //         },
-//             //         {
-//             //           params: [
-//             //             'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069', 'k:d1d47937b0ec42efa859048d0fb5f51707639ddad991e58ae9efcff5f4ff9dbe',
-//             //             1
-//             //           ],
-//             //           name: 'TRANSFER',
-//             //           module: { namespace: null, name: 'coin' },
-//             //           moduleHash: 'klFkrLfpyLW-M3xjVPSdqXEMgxPPJibRt_D6qiBws6s'
-//             //         },
-//             //         {
-//             //           params: [
-//             //             'monkeyaz8', 'k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069',
-//             //             { int: 1 }
-//             //           ],
-//             //           name: 'MINT_EVENT',
-//             //           module: { namespace: 'free', name: 'lptest001' },
-//             //           moduleHash: 'z4eKB4zFUKbHMt4msXtEfw6wPFEPqHMJz02ULTGy0qM'
-//             //         }
-//             //       ],
-//             //       metaData: {
-//             //         blockTime: 1721893894985698,
-//             //         prevBlockHash: '4U4C1zmeS_UDVYbvyvn_oAD3CotALQwmA_rl9Jkd7Ts',
-//             //         blockHash: 'IORjaxIdnFmCLkQSstT4tAZILZUWmVRsphGa8ZcOL3w',
-//             //         blockHeight: 4496846
-//             //       },
-//             //       continuation: null,
-//             //       txId: 6296780
-//             //     }
-//             //   }
 
 //             if (response.data.result.status === "success") {
 //                 const updateResponse = await collectionService.updateCollection(
 //                     {
-//                         reservePrice:
-//                             product.reservePrice + parseInt(reservePrice),
+//                         reservePrice: parseInt(reservePrice),
 //                     },
 //                     product.collectionName
 //                 );
@@ -305,9 +216,12 @@
 //                     reserveTknAmount: parseInt(reservePrice),
 //                 };
 //                 const responsenft = await createNFT(data);
-//                 console.log("Create NyncColName,FT Response:", responsenft);
+//                 console.log("Create NFT Response:", responsenft);
 
 //                 if (updateResponse?.data?.status === "success") {
+//                     await refresh();
+//                     setSwap(false);
+//                     setReservePrice(0);
 //                     Swal.fire({
 //                         icon: "success",
 //                         title: "Success!",
@@ -344,7 +258,6 @@
 //         >
 //             {isLoading && <Loader />}
 
-//             {/* Background image container */}
 //             <div
 //                 style={{
 //                     position: "absolute",
@@ -352,16 +265,14 @@
 //                     left: 0,
 //                     right: 0,
 //                     bottom: 0,
-//                     // backgroundImage: `linear-gradient(rgba(70, 70, 70, 0.7), rgba(70, 70, 70, 0.7)), url(${imageUrl})`,
 //                     backgroundImage: `url(${product?.collectionBannerImage})`,
 //                     backgroundSize: "cover",
 //                     backgroundPosition: "bottom",
 //                     filter: "blur(5px)",
-//                     transform: "scale(1.1)", // Prevents blur from showing edges
+//                     transform: "scale(1.1)",
 //                     zIndex: -2,
 //                 }}
 //             />
-//             {/* Dark overlay */}
 //             <div
 //                 style={{
 //                     position: "absolute",
@@ -369,11 +280,10 @@
 //                     left: 0,
 //                     right: 0,
 //                     bottom: 0,
-//                     backgroundColor: "rgba(70, 70, 70, 0.5)", // Adjust opacity as needed
+//                     backgroundColor: "rgba(70, 70, 70, 0.5)",
 //                     zIndex: -1,
 //                 }}
 //             />
-//             {/* Background and overlay code remains the same */}
 //             <div className="container">
 //                 <div className="row g-2 mb--30">
 //                     <div className="col-lg-7 col-md-12 col-sm-12">
@@ -500,7 +410,7 @@
 //                                                             width: "100%",
 //                                                             borderRadius: "4px",
 //                                                             background: `linear-gradient(to right,
-//                                                             #FF0000 0%,
+//                                                             #FF0000 0%,     
 //                                                             #FFFF00 ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -520,7 +430,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%,
+//                                                             }%, 
 //                                                             #0000FF ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -530,7 +440,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%,
+//                                                             }%, 
 //                                                             rgb(204, 204, 204) ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -567,6 +477,18 @@
 //                                         )
 //                                     </p>
 //                                 </div>
+//                                 {passInfo.isPriorityUser && (
+//                                     <div className="pass-info">
+//                                         <h3>Pass Information</h3>
+//                                         <p>Pass Balance: {passInfo.passBalance}</p>
+//                                         <p>Pass Claimed: {passInfo.passClaimed ? "Yes" : "No"}</p>
+//                                         {passInfo.passAccFlag && (
+//                                             <p className="free-mint-info">
+//                                                 Your next mint will be free due to your unclaimed pass!
+//                                             </p>
+//                                         )}
+//                                     </div>
+//                                 )}
 //                             </div>
 //                             <div className="mint-form">
 //                                 <div className="terms">
@@ -651,11 +573,14 @@
 //     product: PropTypes.shape({
 //         title: PropTypes.string.isRequired,
 //         collectionCoverImage: PropTypes.string.isRequired,
+//         collectionBannerImage: PropTypes.string.isRequired,
 //         collectionName: PropTypes.string.isRequired,
 //         totalSupply: PropTypes.string.isRequired,
 //         reservePrice: PropTypes.number.isRequired,
 //         enablePresale: PropTypes.bool.isRequired,
 //         enableWhitelist: PropTypes.bool.isRequired,
+//         collectionType: PropTypes.oneOf(["marketplace", "launchpad"])
+//             .isRequired,
 //     }).isRequired,
 // };
 
@@ -665,9 +590,7 @@
 
 // export default CollectionDetailsArea;
 
-// src/components/CollectionDetailsArea.js
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import axios from "axios";
@@ -678,29 +601,22 @@ import { Range } from "react-range";
 import { Rings } from "react-loader-spinner";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
+import moment from "moment";
 import { useAccountContext } from "src/contexts";
 import collectionService from "src/services/collection.service";
-// import { useCollectionTypeFunctions } from "../hooks/useCollectionTypeFunctions";
 import { useCollectionTypeFunctions } from "src/hooks/useCollectionTypeFunctions";
 import { useCreateNFTMutation } from "src/services/nft.service";
 import Loader from "@components/loader";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
-import { useGetPriorityUsersQuery, useGetPassBalanceQuery, useGetPassClaimQuery } from "src/services/launchpad.service";
+import {
+    useGetPriorityUsersQuery,
+    useGetPassBalanceQuery,
+    useGetPassClaimQuery,
+} from "src/services/launchpad.service";
 
 const CollectionDetailsArea = ({ space, className, product, refresh }) => {
+    // State variables
     const [isLoading, setIsLoading] = useState(false);
-    const account = useAccountContext();
-    const [createNFT] = useCreateNFTMutation();
-    // Get WalletConnect client and session
-    const { client: wcClient, session: wcSession } = useWalletConnectClient();
-    const {
-        checkIsPublic,
-        checkIsWhitelist,
-        checkIsPresale,
-        checkPrice,
-        reserveTokensFunction,
-    } = useCollectionTypeFunctions(product.collectionType);
-
     const [stageInfo, setStageInfo] = useState({
         currentStage: null,
         isLive: false,
@@ -710,102 +626,232 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     const [iagree, setIagree] = useState(false);
     const [swap, setSwap] = useState(false);
     const [reservePrice, setReservePrice] = useState(0);
-    const { data: priorityUsers } = useGetPriorityUsersQuery();
-    const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
-    const { data: passClaimed } = useGetPassClaimQuery({ 
-        colName: product?.collectionName, 
-        account: account?.user?.walletAddress 
-    });
-    console.log("Priority Users:", priorityUsers);
-
     const [passInfo, setPassInfo] = useState({
         isPriorityUser: false,
         passBalance: 0,
         passClaimed: false,
         passAccFlag: false,
     });
+    const [launchInfo, setLaunchInfo] = useState({
+        status: "Upcoming",
+        text: "",
+        time: "",
+    });
 
+    // Hooks
+    const account = useAccountContext();
+    const [createNFT] = useCreateNFTMutation();
+    const { client: wcClient, session: wcSession } = useWalletConnectClient();
+    const { data: priorityUsers } = useGetPriorityUsersQuery();
+    const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
+    const { data: passClaimed } = useGetPassClaimQuery({
+        colName: product?.collectionName,
+        account: account?.user?.walletAddress,
+    });
 
-    useEffect(() => {
-        if (priorityUsers && passBalance !== undefined && passClaimed !== undefined) {
-            setPassInfo({
-                isPriorityUser: priorityUsers.includes(account?.user?.walletAddress),
-                passBalance,
-                passClaimed,
-                passAccFlag: priorityUsers.includes(account?.user?.walletAddress) && passBalance > 0 && !passClaimed,
-            });
-        }
-    }, [priorityUsers, passBalance, passClaimed, account?.user?.walletAddress]);
+    // Memoized values and functions
+    const memoizedCollectionName = useMemo(() => product.collectionName, [product.collectionName]);
+    const {
+        checkIsPublic,
+        checkIsWhitelist,
+        checkIsPresale,
+        checkPrice,
+        reserveTokensFunction,
+    } = useCollectionTypeFunctions(product.collectionType);
 
-    useEffect(() => {
-        const checkStages = async () => {
-            setIsLoading(true);
-            try {
-                const presaleCheck = await checkIsPresale(
-                    product.collectionName
-                );
-                if (presaleCheck.data === true) {
-                    const price = await checkPrice(
-                        product.collectionName,
-                        "presale"
-                    );
+    const memoizedFunctions = useMemo(() => ({
+        checkIsPublic,
+        checkIsWhitelist,
+        checkIsPresale,
+        checkPrice
+    }), [checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
+
+    // Ref for tracking the number of times checkStages has been called
+    const checkCountRef = useRef(0);
+
+    // Function to check the current stage of the collection
+    const checkStages = useCallback(async () => {
+        if (checkCountRef.current >= 3) return;
+
+        setIsLoading(true);
+        try {
+            const { checkIsPresale, checkIsWhitelist, checkIsPublic, checkPrice } = memoizedFunctions;
+            const presaleCheck = await checkIsPresale(memoizedCollectionName);
+            if (presaleCheck.data === true) {
+                const price = await checkPrice(memoizedCollectionName, "presale");
+                setStageInfo({
+                    currentStage: "Presale",
+                    isLive: true,
+                    price: price.data,
+                });
+            } else {
+                const whitelistCheck = await checkIsWhitelist(memoizedCollectionName);
+                if (whitelistCheck.data === true) {
+                    const price = await checkPrice(memoizedCollectionName, "whitelist");
                     setStageInfo({
-                        currentStage: "Presale",
+                        currentStage: "Whitelist",
                         isLive: true,
                         price: price.data,
                     });
                 } else {
-                    const whitelistCheck = await checkIsWhitelist(
-                        product.collectionName
-                    );
-                    console.log("Whitelist Check:", whitelistCheck);
-                    if (whitelistCheck.data === true) {
-                        const price = await checkPrice(
-                            product.collectionName,
-                            "whitelist"
-                        );
+                    const publicCheck = await checkIsPublic(memoizedCollectionName);
+                    if (publicCheck.data === true) {
+                        const price = await checkPrice(memoizedCollectionName, "public");
                         setStageInfo({
-                            currentStage: "Whitelist",
+                            currentStage: "Public",
                             isLive: true,
                             price: price.data,
                         });
                     } else {
-                        const publicCheck = await checkIsPublic(
-                            product.collectionName
-                        );
-                        if (publicCheck.data === true) {
-                            const price = await checkPrice(
-                                product.collectionName,
-                                "public"
-                            );
-                            setStageInfo({
-                                currentStage: "Public",
-                                isLive: true,
-                                price: price.data,
-                            });
-                        } else {
-                            setStageInfo({
-                                currentStage: "Not Started",
-                                isLive: false,
-                                price: 0,
-                            });
-                        }
+                        setStageInfo({
+                            currentStage: "Not Started",
+                            isLive: false,
+                            price: 0,
+                        });
                     }
                 }
-            } catch (error) {
-                console.error("Error checking stages:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "There was an error loading the mint stages. Please try again later.",
-                });
-            } finally {
-                setIsLoading(false);
             }
+            checkCountRef.current += 1;
+        } catch (error) {
+            console.error("Error checking stages:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "There was an error loading the mint stages. Please try again later.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }, [memoizedCollectionName, memoizedFunctions]);
+
+    // Function to render launch information
+    const renderLaunchInfo = useCallback(() => {
+        const now = moment();
+
+        const formatTimeLeft = (targetTime) => {
+            const duration = moment.duration(targetTime.diff(now));
+            const days = duration.days();
+            const hours = duration.hours();
+            const minutes = duration.minutes();
+            const seconds = duration.seconds();
+
+            if (days > 0) return `${days}d ${hours}h`;
+            if (hours > 0) return `${hours}h ${minutes}m`;
+            if (minutes > 0) return `${minutes}m ${seconds}s`;
+            return `${seconds}s`;
         };
 
-        checkStages();
-    }, [product, checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
+        try {
+            if (product.enablePresale && product.presaleStartDateAndTime) {
+                const presaleStart = moment(product.presaleStartDateAndTime);
+                const presaleEnd = moment(product.presaleEndDateAndTime);
+
+                if (now.isBefore(presaleStart)) {
+                    return {
+                        status: "Upcoming",
+                        text: "Presale starts in",
+                        time: formatTimeLeft(presaleStart),
+                    };
+                } else if (now.isBetween(presaleStart, presaleEnd)) {
+                    return {
+                        status: "Live",
+                        text: "Presale ends in",
+                        time: formatTimeLeft(presaleEnd),
+                    };
+                }
+            }
+
+            if (product.enableWhitelist && product.whitelistStartDateAndTime) {
+                const whitelistStart = moment(product.whitelistStartDateAndTime);
+                const mintStart = moment(product.mintStartDate);
+
+                if (now.isBefore(whitelistStart)) {
+                    return {
+                        status: "Upcoming",
+                        text: "Whitelist starts in",
+                        time: formatTimeLeft(whitelistStart),
+                    };
+                } else if (now.isBetween(whitelistStart, mintStart)) {
+                    return {
+                        status: "Live",
+                        text: "Whitelist ends in",
+                        time: formatTimeLeft(mintStart),
+                    };
+                }
+            }
+
+            const mintStart = moment(product.mintStartDate);
+            const mintEnd = moment(product.mintEndDate);
+
+            if (now.isBefore(mintStart)) {
+                return {
+                    status: "Upcoming",
+                    text: "Mint starts in",
+                    time: formatTimeLeft(mintStart),
+                };
+            } else if (now.isBetween(mintStart, mintEnd)) {
+                return {
+                    status: "Live",
+                    text: "Mint ends in",
+                    time: formatTimeLeft(mintEnd),
+                };
+            } else {
+                return {
+                    status: "Ended",
+                    text: "Mint ended",
+                    time: "0s",
+                };
+            }
+        } catch (error) {
+            console.error("Error in renderLaunchInfo:", error);
+            return {
+                status: "Error",
+                text: "Unable to determine launch status",
+                time: "N/A",
+            };
+        }
+    }, [product]);
+
+    // Effect to update launch info and check stages
+    useEffect(() => {
+        const timer = setInterval(() => {
+            const newLaunchInfo = renderLaunchInfo();
+            setLaunchInfo(prevLaunchInfo => {
+                if (
+                    (newLaunchInfo.status === "Upcoming" || newLaunchInfo.status === "Live") &&
+                    newLaunchInfo.status !== prevLaunchInfo.status
+                ) {
+                    checkStages();
+                }
+                return newLaunchInfo;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [renderLaunchInfo, checkStages]);
+
+    // Effect to update pass info
+    useEffect(() => {
+        if (
+            priorityUsers &&
+            passBalance !== undefined &&
+            passClaimed !== undefined
+        ) {
+            setPassInfo({
+                isPriorityUser: priorityUsers.includes(
+                    account?.user?.walletAddress
+                ),
+                passBalance,
+                passClaimed,
+                passAccFlag:
+                    priorityUsers.includes(account?.user?.walletAddress) &&
+                    passBalance > 0 &&
+                    !passClaimed,
+            });
+        }
+    }, [priorityUsers, passBalance, passClaimed, account?.user?.walletAddress]);
+
+    // Effect to fetch KDA to USD conversion rate
     useEffect(() => {
         axios
             .get(
@@ -815,6 +861,12 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
             .catch((error) => console.log(error));
     }, []);
 
+    // Effect to reset checkCountRef when product changes
+    useEffect(() => {
+        checkCountRef.current = 0;
+    }, [product]);
+
+    // Function to handle mint button click
     const handleMint = () => {
         if (!stageInfo.isLive) {
             Swal.fire({
@@ -836,6 +888,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
         }
     };
 
+    // Function to confirm mint
     const confirmMint = async () => {
         setIsLoading(true);
         try {
@@ -874,7 +927,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
             if (response.data.result.status === "success") {
                 const updateResponse = await collectionService.updateCollection(
                     {
-                        reservePrice: parseInt(reservePrice),
+                        reservePrice: product.reservePrice + parseInt(reservePrice),
                     },
                     product.collectionName
                 );
@@ -1022,7 +1075,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                                         className="range-slider"
                                         style={{ width: "100%" }}
                                     >
-                                        <div className="d-flex justify-content-start">
+                                        {/* <div className="d-flex justify-content-start">
                                             <Rings
                                                 color="green"
                                                 height={20}
@@ -1036,6 +1089,48 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                                             >
                                                 Live
                                             </span>
+                                        </div> */}
+                                        <div className="launch-info">
+                                            <div className="d-flex justify-content-start align-items-center">
+                                                <Rings
+                                                    color={
+                                                        launchInfo.status ===
+                                                        "Live"
+                                                            ? "green"
+                                                            : "orange"
+                                                    }
+                                                    height={20}
+                                                    width={20}
+                                                />
+                                                <span
+                                                    style={{
+                                                        fontWeight: "bold",
+                                                        color:
+                                                            launchInfo.status ===
+                                                            "Live"
+                                                                ? "green"
+                                                                : "orange",
+                                                    }}
+                                                >
+                                                    {launchInfo.status}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        fontWeight: "bold",
+                                                        marginLeft: "10px",
+                                                    }}
+                                                >
+                                                    {launchInfo.text}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        fontWeight: "bold",
+                                                        marginLeft: "5px",
+                                                    }}
+                                                >
+                                                    {launchInfo.time}
+                                                </span>
+                                            </div>
                                         </div>
                                         <p>
                                             Total Minted{" "}
@@ -1146,13 +1241,21 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                                     </p>
                                 </div>
                                 {passInfo.isPriorityUser && (
-                                    <div className="pass-info">
-                                        <h3>Pass Information</h3>
-                                        <p>Pass Balance: {passInfo.passBalance}</p>
-                                        <p>Pass Claimed: {passInfo.passClaimed ? "Yes" : "No"}</p>
+                                    <div className="pass-info" style={{ marginTop: "20px" }}>
+                                        <h6>Pass Information</h6>
+                                        {/* <p>
+                                            Pass Balance: {passInfo.passBalance}
+                                        </p> */}
+                                        <p>
+                                            Pass Claimed:{" "}
+                                            {passInfo.passClaimed
+                                                ? "Yes"
+                                                : "No"}
+                                        </p>
                                         {passInfo.passAccFlag && (
                                             <p className="free-mint-info">
-                                                Your next mint will be free due to your unclaimed pass!
+                                                Your next mint will be free due
+                                                to your unclaimed pass!
                                             </p>
                                         )}
                                     </div>
@@ -1176,9 +1279,13 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                                         className="buttonlaunchpad"
                                         onClick={handleMint}
                                     >
-                                        {stageInfo.isLive
+                                        {/* {stageInfo.isLive
                                             ? "Mint Here!"
+                                            : "Minting Not Available"} */}
+                                            {stageInfo.isLive
+                                            ? passInfo.passClaimed ? "Mint Here!" : "Claim Pass"
                                             : "Minting Not Available"}
+                                            
                                     </button>
                                 ) : (
                                     <motion.div
@@ -1247,9 +1354,14 @@ CollectionDetailsArea.propTypes = {
         reservePrice: PropTypes.number.isRequired,
         enablePresale: PropTypes.bool.isRequired,
         enableWhitelist: PropTypes.bool.isRequired,
-        collectionType: PropTypes.oneOf(["marketplace", "launchpad"])
-            .isRequired,
+        collectionType: PropTypes.oneOf(["marketplace", "launchpad"]).isRequired,
+        presaleStartDateAndTime: PropTypes.string,
+        presaleEndDateAndTime: PropTypes.string,
+        whitelistStartDateAndTime: PropTypes.string,
+        mintStartDate: PropTypes.string,
+        mintEndDate: PropTypes.string,
     }).isRequired,
+    refresh: PropTypes.func.isRequired,
 };
 
 CollectionDetailsArea.defaultProps = {

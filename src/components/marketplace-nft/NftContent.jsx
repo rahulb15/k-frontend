@@ -8,6 +8,7 @@ import NftDetailsSection from "./NftDetailsSection";
 import NftAttributes from "./NftAttributes";
 import NftProperties from "./NftProperties";
 import NftBuyOptions from "./NftBuyOptions";
+import NftDutchBuyOptions from "./NftDutchBuyOptions";
 import NftBidOptions from "./NftBidOptions";
 import NftQrCode from "./NftQrCode";
 import FullScreenImage from "./FullScreenImage";
@@ -19,8 +20,10 @@ const NftContent = ({
     showSaleOptions,
     showBuyOptions,
     showBidOptions,
+    showDutchBuyOptions,
     setShowBuyOptions,
     setShowBidOptions,
+    setShowDutchBuyOptions
 }) => {
     const [isFlipped, setIsFlipped] = useState(false);
     const [qrSize, setQrSize] = useState({ width: 500, height: 500 });
@@ -59,6 +62,10 @@ const NftContent = ({
 
     const handleBid = () => {
         setShowBidOptions(true);
+    };
+
+    const handleDutchAuction = () => {
+        setShowDutchBuyOptions(true);
     };
 
     return (
@@ -102,6 +109,12 @@ const NftContent = ({
                             Bid
                         </Button>
                     )}
+                    {data?.onMarketplace && data?.onDutchAuction && (
+                        <Button className="nft-bid-button" onClick={handleDutchAuction}>
+                            Buy Now
+                        </Button>
+                    )}
+
                 </Box>
 
                 {!showSaleOptions && (
@@ -126,6 +139,15 @@ const NftContent = ({
                         sales={sales}
                     />
                 )}
+
+                {showDutchBuyOptions && (
+                    <NftDutchBuyOptions
+                        data={data}
+                        userData={userData}
+                        sales={sales}
+                    />
+                )}
+
             </Box>
 
             {showFullImage && (

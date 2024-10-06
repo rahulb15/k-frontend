@@ -6,7 +6,7 @@ import { make_trx } from "./nftUtils";
 import { clear_sales } from "src/hooks/SWR_Hooks";
 
 const NftBuyOptions = ({ data, userData, sales }) => {
-  console.log("NftBuyOptions", data, userData, sales);
+  console.log("NftBuyOptions", sales);
   const buyTrx = sales[0] && userData?.account && userData?.guard && userData?.key
     ? make_trx(sales[0], userData.account, userData.guard)
     : null;

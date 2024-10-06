@@ -299,7 +299,8 @@ const Product = ({ nft, disableShareDropdown }) => {
     const isRevealed = nft.isRevealed;
     const isOnMarketplace = nft.onMarketplace;
     const isOnSale = nft.onSale;
-    const isOnAuction = nft.onAuction;
+    const isOnAuction = nft.onAuction || nft.onDutchAuction;
+    console.log(isOnAuction);
 
     const buttonStyle = {
         height: "40px",
@@ -324,7 +325,7 @@ const Product = ({ nft, disableShareDropdown }) => {
 
     const bidButtonStyle = {
         ...buttonStyle,
-        backgroundColor: "#f0b90b",
+        backgroundColor: `${nft.onDutchAuction ? "#d72700" : "#f0b90b"}`,
         color: "white",
     };
 
@@ -397,7 +398,8 @@ const Product = ({ nft, disableShareDropdown }) => {
                                     style={bidButtonStyle}
                                     whileHover={{
                                         scale: 1.05,
-                                        backgroundColor: "#d9a400",
+                                        // backgroundColor: "#d9a400",
+                                        backgroundColor: `${nft.onDutchAuction ? "#d72700" : "#f0b90b"}`,
                                     }}
                                     whileTap={{ scale: 0.95 }}
                                     transition={{
@@ -406,7 +408,8 @@ const Product = ({ nft, disableShareDropdown }) => {
                                         damping: 17,
                                     }}
                                 >
-                                    Place Bid
+                                    {/* Place Bid */}
+                                    {nft.onDutchAuction ? "Buy Now" : "Place Bid"}
                                 </motion.button>
                             )}
                         </motion.div>
@@ -426,6 +429,9 @@ const Product = ({ nft, disableShareDropdown }) => {
                                 <ShoppingCartIcon />
                             </IconButton>
                         )}
+                    </div>
+                    <div className="profile-share">
+                       <span style={{color: "white", fontSize: "14px", fontWeight: "bold"}}>{nft?.onAuction ? "Auction" : nft?.onDutchAuction ? "Dutch Auction" : "Fixed Sale"}</span>
                     </div>
                     {!disableShareDropdown && <ShareDropdown />}
                 </div>
@@ -474,12 +480,17 @@ const Product = ({ nft, disableShareDropdown }) => {
                     {isOnAuction ? (
                         <>
                             <span style={{ fontWeight: "bold" }}>
-                                Highest bid:
+                                {/* Highest bid: */}
+                                {nft?.onAuction ? "Highest bid" : "Price"}:
                             </span>{" "}
                             <span style={{ fontWeight: "bold" }}>
-                                {nft.currentPrice}
+                                {/* {nft.currentPrice} */}
+                                {nft?.onAuction ? nft?.currentPrice : nft?.nftPrice}
                             </span>{" "}
-                            {nft.currency}
+                            {/* {nft.currency} */}
+                            <span style={{ fontSize: "14px" }}>
+                                KDA
+                            </span>
                         </>
                     ) : isOnSale ? (
                         <>
@@ -487,7 +498,10 @@ const Product = ({ nft, disableShareDropdown }) => {
                             <span style={{ fontWeight: "bold" }}>
                                 {nft.nftPrice}
                             </span>{" "}
-                            {nft.currency}
+                            {/* {nft.currency} */}
+                            <span style={{ fontSize: "14px" }}>
+                                KDA
+                            </span>
                         </>
                     ) : (
                         "Not for sale"

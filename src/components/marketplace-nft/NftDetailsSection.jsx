@@ -87,6 +87,29 @@ const NftDetailsSection = ({ data }) => {
                 </>
             )}
 
+            {data?.onDutchAuction && (
+                <>
+                    <Typography variant="h5" paragraph>
+                        Current Price:{" "}
+                        <strong>
+                            {data.nftPrice > 0
+                                ? `${data.nftPrice} KDA`
+                                : "Not for sale"}
+                        </strong>
+                    </Typography>
+                    <Typography variant="h5" paragraph>
+                        Dutch Auction Ends: <strong>{moment(data.timeout).fromNow()}</strong>
+                    </Typography>
+                </>
+            )}
+
+            {/* //sale type */}
+            <Typography variant="h5" paragraph>
+                Sale Type: <strong>{data?.saleType === "f" ? "Fixed" : data?.saleType === "a" ? "Auction" : data?.saleType === "d" ? "Dutch Auction" : "Not for sale"}</strong>
+            </Typography>
+
+
+
             <Typography variant="body1" paragraph sx={{ fontSize: 16 }}>
                 <CopyableText label="Owner" text={data?.owner} />
             </Typography>

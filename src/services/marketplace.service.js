@@ -1707,6 +1707,34 @@ export const marketplaceApi = createApi({
                 }
             },
         }),
+        getDutchPrice: builder.query({
+            query: (saleId) => {
+                console.log("getDutchPrice query called with saleId:", saleId);
+                return { url: `/local`, method: 'POST', body: { 
+                    pactCode: `(n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.policy-dutch-auction-sale.compute-price "${saleId}")`,
+                    meta: { chainId: CHAIN_ID },
+                    networkId: NETWORKID
+                }};
+            },
+            transformResponse: (response) => {
+                console.log("getDutchPrice response:", response);
+                if (response.result.status === "success") {
+                    return response.result.data;
+                } else {
+                    throw new Error(response.result.error);
+                }
+            },
+            async onQueryStarted(saleId, { queryFulfilled }) {
+                console.log("getDutchPrice query started for saleId:", saleId);
+                try {
+                    const { data } = await queryFulfilled;
+                    console.log("getDutchPrice query fulfilled with data:", data);
+                } catch (err) {
+                    console.error("getDutchPrice query failed:", err);
+                }
+            },
+        }),
+
     }),
 });
 
@@ -1733,6 +1761,7 @@ export const {
     useGetMinterQuery,
     useSyncSingleNftMutation,
     useGetTokensOwnedQuery,
+    useGetDutchPriceQuery,
 } = marketplaceApi;
 
 // Helper functions

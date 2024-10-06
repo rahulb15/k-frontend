@@ -708,6 +708,67 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         }
     };
 
+
+    // Add this validation function
+const validateDateTime = () => {
+    const startDate = watch("mintStartDate");
+    const endDate = watch("mintEndDate");
+    const startTime = watch("mintStartTime");
+    const endTime = watch("mintEndTime");
+
+    if (startDate && endDate && startTime && endTime) {
+        const startDateTime = new Date(`${startDate}T${startTime}`);
+        const endDateTime = new Date(`${endDate}T${endTime}`);
+        return endDateTime > startDateTime;
+    }
+    return true;
+}
+
+    useEffect(() => {
+        console.log("watch", watch("mintStartTime"));
+    
+        const mintStartDate = moment(
+            `${watch("mintStartDate")} ${watch("mintStartTime")}`
+        )
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
+        const formattedStartDate = `time "${mintStartDate}Z"`;
+        console.log("formattedDate", formattedStartDate);
+    
+        if (validateDateTime()) {
+            dispatch(setCollectionRequestStartDate(formattedStartDate));
+            setMintStartDateTime(
+                moment(`${watch("mintStartDate")} ${watch("mintStartTime")}`)
+                    .utc()
+                    .format()
+            );
+        } else {
+            toast.error("Start date/time must be before end date/time");
+        }
+    }, [watch("mintStartTime"), watch("mintStartDate")]);
+    
+    useEffect(() => {
+        console.log("watch", watch("mintEndTime"));
+        const mintEndDate = moment(
+            `${watch("mintEndDate")} ${watch("mintEndTime")}`
+        )
+            .utc()
+            .format("YYYY-MM-DDTHH:mm:ss");
+        const formattedEndDate = `time "${mintEndDate}Z"`;
+        console.log("formattedEndDate", formattedEndDate);
+    
+        if (validateDateTime()) {
+            dispatch(setCollectionRequesEndDate(formattedEndDate));
+            setMintEndDateTime(
+                moment(`${watch("mintEndDate")} ${watch("mintEndTime")}`)
+                    .utc()
+                    .format()
+            );
+        } else {
+            toast.error("End date/time must be after start date/time");
+        }
+    }, [watch("mintEndTime"), watch("mintEndDate")]);
+
     const createCollectionRequest = async () => {
         const body = {
             collectionName: collectionRequestName,
@@ -795,6 +856,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                     if (selectedWallet === null) {
                         setShake(true);
                         toast.error("Please select payment option");
+                        return;
+                    }
+
+                    if (!validateDateTime()) {
+                        toast.error("End date/time must be after start date/time");
                         return;
                     }
 

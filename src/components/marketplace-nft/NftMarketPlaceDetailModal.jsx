@@ -32,6 +32,7 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
   const [showSaleOptions, setShowSaleOptions] = useState(false);
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [showBidOptions, setShowBidOptions] = useState(false);
+  const [showDutchBuyOptions, setShowDutchBuyOptions] = useState(false);
 
   const fee = useFee(data.tokenId);
 
@@ -79,8 +80,10 @@ const NftMarketPlaceDetailModal = ({ open, onClose, data }) => {
           showSaleOptions={showSaleOptions}
           showBuyOptions={showBuyOptions}
           showBidOptions={showBidOptions}
+          showDutchBuyOptions={showDutchBuyOptions}
           setShowBuyOptions={setShowBuyOptions}
           setShowBidOptions={setShowBidOptions}
+          setShowDutchBuyOptions={setShowDutchBuyOptions}
         />
         <NftFooter data={data} />
       </Box>
