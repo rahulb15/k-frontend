@@ -39,7 +39,7 @@ const CollectionArea = ({ className, space, id, data }) => {
         const fetchCreatedItems = async () => {
             try {
                 const collectionsResponse =
-                    await collectionService.getCreatedCollections(
+                    await collectionService.getCreatedCollectionsMarketPlace(
                         pageNo,
                         limit,
                         search

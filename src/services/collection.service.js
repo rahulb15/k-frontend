@@ -314,6 +314,25 @@ const getCreatedCollections = async ( page, limit, search) => {
     }
 }
 
+const getCreatedCollectionsMarketPlace = async ( page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/getCreatedCollectionsMarketPlace`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 // getCollectionsAllCategory
 // http://localhost:5000/api/v1/launch-collection/category-wise  POST
@@ -359,5 +378,6 @@ export default {
     getAllMarketplaceCollections,
     getCreatedCollections,
     getAllCollectionMarketplace,
-    getCollectionsAllCategory
+    getCollectionsAllCategory,
+    getCreatedCollectionsMarketPlace
 };

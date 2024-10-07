@@ -70,6 +70,9 @@ const policies = [
     "ROYALTY",
 ];
 
+const defaultPolicies = ["COLLECTION", "MARKETPLACE", "NON-FUNGIBLE", "INSTANT-MINT"];
+
+
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -113,7 +116,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const [imageCoverLoading, setImageCoverLoading] = useState(false);
     const [imageBannerLoading, setImageBannerLoading] = useState(false);
     const [tokenCount, setTokenCount] = useState(0);
-    const [policy, setPolicy] = useState([]);
+    const [policy, setPolicy] = useState(defaultPolicies);
     const [disabledPolicies, setDisabledPolicies] = useState([]);
     const account = useAccountContext();
     console.log("Account:", account);
@@ -191,6 +194,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                 setDisabledPolicies([]);
             }
         }
+        newValue = [...new Set([...defaultPolicies, ...newValue])];
 
         setPolicy(newValue);
     };
@@ -1042,7 +1046,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                             </Select>
                                         </div>
                                     </div> */}
-
+{/* 
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
@@ -1103,7 +1107,50 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 ))}
                                             </Select>
                                         </div>
-                                    </div>
+                                    </div> */}
+
+<div className="col-md-12">
+                <div className="input-box pb--20">
+                    <label htmlFor="policy" className="form-label">
+                        Policy
+                    </label>
+                    <Select
+                        labelId="policy-multiple-chip-label"
+                        id="policy-multiple-chip"
+                        className={styles["form-select"]}
+                        multiple
+                        value={policy}
+                        onChange={handlePolicyChange}
+                        input={<OutlinedInput id="select-multiple-chip" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip 
+                                        key={value} 
+                                        label={value} 
+                                        style={{
+                                            opacity: defaultPolicies.includes(value) ? 0.7 : 1,
+                                            cursor: defaultPolicies.includes(value) ? 'not-allowed' : 'default'
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
+                    >
+                        {policies.map((name) => (
+                            <MenuItem
+                                key={name}
+                                value={name}
+                                style={getStyles(name, policy, theme)}
+                                disabled={defaultPolicies.includes(name)}
+                            >
+                                {name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </div>
+            </div>
                                     <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input

@@ -82,6 +82,9 @@ const policies = [
     "ROYALTY",
 ];
 
+const defaultPolicies = ["COLLECTION", "MARKETPLACE", "NON-FUNGIBLE", "INSTANT-MINT"];
+
+
 function getStyles(name, personName, theme) {
     return {
         fontWeight:
@@ -157,7 +160,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         collectionRequestPolicy,
         walletName,
     } = useSelector((state) => state.launchpad);
-    const [policy, setPolicy] = React.useState([]);
+    const [policy, setPolicy] = useState(defaultPolicies);
     const [mintStartDateTime, setMintStartDateTime] = useState(null);
     const [mintEndDateTime, setMintEndDateTime] = useState(null);
     const [haveSufficientBalance, setHaveSufficientBalance] = useState(false);
@@ -227,6 +230,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 setDisabledPolicies([]);
             }
         }
+        newValue = [...new Set([...defaultPolicies, ...newValue])];
 
         setPolicy(newValue);
     };
@@ -2134,7 +2138,7 @@ const validateDateTime = () => {
                                             >
                                                 Policy
                                             </label>
-                                            <Select
+                                            {/* <Select
                                                 labelId="demo-multiple-chip-label"
                                                 id="demo-multiple-chip"
                                                 style={{
@@ -2200,7 +2204,55 @@ const validateDateTime = () => {
                                                         {name}
                                                     </MenuItem>
                                                 ))}
-                                            </Select>
+                                            </Select> */}
+
+<Select
+                                                                   labelId="demo-multiple-chip-label"
+                                                                   id="demo-multiple-chip"
+                                                                   style={{
+                                                                       width: "100%",
+                                                                       backgroundColor: "#242435",
+                                                                       color: "#fff",
+                                                                       borderRadius: 5,
+                                                                   }}
+                                                                   multiple
+                                                                   value={policy}
+                                                                   onChange={handlePolicyChange}
+                                                                   input={
+                                                                    <OutlinedInput
+                                                                        id="select-multiple-chip"
+                                                                        label="Chip"
+                                                                    />
+                                                                }                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip 
+                                        key={value} 
+                                        label={value} 
+                                        style={{
+                                            opacity: defaultPolicies.includes(value) ? 0.7 : 1,
+                                            cursor: defaultPolicies.includes(value) ? 'not-allowed' : 'default',
+                                            color: "#fff",
+                                            backgroundColor:
+                                                "#363545",
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
+                    >
+                        {policies.map((name) => (
+                            <MenuItem
+                                key={name}
+                                value={name}
+                                style={getStyles(name, policy, theme)}
+                                disabled={defaultPolicies.includes(name)}
+                            >
+                                {name}
+                            </MenuItem>
+                        ))}
+                    </Select>
                                         </div>
                                     </div>
 
