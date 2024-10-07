@@ -29,7 +29,7 @@ const NftDetailsSection = ({ data }) => {
         >
             {label}: &nbsp;
             <strong className="token-id" style={{ marginRight: "5px" }}>
-                {`${text.slice(0, 8)}...${text.slice(-6)}`}
+                {`${text?.slice(0, 8)}...${text?.slice(-6)}`}
             </strong>
             <motion.div
                 whileHover={{ scale: 1.1 }}

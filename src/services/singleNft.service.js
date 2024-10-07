@@ -41,6 +41,30 @@ const getCreatedSingleNfts = async (pageNo, limit, search) => {
     }
 };
 
+// getCreatedSingleNfts(pageNo, limit, search);
+const getCreatedSingleNftsMarketPlace = async (pageNo, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${url}single-nft/getAllMarketPlace`,
+            {
+                page: pageNo,
+                limit: limit,
+                search: search,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        return error.response.data;
+    }
+};
+
 
 // update
 const updateSingleNFT = async (data) => {
@@ -62,5 +86,6 @@ const updateSingleNFT = async (data) => {
 export default {
     createSingleNFT,
     getCreatedSingleNfts,
+    getCreatedSingleNftsMarketPlace,
     updateSingleNFT,
 };

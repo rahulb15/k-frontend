@@ -429,7 +429,7 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
 
     const handleReveal = async () => {
         try {
-            const nftName = nft.collectionName.split("_")[0];
+            const nftName = nft.collectionName?.split("_KR")[0];
             const nftData = {
                 account: account?.user?.walletAddress,
                 singleNftName: nftName,
@@ -618,7 +618,7 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                     {!disableShareDropdown && <ShareDropdown />}
                 </div>
                 <Anchor path={`/product/${nft.tokenId}`}>
-                    <span className="product-name">{nft.nftData?.name || nft.collectionName}</span>
+                    <span className="product-name">{nft.nftData?.name || nft?.collectionName?.split("_KR")[0]}</span>
                 </Anchor>
                 <div
                     style={{

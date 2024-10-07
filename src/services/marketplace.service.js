@@ -348,6 +348,7 @@ export const marketplaceApi = createApi({
                     collectionRequestCreator,
                     collectionRequestDescription,
                     collectionRequestCategory,
+                    collectionRequestMintPrice,
                     collectionRequestRoyalityPerc,
                     collectionRequestRoyalityAddress,
                     collectionRequestCoverImgUrl,
@@ -362,6 +363,28 @@ export const marketplaceApi = createApi({
                 } = args;
                 console.log(walletName);
 
+
+                let decimalPrice;
+                const calculateDecimal = (price) => {
+                  const priceString = price.toString();
+                  const priceArray = priceString.split(".");
+                  if (priceArray.length === 1) {
+                    decimalPrice = `${priceArray[0]}.0`;
+                  } else {
+                    decimalPrice = priceString;
+                  }
+                };
+                calculateDecimal(collectionRequestMintPrice);
+                console.log("decimalPrice", decimalPrice);
+
+
+                let royalityPercentage;
+                const calculateRoyalityPercentage = (royality) => {
+                    royalityPercentage = royality / 100;
+                };
+                calculateRoyalityPercentage(collectionRequestRoyalityPerc);
+
+
                 const account = collectionRequestCreator;
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
@@ -375,8 +398,8 @@ export const marketplaceApi = createApi({
                     ${JSON.stringify(collectionRequestCategory)}
                     ${collectionRequestSupply}
                     ${JSON.stringify(collectionRequestUriList)}
-                    1.0
-                    ${collectionRequestRoyalityPerc}
+                    ${decimalPrice}
+                    ${royalityPercentage}
                     ${JSON.stringify(collectionRequestRoyalityAddress)}
                     ${JSON.stringify(collectionRequestCoverImgUrl)}
                     ${JSON.stringify(collectionRequestBannerImgUrl)}

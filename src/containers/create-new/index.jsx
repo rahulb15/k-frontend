@@ -461,6 +461,9 @@ const policies = [
     "NON-FUNGIBLE"
 ];
 
+const defaultPolicies = ["MARKETPLACE", "NON-FUNGIBLE", "INSTANT-MINT"];
+
+
 function getStyles(name, policy, theme) {
     return {
         fontWeight:
@@ -495,7 +498,7 @@ const wallets = [
 const CreateSingleNFTArea = ({ onBack }) => {
     const [selectedImage, setSelectedImage] = useState();
     const [hasImageError, setHasImageError] = useState(false);
-    const [policy, setPolicy] = useState([]);
+    const [policy, setPolicy] = useState(defaultPolicies);
     const [disabledPolicies, setDisabledPolicies] = useState([]);
     const [imageLoading, setImageLoading] = useState(false);
     const account = useAccountContext();
@@ -601,6 +604,8 @@ const CreateSingleNFTArea = ({ onBack }) => {
             }
         }
 
+        newValue = [...new Set([...defaultPolicies, ...newValue])];
+
         setPolicy(newValue);
     };
 
@@ -652,7 +657,7 @@ const CreateSingleNFTArea = ({ onBack }) => {
                         toast.success("NFT launched successfully!");
                         reset();
                         setSelectedImage(null);
-                        setPolicy([]);
+                        setPolicy([defaultPolicies]);
                     } else {
                         toast.error("Failed to launch NFT. Please try again.");
                     }
@@ -878,7 +883,7 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="col-md-12">
+                                    {/* <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
                                                 htmlFor="uri"
@@ -904,7 +909,39 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                 </ErrorText>
                                             )}
                                         </div>
-                                    </div>
+                                    </div> */}
+
+<div className="col-md-12">
+                <div className="input-box pb--20">
+                    <label htmlFor="uri" className="form-label">
+                        URI
+                    </label>
+                    <input
+                        id="uri"
+                        type="text"
+                        placeholder="e. g. `https://www.example.com`"
+                        {...register("uri", {
+                            required: "URI is required",
+                            pattern: {
+                                value: /^https?:\/\/\S+$/,
+                                message: "Please enter a valid URI",
+                            },
+                            validate: {
+                                noSpaces: (value) => !/\s/.test(value) || "Spaces are not allowed in the URI",
+                                noCommas: (value) => !/,/.test(value) || "Commas are not allowed in the URI",
+                            },
+                        })}
+                    />
+                    {errors.uri && (
+                        <ErrorText>
+                            {errors.uri.message}
+                        </ErrorText>
+                    )}
+                </div>
+            </div>
+
+
+
                                     {/* <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label htmlFor="policy" className="form-label">
@@ -938,7 +975,7 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                             </Select>
                                         </div>
                                     </div> */}
-                                    <div className="col-md-12">
+                                    {/* <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
                                                 htmlFor="policy"
@@ -998,7 +1035,50 @@ const CreateSingleNFTArea = ({ onBack }) => {
                                                 ))}
                                             </Select>
                                         </div>
-                                    </div>
+                                    </div> */}
+
+<div className="col-md-12">
+                <div className="input-box pb--20">
+                    <label htmlFor="policy" className="form-label">
+                        Policy
+                    </label>
+                    <Select
+                        labelId="policy-multiple-chip-label"
+                        id="policy-multiple-chip"
+                        className={styles["form-select"]}
+                        multiple
+                        value={policy}
+                        onChange={handlePolicyChange}
+                        input={<OutlinedInput id="select-multiple-chip" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip 
+                                        key={value} 
+                                        label={value} 
+                                        style={{
+                                            opacity: defaultPolicies.includes(value) ? 0.7 : 1,
+                                            cursor: defaultPolicies.includes(value) ? 'not-allowed' : 'default'
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
+                    >
+                        {policies.map((name) => (
+                            <MenuItem
+                                key={name}
+                                value={name}
+                                style={getStyles(name, policy, theme)}
+                                disabled={defaultPolicies.includes(name)}
+                            >
+                                {name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </div>
+            </div>
 
                                     <div className="col-md-12 col-xl-4 mt--20 mb--20">
                                         <label

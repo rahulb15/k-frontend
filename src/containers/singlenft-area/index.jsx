@@ -20,6 +20,7 @@ const SingleNftArea = ({ className, space, id }) => {
     const [limit, setLimit] = useState(20);
     const [search, setSearch] = useState("");
     const account = useAccountContext();
+    const [refresh, setRefresh] = useState(false);
 
    
  
@@ -27,7 +28,7 @@ const SingleNftArea = ({ className, space, id }) => {
     useEffect(() => {
         const fetchCreatedItems = async () => {
             try {
-                const singleNftsResponse = await singleNftService.getCreatedSingleNfts(
+                const singleNftsResponse = await singleNftService.getCreatedSingleNftsMarketPlace(
                     pageNo,
                     limit,
                     search
@@ -40,7 +41,7 @@ const SingleNftArea = ({ className, space, id }) => {
         };
 
         fetchCreatedItems();
-    }, [account?.user?.walletAddress, pageNo, limit, search]);
+    }, [account?.user?.walletAddress, pageNo, limit, search, refresh]);
 
 
     return (
@@ -57,7 +58,7 @@ const SingleNftArea = ({ className, space, id }) => {
                                                 key={nft._id}
                                                 className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                                             >
-                                                <SingleNft
+                                                {/* <SingleNft
                                                     overlay
                                                     placeBid
                                                     title={nft.collectionName}
@@ -70,7 +71,23 @@ const SingleNftArea = ({ className, space, id }) => {
                                                     authors={nft.creatorName}
                                                     bitCount={nft.likes}
                                                     data={nft}
-                                                />
+                                                /> */}
+                                                 <SingleNft
+                    overlay
+                    placeBid
+                    title={nft.collectionName}
+                    slug={nft.tokenId}
+                    latestBid={nft.nftPrice}
+                    price={nft.nftPrice}
+                    likeCount={nft.likes}
+                    auction_date={nft.createdAt}
+                    image={nft.tokenImage}
+                    authors={nft.creatorName}
+                    bitCount={nft.likes}
+                    data={nft}
+                    refresh={refresh}
+                    setRefresh={setRefresh}
+                />
                                             </div>
                                         ))}
                 </div>

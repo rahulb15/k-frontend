@@ -91,7 +91,7 @@ const SingleNft = ({
                 setRefresh(!refresh);
                 if (responseupdate?.status === "success") {
                     const uniqueHash = Date.now();
-                    const uniqueCollectionName = `${data.nftName}_${uniqueHash}`;
+                    const uniqueCollectionName = `${data.nftName}_KR${uniqueHash}`;
                     const body = {
                         collectionName: uniqueCollectionName,
                         // nftPrice: data.nftPrice,
