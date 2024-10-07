@@ -473,7 +473,7 @@ function getStyles(name, policy, theme) {
 const wallets = [
     { name: "Stripe", src: "/wallet/Stripe.svg", width: 200, height: 200 },
     {
-        name: "EckoWallet",
+        name: "Ecko Wallet",
         src: "/wallet/eckowallet.png",
         width: 100,
         height: 100,
