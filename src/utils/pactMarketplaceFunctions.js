@@ -40,17 +40,17 @@ const testnetFunctions = {
     getSingleNftCreator: "free.mp-ng-003.get-single-nft-creator",
     getRoyaltyInfoSingleNft: "free.mp-ng-003.get-royalty-info-single-nft",
     marmaladeLedgerSale:
-        `${DEFAULT_INSTANCE.ns}.ledger.sale`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     marmaladeLedgerOffer:
-        `${DEFAULT_INSTANCE.ns}.ledger.OFFER`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.OFFER`,
     marmaladePolicyDutchAuctionSaleComputePrice:
-        `${DEFAULT_INSTANCE.ns}.policy-dutch-auction-sale.compute-price`,
+        `${DEFAULT_INSTANCE?.ns}.policy-dutch-auction-sale.compute-price`,
     ledgerTransfer:
-        `${DEFAULT_INSTANCE.ns}.ledger.TRANSFER`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.TRANSFER`,
     isAdmin: "free.mp-ng-003.IS_ADMIN",
-    ledgerSale: `${DEFAULT_INSTANCE.ns}.ledger.sale`,
+    ledgerSale: `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     ledgerNoTimeout:
-        `${DEFAULT_INSTANCE.ns}.ledger.NO-TIMEOUT`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.NO-TIMEOUT`,
 };
 
 const mainnetFunctions = {
@@ -82,17 +82,17 @@ const mainnetFunctions = {
     getSingleNftCreator: "free.KMMMV2.get-single-nft-creator",
     getRoyaltyInfoSingleNft: "free.KMMMV2.get-royalty-info-single-nft",
     marmaladeLedgerSale:
-        `${DEFAULT_INSTANCE.ns}.ledger.sale`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     marmaladeLedgerOffer:
-        `${DEFAULT_INSTANCE.ns}.ledger.OFFER`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.OFFER`,
     marmaladePolicyDutchAuctionSaleComputePrice:
-        `${DEFAULT_INSTANCE.ns}.policy-dutch-auction-sale.compute-price`,
+        `${DEFAULT_INSTANCE?.ns}.policy-dutch-auction-sale.compute-price`,
     ledgerTransfer:
-        `${DEFAULT_INSTANCE.ns}.ledger.TRANSFER`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.TRANSFER`,
     isAdmin: "free.KMMMV2.IS_ADMIN",
-    ledgerSale: `${DEFAULT_INSTANCE.ns}.ledger.sale`,
+    ledgerSale: `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     ledgerNoTimeout:
-        `${DEFAULT_INSTANCE.ns}.ledger.NO-TIMEOUT`,
+        `${DEFAULT_INSTANCE?.ns}.ledger.NO-TIMEOUT`,
 };
 
 const networkType = process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE || "testnet";

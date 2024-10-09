@@ -7,7 +7,8 @@ import { Box, Tabs, Tab, Typography } from '@mui/material';
 import { Range } from "react-range";
 import Product from '@components/product/layout-01';
 import { ProductType } from '@utils/types';
-import { addToCart, removeToCart } from "src/features/cartSlice";
+// import { addToCart, removeToCart } from "src/features/cartSlice";
+import { addToCart, removeFromCart } from "src/features/cartSlice";
 
 const NftListArea = ({ className, space, data }) => {
   const dispatch = useDispatch();
@@ -50,7 +51,8 @@ const NftListArea = ({ className, space, data }) => {
       for (let i = currentItemsInCart - 1; i >= newValue; i--) {
         const itemToRemove = carts[i];
         if (itemToRemove) {
-          dispatch(removeToCart(itemToRemove._id));
+          // dispatch(removeToCart(itemToRemove._id));
+          dispatch(removeFromCart(itemToRemove._id));
         }
       }
     }
