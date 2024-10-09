@@ -15,8 +15,10 @@ import {
     creationTime,
 } from "src/constants/contextConstants";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
+import pactFunctions from "@utils/pactLaunchapdFunctions";
 
 const API_HOST = NETWORK;
+console.log(API_HOST);
 const client = createClient(API_HOST);
 const signWithChainweaver = createSignWithChainweaver();
 const eckoWallet = createEckoWalletQuicksign();
@@ -48,99 +50,101 @@ const fetchData = async () => {
     }
 };
 
-
 const getPrimeRoleUsers = async () => {
-    const pactCode = `(free.lptest001.get-prime-role)`;
+    // const pactCode = `(free.lptest001.get-prime-role)`;
+    const pactCode = `(${pactFunctions.getPrimeRole})`;
 
     const txn = Pact.builder
-                    .execution(pactCode)
-                    .setMeta({ chainId: CHAIN_ID })
-                    .setNetworkId(NETWORKID)
-                    .createTransaction();
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
 
     const localResponse = await client.local(txn, {
-      preflight: false,
-      signatureVerification: false,
+        preflight: false,
+        signatureVerification: false,
     });
 
     if (localResponse.result.status == "success") {
-      let users = localResponse.result.data;
-      console.log("users", users);
-      return users;
+        let users = localResponse.result.data;
+        console.log("users", users);
+        return users;
     } else {
-      console.log("Error in local response", localResponse.result.error);
+        console.log("Error in local response", localResponse.result.error);
     }
-  };
+};
 
-  const getDiscountRoleUsers = async () => {
-    const pactCode = `(free.lptest001.get-discount-role)`;
+const getDiscountRoleUsers = async () => {
+    // const pactCode = `(free.lptest001.get-discount-role)`;
+    const pactCode = `(${pactFunctions.getDiscountRole})`;
 
     const txn = Pact.builder
-    .execution(pactCode)
-    .setMeta({ chainId: CHAIN_ID })
-    .setNetworkId(NETWORKID)
-    .createTransaction();
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
 
     const localResponse = await client.local(txn, {
-      preflight: false,
-      signatureVerification: false,
+        preflight: false,
+        signatureVerification: false,
     });
 
     if (localResponse.result.status == "success") {
-      let users = localResponse.result.data;
-      console.log("users", users);
-      return users;
+        let users = localResponse.result.data;
+        console.log("users", users);
+        return users;
     } else {
-      console.log("Error in local response", localResponse.result.error);
+        console.log("Error in local response", localResponse.result.error);
     }
-  };
+};
 
-  const getDiscountRate = async () => {
-    const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+const getDiscountRate = async () => {
+    // const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+    const pactCode = `(${pactFunctions.getCollectionDiscountFee})`;
 
-   
     const txn = Pact.builder
-    .execution(pactCode)
-    .setMeta({ chainId: CHAIN_ID })
-    .setNetworkId(NETWORKID)
-    .createTransaction();
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
 
     const localResponse = await client.local(txn, {
-      preflight: false,
-      signatureVerification: false,
+        preflight: false,
+        signatureVerification: false,
     });
 
     if (localResponse.result.status == "success") {
-      let discount = localResponse.result.data;
-      console.log("users", discount);
-      return discount;
+        let discount = localResponse.result.data;
+        console.log("users", discount);
+        return discount;
     } else {
-      console.log("Error in local response", localResponse.result.error);
+        console.log("Error in local response", localResponse.result.error);
     }
-  };
+};
 
-  const getLaunchFee = async () => {
-    const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+const getLaunchFee = async () => {
+    // const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+    const pactCode = `(${pactFunctions.getCollectionLaunchFee})`;
 
     const txn = Pact.builder
-    .execution(pactCode)
-    .setMeta({ chainId: CHAIN_ID })
-    .setNetworkId(NETWORKID)
-    .createTransaction();
+        .execution(pactCode)
+        .setMeta({ chainId: CHAIN_ID })
+        .setNetworkId(NETWORKID)
+        .createTransaction();
 
     const localResponse = await client.local(txn, {
-      preflight: false,
-      signatureVerification: false,
+        preflight: false,
+        signatureVerification: false,
     });
 
     if (localResponse.result.status == "success") {
-      let fee = localResponse.result.data;
-      console.log("fee", fee);
-      return fee;
+        let fee = localResponse.result.data;
+        console.log("fee", fee);
+        return fee;
     } else {
-      console.log("Error in local response", localResponse.result.error);
+        console.log("Error in local response", localResponse.result.error);
     }
-  };
+};
 
 export const launchpadApi = createApi({
     reducerPath: "launchpadApi",
@@ -179,10 +183,10 @@ export const launchpadApi = createApi({
         //         console.log(publicKey);
         //         const guard = { keys: [publicKey], pred: "keys-all" };
 
-        //         const pactCode = `(free.lptest001.nft-collection-request 
+        //         const pactCode = `(free.lptest001.nft-collection-request
         //         ${JSON.stringify(collectionRequestName)}
-        //         ${JSON.stringify(collectionRequestSymbol)}  
-        //         ${JSON.stringify(account)}        
+        //         ${JSON.stringify(collectionRequestSymbol)}
+        //         ${JSON.stringify(account)}
         //         (read-keyset  "guard")
         //         ${JSON.stringify(collectionRequestDescription)}
         //         ${JSON.stringify(collectionRequestCategory)}
@@ -195,12 +199,12 @@ export const launchpadApi = createApi({
         //         ${JSON.stringify(collectionRequestBannerImgUrl)}
         //         ${JSON.stringify(collectionRequestStartDate)}
         //         (${collectionRequestStartDate})
-        //         ${JSON.stringify(collectionRequesEndDate)}       
-        //         (${collectionRequesEndDate}) 
-        //         ${collectionRequestEnableFreeMint}                 
-        //         ${collectionRequestEnableWl} 
-        //         ${collectionRequestEnablePresale} 
-        //         ${collectionRequestEnableAirdrop} 
+        //         ${JSON.stringify(collectionRequesEndDate)}
+        //         (${collectionRequesEndDate})
+        //         ${collectionRequestEnableFreeMint}
+        //         ${collectionRequestEnableWl}
+        //         ${collectionRequestEnablePresale}
+        //         ${collectionRequestEnableAirdrop}
         //         ${JSON.stringify(collectionRequestPolicy)}
         //         )
         //         `;
@@ -301,10 +305,8 @@ export const launchpadApi = createApi({
                 console.log("discountRole", discountRole);
                 const discountRate = await getDiscountRate();
                 console.log("discountRate", discountRate);
-                const discountFee = (launchFee * (1 - discountRate));
+                const discountFee = launchFee * (1 - discountRate);
                 console.log("discountFee", discountFee);
-
-
 
                 const account = collectionRequestCreator;
                 console.log("account", account);
@@ -314,17 +316,16 @@ export const launchpadApi = createApi({
 
                 let decimalPrice;
                 const calculateDecimal = (price) => {
-                  const priceString = price.toString();
-                  const priceArray = priceString.split(".");
-                  if (priceArray.length === 1) {
-                    decimalPrice = `${priceArray[0]}.0`;
-                  } else {
-                    decimalPrice = priceString;
-                  }
+                    const priceString = price.toString();
+                    const priceArray = priceString.split(".");
+                    if (priceArray.length === 1) {
+                        decimalPrice = `${priceArray[0]}.0`;
+                    } else {
+                        decimalPrice = priceString;
+                    }
                 };
                 calculateDecimal(collectionRequestMintPrice);
                 console.log("decimalPrice", decimalPrice);
-
 
                 let royalityPercentage;
                 const calculateRoyalityPercentage = (royality) => {
@@ -332,12 +333,12 @@ export const launchpadApi = createApi({
                 };
                 calculateRoyalityPercentage(collectionRequestRoyalityPerc);
 
-
                 const publicKey = account.slice(2, account.length);
                 console.log(publicKey);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                const pactCode = `(free.lptest001.nft-collection-request 
+                // const pactCode = `(free.lptest001.nft-collection-request
+                const pactCode = `(${pactFunctions.nftCollectionRequest} 
                 ${JSON.stringify(collectionRequestName)}
                 ${JSON.stringify(collectionRequestSymbol)}  
                 ${JSON.stringify(account)}        
@@ -388,7 +389,12 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("coin.TRANSFER", account, admin, discountFee),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                admin,
+                                discountFee
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -405,7 +411,12 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("coin.TRANSFER", account, admin, launchFee),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                admin,
+                                launchFee
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -445,14 +456,25 @@ export const launchpadApi = createApi({
                         } else if (walletName === "WalletConnect") {
                             console.log("WalletConnect");
                             if (wcClient && wcSession) {
-                                const signWithWalletConnect = createWalletConnectSign(
-                                    wcClient,
-                                    wcSession,
-                                    "kadena:testnet04"
-                                );
+                                const signWithWalletConnect =
+                                    createWalletConnectSign(
+                                        wcClient,
+                                        wcSession,
+                                        // "kadena:testnet04"
+                                        // process.env.NEXT_PUBLIC_WALLETCONNECT_CHAIN_ID || "kadena:testnet04"
+                                        process.env
+                                            .NEXT_PUBLIC_KDA_NETWORK_TYPE ===
+                                            "mainnet"
+                                            ? process.env
+                                                  .NEXT_PUBLIC_MAINNET_WALLETCONNECT_CHAIN_ID
+                                            : process.env
+                                                  .NEXT_PUBLIC_TESTNET_WALLETCONNECT_CHAIN_ID
+                                    );
                                 signedTx = await signWithWalletConnect(txn);
                             } else {
-                                return { error: "WalletConnect not initialized" };
+                                return {
+                                    error: "WalletConnect not initialized",
+                                };
                             }
                         }
 
@@ -470,7 +492,8 @@ export const launchpadApi = createApi({
         }),
         getLaunchFee: builder.query({
             async queryFn() {
-                const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+                // const pactCode = `(free.lptest001.get-collection-launch-fee)`;
+                const pactCode = `(${pactFunctions.getCollectionLaunchFee})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -493,7 +516,8 @@ export const launchpadApi = createApi({
 
         getPrimeRoleUsers: builder.query({
             async queryFn() {
-                const pactCode = `(free.lptest001.get-prime-role)`;
+                // const pactCode = `(free.lptest001.get-prime-role)`;
+                const pactCode = `(${pactFunctions.getPrimeRole})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -516,7 +540,8 @@ export const launchpadApi = createApi({
 
         getDiscountRoleUsers: builder.query({
             async queryFn() {
-                const pactCode = `(free.lptest001.get-discount-role)`;
+                // const pactCode = `(free.lptest001.get-discount-role)`;
+                const pactCode = `(${pactFunctions.getDiscountRole})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -539,7 +564,8 @@ export const launchpadApi = createApi({
 
         getDiscountRate: builder.query({
             async queryFn() {
-                const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+                // const pactCode = `(free.lptest001.get-collection-discount-fee)`;
+                const pactCode = `(${pactFunctions.getCollectionDiscountFee})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -564,9 +590,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.get-collection-creator ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.get-collection-creator ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.getCollectionCreator
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -590,9 +619,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.check-public ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.check-public ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.checkPublic
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -615,9 +647,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.check-whitelist ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.check-whitelist ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.checkWhitelist
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -641,9 +676,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.check-presale ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.check-presale ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.checkPresale
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -666,9 +704,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.get-mint-price ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.get-mint-price ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.getMintPrice
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -692,7 +733,10 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.get-wl-price ${JSON.stringify(
+                // const pactCode = `(free.lptest001.get-wl-price ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${pactFunctions.getWlPrice} ${JSON.stringify(
                     colName
                 )})`;
 
@@ -718,9 +762,12 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                const pactCode = `(free.lptest001.get-presale-price ${JSON.stringify(
-                    colName
-                )})`;
+                // const pactCode = `(free.lptest001.get-presale-price ${JSON.stringify(
+                //     colName
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.getPresalePrice
+                } ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
                     .execution(pactCode)
@@ -741,7 +788,8 @@ export const launchpadApi = createApi({
         }),
         getPriorityUsers: builder.query({
             async queryFn() {
-                const pactCode = `(free.kmpasstest003.get-priority-users)`;
+                // const pactCode = `(free.kmpasstest003.get-priority-users)`;
+                const pactCode = `(${pactFunctions.getPriorityUsers})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -765,9 +813,14 @@ export const launchpadApi = createApi({
 
         getPassBalance: builder.query({
             async queryFn(account) {
-                console.log( account);
+                console.log(account);
 
-                const pactCode = `(free.kmpasstest003.get-pass-balance ${JSON.stringify(account)})`;
+                // const pactCode = `(free.kmpasstest003.get-pass-balance ${JSON.stringify(
+                //     account
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.getPassBalance
+                } ${JSON.stringify(account)})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -792,7 +845,12 @@ export const launchpadApi = createApi({
         getPassClaim: builder.query({
             async queryFn({ colName, account }) {
                 console.log(colName, account);
-                const pactCode = `(free.lptest001.get-pass-claim ${JSON.stringify(colName)} ${JSON.stringify(account)})`;
+                // const pactCode = `(free.lptest001.get-pass-claim ${JSON.stringify(
+                //     colName
+                // )} ${JSON.stringify(account)})`;
+                const pactCode = `(${
+                    pactFunctions.getPassClaim
+                } ${JSON.stringify(colName)} ${JSON.stringify(account)})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -982,7 +1040,7 @@ export const launchpadApi = createApi({
         //                     return { error: "WalletConnect not initialized" };
         //                 }
         //             }
-                    
+
         //             console.log("sign1");
         //             const response = await signFunction(signedTx);
         //             if (response.result.status == "success") {
@@ -1011,18 +1069,54 @@ export const launchpadApi = createApi({
                 console.log(args);
 
                 // Check public, whitelist, and presale status
-                const chkPublic = await api.dispatch(launchpadApi.endpoints.checkPublic.initiate({ colName: reseveTknColName })).unwrap();
-                const chkWl = await api.dispatch(launchpadApi.endpoints.checkWl.initiate({ colName: reseveTknColName })).unwrap();
-                const chkPresale = await api.dispatch(launchpadApi.endpoints.checkPresale.initiate({ colName: reseveTknColName })).unwrap();
+                const chkPublic = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkPublic.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
+                const chkWl = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkWl.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
+                const chkPresale = await api
+                    .dispatch(
+                        launchpadApi.endpoints.checkPresale.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
 
                 // Determine the price based on sale status
                 let price;
                 if (chkPresale) {
-                    price = await api.dispatch(launchpadApi.endpoints.checkPresalePrice.initiate({ colName: reseveTknColName })).unwrap();
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkPresalePrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
                 } else if (chkWl) {
-                    price = await api.dispatch(launchpadApi.endpoints.checkWlPrice.initiate({ colName: reseveTknColName })).unwrap();
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkWlPrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
                 } else if (chkPublic) {
-                    price = await api.dispatch(launchpadApi.endpoints.checkPublicPrice.initiate({ colName: reseveTknColName })).unwrap();
+                    price = await api
+                        .dispatch(
+                            launchpadApi.endpoints.checkPublicPrice.initiate({
+                                colName: reseveTknColName,
+                            })
+                        )
+                        .unwrap();
                 } else {
                     throw new Error("Sale is not live");
                 }
@@ -1030,21 +1124,46 @@ export const launchpadApi = createApi({
                 console.log("Determined price:", price);
 
                 const account = reserverAcc;
-                const creator = await api.dispatch(launchpadApi.endpoints.getColCreator.initiate({ colName: reseveTknColName })).unwrap();
+                const creator = await api
+                    .dispatch(
+                        launchpadApi.endpoints.getColCreator.initiate({
+                            colName: reseveTknColName,
+                        })
+                    )
+                    .unwrap();
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
                 // Check if the user is eligible for a pass
-                const priorityUsers = await api.dispatch(launchpadApi.endpoints.getPriorityUsers.initiate()).unwrap();
+                const priorityUsers = await api
+                    .dispatch(
+                        launchpadApi.endpoints.getPriorityUsers.initiate()
+                    )
+                    .unwrap();
                 console.log("priorityUsers", priorityUsers);
-                const passBalance = await api.dispatch(launchpadApi.endpoints.getPassBalance.initiate(account)).unwrap();
+                const passBalance = await api
+                    .dispatch(
+                        launchpadApi.endpoints.getPassBalance.initiate(account)
+                    )
+                    .unwrap();
                 console.log("passBalance", passBalance);
-                const passClaimed = await api.dispatch(launchpadApi.endpoints.getPassClaim.initiate({ colName: reseveTknColName, account })).unwrap();
+                const passClaimed = await api
+                    .dispatch(
+                        launchpadApi.endpoints.getPassClaim.initiate({
+                            colName: reseveTknColName,
+                            account,
+                        })
+                    )
+                    .unwrap();
                 console.log("passClaimed", passClaimed);
 
                 let passAccFlag = false;
                 console.log("passAccFlag", passAccFlag);
-                if (priorityUsers.includes(account) && passBalance > 0 && !passClaimed) {
+                if (
+                    priorityUsers.includes(account) &&
+                    passBalance > 0 &&
+                    !passClaimed
+                ) {
                     console.log("User is eligible for a pass");
                     passAccFlag = true;
                 }
@@ -1053,7 +1172,15 @@ export const launchpadApi = createApi({
                 let txn;
                 let mintPrice = reserveTknAmount * price;
 
-                const pactCode = `(free.lptest001.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
+                // const pactCode = `(free.lptest001.reserve-token ${JSON.stringify(
+                //     reseveTknColName
+                // )} ${JSON.stringify(account)} ${reserveTknAmount})`;
+                const pactCode = `(${
+                    pactFunctions.reserveToken
+                } ${JSON.stringify(reseveTknColName)} ${JSON.stringify(
+                    account
+                )} ${reserveTknAmount})`;
+
                 console.log(pactCode);
 
                 if (account == creator || passAccFlag) {
@@ -1082,7 +1209,12 @@ export const launchpadApi = createApi({
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
                             withCapability("free.lptest001.MINT-NFT", account),
-                            withCapability("coin.TRANSFER", account, creator, mintPrice),
+                            withCapability(
+                                "coin.TRANSFER",
+                                account,
+                                creator,
+                                mintPrice
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -1112,17 +1244,25 @@ export const launchpadApi = createApi({
                         signedTx = await signWithChainweaver(txn);
                     } else if (walletName == "WalletConnect") {
                         if (wcClient && wcSession) {
-                            const signWithWalletConnect = createWalletConnectSign(
-                                wcClient,
-                                wcSession,
-                                "kadena:testnet04"
-                            );
+                            const signWithWalletConnect =
+                                createWalletConnectSign(
+                                    wcClient,
+                                    wcSession,
+                                    // "kadena:testnet04"
+                                    // process.env.NEXT_PUBLIC_WALLETCONNECT_CHAIN_ID || "kadena:testnet04"
+                                    process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE ===
+                                        "mainnet"
+                                        ? process.env
+                                              .NEXT_PUBLIC_MAINNET_WALLETCONNECT_CHAIN_ID
+                                        : process.env
+                                              .NEXT_PUBLIC_TESTNET_WALLETCONNECT_CHAIN_ID
+                                );
                             signedTx = await signWithWalletConnect(txn);
                         } else {
                             return { error: "WalletConnect not initialized" };
                         }
                     }
-                    
+
                     console.log("sign1");
                     const response = await signFunction(signedTx);
                     if (response.result.status == "success") {
@@ -1132,99 +1272,112 @@ export const launchpadApi = createApi({
                         return { error: response.result.error };
                     }
                 } else {
-                    console.log("Error in local response", localResponse.result.error);
+                    console.log(
+                        "Error in local response",
+                        localResponse.result.error
+                    );
                     return { error: localResponse.result.error };
                 }
             },
         }),
         balance: builder.mutation({
             async queryFn(args) {
-              try {
-                const { account } = args;
-                console.log("account", account);
-          
-                const pactCode = `(coin.get-balance (read-string "account"))`;
-                const transaction = Pact.builder
-                  .execution(pactCode)
-                  .setMeta({ chainId: "1" })
-                  .addData("account", account)
-                  .setNetworkId(NETWORKID)
-                  .createTransaction();
-          
-                const staticClient = createClient(API_HOST);
-          
-                const response = await staticClient.local(transaction, {
-                  preflight: false,
-                  signatureVerification: false,
-                });
-          
-                console.log(response);
-                return { data: response.result.data }; 
-              } catch (error) {
-                return { error: error.toString() };
-              }
-            },
-          }),
-          
-      
-          transfer: builder.mutation({
-            async queryFn(args) {
-              const { receiver, amount, wallet } = args;
-              console.log("receiver", receiver);
-              console.log("amount", amount);
-              const sender = admin;
-              const receiverKey = receiver.slice(2, receiver.length);
-              const senderKey = sender.slice(2, receiver.length);
-              const guard = { keys: [receiverKey], pred: "keys-all" };
-      
-              const pactCode = `(coin.transfer-create (read-string "sender") (read-string "receiver") (read-keyset "guard") ${parseFloat(
-                amount
-              ).toFixed(1)})`;
-              const txn = Pact.builder
-                .execution(pactCode)
-                .addData("guard", guard)
-                .addData("sender", admin)
-                .addData("receiver", receiver)
-                .addSigner(senderKey, (withCapability) => [
-                  withCapability("coin.GAS"),
-                  withCapability("coin.TRANSFER", sender, receiver, amount),
-                ])
-                .setMeta({ chainId: "1", sender })
-                .setNetworkId(NETWORKID)
-                .createTransaction();
-      
-              console.log("transaction", txn);
-      
-              try {
-                const localResponse = await client.local(txn, {
-                  preflight: false,
-                  signatureVerification: false,
-                });
-      
-                if (localResponse.result.status === "success") {
-                  let signedTx;
-                  if (wallet === "ecko") {
-                    signedTx = await eckoWallet(txn);
-                  } else if (wallet === "CW") {
-                    signedTx = await signWithChainweaver(txn);
-                  }
-      
-                  const response = await signFunction(signedTx);
-                  return { data: response };
-                } else {
-                  return { error: localResponse.result.error };
-                }
-              } catch (error) {
-                return { error: error.message };
-              }
-            },
-          }),
+                try {
+                    const { account } = args;
+                    console.log("account", account);
 
-          getTokenDetails: builder.mutation({
+                    const pactCode = `(coin.get-balance (read-string "account"))`;
+                    // const pactCode = `(${pactFunctions.getBalance} (read-string "account"))`;
+                    const transaction = Pact.builder
+                        .execution(pactCode)
+                        .setMeta({ chainId: "1" })
+                        .addData("account", account)
+                        .setNetworkId(NETWORKID)
+                        .createTransaction();
+
+                    const staticClient = createClient(API_HOST);
+
+                    const response = await staticClient.local(transaction, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    console.log(response);
+                    return { data: response.result.data };
+                } catch (error) {
+                    return { error: error.toString() };
+                }
+            },
+        }),
+
+        transfer: builder.mutation({
+            async queryFn(args) {
+                const { receiver, amount, wallet } = args;
+                console.log("receiver", receiver);
+                console.log("amount", amount);
+                const sender = admin;
+                const receiverKey = receiver.slice(2, receiver.length);
+                const senderKey = sender.slice(2, receiver.length);
+                const guard = { keys: [receiverKey], pred: "keys-all" };
+
+                const pactCode = `(coin.transfer-create (read-string "sender") (read-string "receiver") (read-keyset "guard") ${parseFloat(
+                    amount
+                ).toFixed(1)})`;
+                const txn = Pact.builder
+                    .execution(pactCode)
+                    .addData("guard", guard)
+                    .addData("sender", admin)
+                    .addData("receiver", receiver)
+                    .addSigner(senderKey, (withCapability) => [
+                        withCapability("coin.GAS"),
+                        withCapability(
+                            "coin.TRANSFER",
+                            sender,
+                            receiver,
+                            amount
+                        ),
+                    ])
+                    .setMeta({ chainId: "1", sender })
+                    .setNetworkId(NETWORKID)
+                    .createTransaction();
+
+                console.log("transaction", txn);
+
+                try {
+                    const localResponse = await client.local(txn, {
+                        preflight: false,
+                        signatureVerification: false,
+                    });
+
+                    if (localResponse.result.status === "success") {
+                        let signedTx;
+                        if (wallet === "ecko") {
+                            signedTx = await eckoWallet(txn);
+                        } else if (wallet === "CW") {
+                            signedTx = await signWithChainweaver(txn);
+                        }
+
+                        const response = await signFunction(signedTx);
+                        return { data: response };
+                    } else {
+                        return { error: localResponse.result.error };
+                    }
+                } catch (error) {
+                    return { error: error.message };
+                }
+            },
+        }),
+
+        getTokenDetails: builder.mutation({
             async queryFn(args) {
                 const { account } = args;
                 console.log("account", account);
-                const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(account)})`;
+                // const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(
+                //     account
+                // )})`;
+                const pactCode = `(${
+                    pactFunctions.getTokenDetails
+                } ${JSON.stringify(account)})`;
                 const transaction = Pact.builder
                     .execution(pactCode)
                     .setMeta({
@@ -1244,7 +1397,7 @@ export const launchpadApi = createApi({
                         signatureVerification: false,
                     });
 
-                    if (response.result.status === 'success') {
+                    if (response.result.status === "success") {
                         return { data: response.result.data };
                     } else {
                         return { error: response.result.error };
@@ -1254,25 +1407,6 @@ export const launchpadApi = createApi({
                 }
             },
         }),
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }),
 });
 

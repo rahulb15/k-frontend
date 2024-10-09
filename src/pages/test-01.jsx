@@ -66,8 +66,10 @@ const Launchpad = () => {
   const { kadena } = window;
   const client = createClient(API_HOST);
 
-  const admin =
-    "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf";
+  // const admin =
+  //   "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf";
+  const admin = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
+
 
   // const [wallet, setWallet] = useState("ecko");
   const [wallet, setWallet] = useState("CW");

@@ -17,6 +17,7 @@ import styled from "styled-components";
 import Foote from "@layout/footer/footer-01";
 import ChatBot from "@containers/chatbot";
 import { useAccountContext } from "src/contexts";
+import { CHAIN_ID } from "src/constants/contextConstants";
 
 // Styled component for the button with gradient border
 const GradientBorderButton = styled(motion.div)`
@@ -213,7 +214,7 @@ const Footer = () => {
                                     </span>
                                     <span style={{ color: "#fff" }}>
                                         {" "}
-                                        {process.env.NEXT_PUBLIC_KDA_CHAIN_ID}
+                                        {CHAIN_ID}
                                     </span>
                                 </div>
 

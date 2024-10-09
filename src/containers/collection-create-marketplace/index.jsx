@@ -1151,7 +1151,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                     </Select>
                 </div>
             </div>
-                                    <div className="col-md-3">
+                                    {/* <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input
                                                 className="rn-check-box-input"
@@ -1166,8 +1166,8 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 Allow Free Mints
                                             </label>
                                         </div>
-                                    </div>
-                                    <div className="col-md-3">
+                                    </div> */}
+                                    {/* <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input
                                                 className="rn-check-box-input"
@@ -1182,8 +1182,8 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 Enable Whitelist
                                             </label>
                                         </div>
-                                    </div>
-                                    <div className="col-md-3">
+                                    </div> */}
+                                    {/* <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input
                                                 className="rn-check-box-input"
@@ -1198,7 +1198,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 Enable Presale
                                             </label>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input

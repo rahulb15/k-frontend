@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createClient, Pact } from "@kadena/client";
 import { NETWORKID, CHAIN_ID, NETWORK } from 'src/constants/contextConstants';
+import marketplacePactFunctions from '@utils/pactMarketplaceFunctions';
 
 console.log("NETWORKID", NETWORKID);
 console.log("CHAIN_ID", CHAIN_ID);
@@ -30,7 +31,8 @@ export const useDutchPrice = (saleId, saleType) => {
     setError(null);
 
     try {
-      const pactCode = `(n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.policy-dutch-auction-sale.compute-price "${saleId}")`;
+      // const pactCode = `(n_442d3e11cfe0d39859878e5b1520cd8b8c36e5db.policy-dutch-auction-sale.compute-price "${saleId}")`;
+      const pactCode = `${marketplacePactFunctions.marmaladePolicyDutchAuctionSaleComputePrice} "${saleId}"`;
       
       const transaction = Pact.builder
         .execution(pactCode)

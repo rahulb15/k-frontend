@@ -240,7 +240,13 @@ function TransactionManager({
                     const signWithWalletConnect = createWalletConnectSign(
                         wcClient,
                         wcSession,
-                        "kadena:testnet04"
+                        // "kadena:testnet04"
+                        // process.env.NEXT_PUBLIC_WALLETCONNECT_CHAIN_ID || "kadena:testnet04"
+                        process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE === "mainnet"
+                            ? process.env
+                                  .NEXT_PUBLIC_MAINNET_WALLETCONNECT_CHAIN_ID
+                            : process.env
+                                  .NEXT_PUBLIC_TESTNET_WALLETCONNECT_CHAIN_ID
                     );
                     setSigner(() => signWithWalletConnect);
                 } else {
@@ -266,7 +272,13 @@ function TransactionManager({
                 setStatusResult(null);
                 const status = await m_client.status(trx);
                 // Handle post-transaction logic (e.g., updating NFT status)
-                await handlePostTransaction(status, type, data, amount,accountuser.user );
+                await handlePostTransaction(
+                    status,
+                    type,
+                    data,
+                    amount,
+                    accountuser.user
+                );
                 setStatusResult(status.result);
                 if (onConfirm) onConfirm();
             } catch (error) {

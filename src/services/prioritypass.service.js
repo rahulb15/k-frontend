@@ -13,14 +13,16 @@ import {
     CHAIN_ID,
     NETWORK,
 } from "../constants/contextConstants";
+import priorityPassPactFunctions from "@utils/pactPriorityPassFunctions";
 
 const API_HOST = NETWORK;
 const client = createClient(API_HOST);
 const signWithChainweaver = createSignWithChainweaver();
 const eckoWallet = createEckoWalletQuicksign();
 
-const admin =
-    "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf";
+// const admin =
+//     "k:56609bf9d1983f0c13aaf3bd3537fe00db65eb15160463bb641530143d4e9bcf";
+const admin = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
 
 const signFunction = async (signedTx) => {
     const transactionDescriptor = await client.submit(signedTx);
@@ -32,10 +34,11 @@ const signFunction = async (signedTx) => {
 };
 
 const getPassPrice = async () => {
-    const pactCode = `(free.kmpasstest003.get-mint-price )`;
+    // const pactCode = `(free.kmpasstest003.get-mint-price )`;
+    const pactCode = `(${priorityPassPactFunctions.getMintPrice})`;
     const transaction = Pact.builder
         .execution(pactCode)
-        .setMeta({ chainId: "1" })
+        .setMeta({ chainId: CHAIN_ID })
         .setNetworkId(NETWORKID)
         .createTransaction();
 
@@ -79,7 +82,8 @@ export const priorityPassApi = createApi({
                 const account = creator;
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
-                const pactCode = `(free.kmpasstest003.create-collection 
+                // const pactCode = `(free.kmpasstest003.create-collection 
+                const pactCode = `(${priorityPassPactFunctions.createCollection}
                             ${totalSupply}
                             (read-keyset 'guard)
                             ${JSON.stringify(account)}
@@ -93,8 +97,10 @@ export const priorityPassApi = createApi({
                     .addData("guard", guard)
                     .addSigner(account, (withCapability) => [
                         withCapability("coin.GAS"),
-                        withCapability("free.kmpasstest003.IS_ADMIN"),
-                        withCapability("free.kmpasstest003.CREATE-COLLECTION"),
+                        // withCapability("free.kmpasstest003.IS_ADMIN"),
+                        withCapability(priorityPassPactFunctions.isAdmin),
+                        // withCapability("free.kmpasstest003.CREATE-COLLECTION"),
+                        withCapability(priorityPassPactFunctions.createCollectionCapability),
                     ])
                     .setMeta({
                         creationTime: creationTime(),
@@ -150,14 +156,16 @@ export const priorityPassApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                const pactCode = `(free.kmpasstest003.get-unrevealed-tokens-for-collection)`;
+                // const pactCode = `(free.kmpasstest003.get-unrevealed-tokens-for-collection)`;
+                const pactCode = `(${priorityPassPactFunctions.getUnrevealedTokensForCollection})`;
 
                 const txn = Pact.builder
                     .execution(pactCode)
                     .addData("guard", guard)
                     .addSigner(publicKey, (withCapability) => [
                         withCapability("coin.GAS"),
-                        withCapability("free.kmpasstest003.IS_ADMIN"),
+                        // withCapability("free.kmpasstest003.IS_ADMIN"),
+                        withCapability(priorityPassPactFunctions.isAdmin),
                     ])
                     .setMeta({
                         creationTime: creationTime(),
@@ -192,8 +200,14 @@ export const priorityPassApi = createApi({
 
         reserveTokens: builder.mutation({
             async queryFn(args) {
-                const { minter, amount, creator, walletName, wcClient,
-                    wcSession } = args;
+                const {
+                    minter,
+                    amount,
+                    creator,
+                    walletName,
+                    wcClient,
+                    wcSession,
+                } = args;
                 const passPrice = await getPassPrice();
                 console.log("Pass Price", passPrice);
                 console.log("Minter", minter);
@@ -203,9 +217,13 @@ export const priorityPassApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                const pactCode = `(free.kmpasstest003.reserve-token ${JSON.stringify(
+                // const pactCode = `(free.kmpasstest003.reserve-token ${JSON.stringify(
+                //     account
+                // )} ${amount})`;
+                const pactCode = `(${priorityPassPactFunctions.reserveToken} ${JSON.stringify(
                     account
                 )} ${amount})`;
+
 
                 let txn;
                 if (account === admin) {
@@ -216,7 +234,8 @@ export const priorityPassApi = createApi({
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
                             withCapability(
-                                "free.kmpasstest003.MINT-PASS",
+                                // "free.kmpasstest003.MINT-PASS",
+                                priorityPassPactFunctions.mintPassCapability,
                                 account
                             ),
                         ])
@@ -237,7 +256,8 @@ export const priorityPassApi = createApi({
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
                             withCapability(
-                                "free.kmpasstest003.MINT-PASS",
+                                // "free.kmpasstest003.MINT-PASS",
+                                priorityPassPactFunctions.mintPassCapability,
                                 account
                             ),
                             withCapability(
@@ -274,14 +294,21 @@ export const priorityPassApi = createApi({
                     }
                     if (walletName == "Chainweaver") {
                         signedTx = await signWithChainweaver(txn);
-                    }
-                    else if (walletName == "WalletConnect") {
+                    } else if (walletName == "WalletConnect") {
                         if (wcClient && wcSession) {
-                            const signWithWalletConnect = createWalletConnectSign(
-                                wcClient,
-                                wcSession,
-                                "kadena:testnet04"
-                            );
+                            const signWithWalletConnect =
+                                createWalletConnectSign(
+                                    wcClient,
+                                    wcSession,
+                                    // "kadena:testnet04"
+                                    // process.env.NEXT_PUBLIC_WALLETCONNECT_CHAIN_ID || "kadena:testnet04"
+                                    process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE ===
+                                        "mainnet"
+                                        ? process.env
+                                              .NEXT_PUBLIC_MAINNET_WALLETCONNECT_CHAIN_ID
+                                        : process.env
+                                              .NEXT_PUBLIC_TESTNET_WALLETCONNECT_CHAIN_ID
+                                );
                             signedTx = await signWithWalletConnect(txn);
                         } else {
                             return { error: "WalletConnect not initialized" };
