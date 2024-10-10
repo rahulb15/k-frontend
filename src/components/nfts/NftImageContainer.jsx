@@ -50,6 +50,7 @@ const NftImageContainer = ({ data, handleImageClick, setIsFlipped, isFlipped }) 
           <FullscreenIcon />
         </IconButton>
       </Box>
+      {!data?.collectionName === 'Priority Pass' && (
       <Box
         sx={{
           position: 'absolute',
@@ -75,6 +76,7 @@ const NftImageContainer = ({ data, handleImageClick, setIsFlipped, isFlipped }) 
           <QrCodeIcon />
         </IconButton>
       </Box>
+      )}
     </Box>
   );
 };

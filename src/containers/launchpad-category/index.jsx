@@ -105,7 +105,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-01.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 2,
@@ -113,7 +113,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-02.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 3,
@@ -121,7 +121,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-03.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 4,
@@ -129,7 +129,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-04.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 5,
@@ -137,7 +137,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-05.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 6,
@@ -145,7 +145,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-06.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 7,
@@ -153,7 +153,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-07.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 8,
@@ -161,7 +161,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-08.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 9,
@@ -169,7 +169,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-09.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
                 {
                     id: 10,
@@ -177,7 +177,7 @@ const LaunchpadCategory = ({ className, space }) => {
                     image: {
                         src: "/assets-images/launchpad/launchpad-10.jpeg",
                     },
-                    path: "/collections/kadena/priority-pass",
+                    path: "/collections/kadena/Priority Pass",
                 },
             ],
         },

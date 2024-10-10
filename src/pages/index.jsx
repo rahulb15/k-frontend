@@ -34,7 +34,7 @@ const Home = () => {
                 { id: 1, path: "/login", content: "Get Started" },
                 // {
                 //     id: 2,
-                //     path: "/launchpad/kadena/priority-pass",
+                //     path: "/launchpad/kadena/Priority Pass",
                 //     color: "primary-alta",
                 //     content: "Mint",
                 // },
@@ -49,7 +49,7 @@ const Home = () => {
                 { id: 1, path: "/login", content: "Get Started" },
                 // {
                 //     id: 2,
-                //     path: "/launchpad/kadena/priority-pass",
+                //     path: "/launchpad/kadena/Priority Pass",
                 //     color: "primary-alta",
                 //     content: "Mint",
                 // },
@@ -65,7 +65,7 @@ const Home = () => {
                 { id: 1, path: "/login", content: "Get Started" },
                 // {
                 //     id: 2,
-                //     path: "/launchpad/kadena/priority-pass",
+                //     path: "/launchpad/kadena/Priority Pass",
                 //     color: "primary-alta",
                 //     content: "Mint",
                 // },

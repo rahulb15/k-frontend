@@ -73,7 +73,7 @@ const AuthorProfileArea = ({ className }) => {
         };
 
         fetchTokenDetails();
-    }, [account?.user?.walletAddress, getTokenDetailsMutation, refetchOwnedNfts]);
+    }, [account?.user?.walletAddress, getTokenDetailsMutation, refetchOwnedNfts, isRefreshing]);
 
     // Fetch Priority Pass NFTs
 
@@ -535,6 +535,8 @@ const AuthorProfileArea = ({ className }) => {
                             className="row g-5 d-flex"
                             eventKey="nav-profile"
                         >
+                            {nfts.length === 0 &&  <NoDataFound /> }
+
                             {nfts?.map((nft) => (
                                 <div
                                     key={nft._id}

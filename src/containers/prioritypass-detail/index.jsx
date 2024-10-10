@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import clsx from "clsx";
 import Sticky from "@ui/sticky";
 import CollectionDetailTab from "@components/product-details/collection-detail-tab";
-import ProductTitle from "@components/product-details/title";
+import ProductTitle from "@components/product-details/priority_pass_title";
 import { Range } from "react-range";
 import { Rings } from "react-loader-spinner";
 import { motion } from "framer-motion";
@@ -304,7 +304,7 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
                         <div className="rn-pd-content-area">
                             <ProductTitle title="Mint Stages" />
                             <div className="mint-stages">
-                                {["Presale", "Whitelist", "Public"].map(
+                                {[ "Public"].map(
                                     (stage, index) => (
                                         <div className="mint-stage" key={index}>
                                             <h3>

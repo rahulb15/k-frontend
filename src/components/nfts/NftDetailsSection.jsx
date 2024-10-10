@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 
 const NftDetailsSection = ({ data }) => {
-  console.log(data);
+    console.log(data);
     const copyToClipboard = (text, label) => {
         navigator.clipboard.writeText(text);
         Swal.fire({
@@ -59,7 +59,15 @@ const NftDetailsSection = ({ data }) => {
                 <CopyableText label="Owner" text={data?.owner} />
             </Typography>
             <Typography variant="body1" paragraph sx={{ fontSize: 16 }}>
-                <CopyableText label="Sale ID" text={data?.saleId || "N/A"} />
+                {/* <CopyableText label="Sale ID" text={data?.saleId || "N/A"} /> */}
+                {data?.onMarketplace ? (
+                    <CopyableText
+                        label="Sale ID"
+                        text={data?.saleId || "N/A"}
+                    />
+                ) : (
+                    <></>
+                )}
             </Typography>
         </Box>
     );

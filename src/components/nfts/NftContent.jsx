@@ -81,7 +81,33 @@ const NftContent = ({
                         isFlipped={isFlipped}
                     />
                 </ReactCardFlip>
-                <NftGraphSection />
+                {/* <NftGraphSection /> */}
+                {data?.collectionName === "Priority Pass" ? (
+                    <Typography
+                        variant="h5"
+                        style={{
+                            marginTop: "20px",
+                            textAlign: "justify",
+                            fontSize: "16px",
+                            // backgroundColor: "#f0f0f0",
+                            borderRadius: 2,
+                            padding: 2,
+                            textAlign: "center",
+                            transition: "transform 0.2s, box-shadow 0.2s",
+                            "&:hover": {
+                                transform: "translateY(-5px)",
+                                boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                            },
+                            cursor: "pointer",
+
+                        }}
+                    >
+                        {`Each Priority Pass provides the holder with exclusive benefits, including the ability to claim a free NFT from every new collection. Additionally, the pass offers other perks such as early access to limited-edition drops, discounted rates on future collections.
+                            Pass holders can also enjoy priority customer support, access to private communities, and potential airdrops of exclusive NFTs or tokens. By holding the Priority Pass, users can unlock a wide range of valuable benefits and experiences within the ecosystem.`}
+                    </Typography>
+                ) : (
+                    <NftGraphSection data={data} />
+                )}
             </Box>
 
             <Box className="nft-details-section">
@@ -108,6 +134,7 @@ const NftContent = ({
                     {!data?.onMarketplace &&
                         !data?.onAuction &&
                         !data?.onSale &&
+                        !data?.collectionName === "Priority Pass" &&
                         !showSellOptions && (
                             <Button
                                 className="nft-bid-button"
