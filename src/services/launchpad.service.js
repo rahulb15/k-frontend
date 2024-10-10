@@ -377,7 +377,7 @@ export const launchpadApi = createApi({
                         .setMeta({
                             creationTime: creationTime(),
                             sender: account,
-                            gasLimit: 150000,
+                            gasLimit: 300000,
                             chainId: CHAIN_ID,
                             ttl: 28800,
                         })
