@@ -1158,7 +1158,7 @@ const validateDateTime = () => {
                                     <span style={{ fontSize: "16px" }}>
                                         Kryptomerch is looking to onboard
                                         unique, quality projects to drop their
-                                        collections via Magic Eden Launchpad.
+                                        collections via Kryptomerch Launchpad.
                                     </span>{" "}
                                     <br />
                                     <br />
