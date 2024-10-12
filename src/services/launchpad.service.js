@@ -173,60 +173,143 @@ export const launchpadApi = createApi({
         //             collectionRequestEnableAirdrop,
         //             collectionRequestPolicy,
         //             walletName,
+        //             wcClient,
+        //             wcSession,
         //         } = args;
         //         console.log(args);
-
-        //         // return;
+        //         const launchFee = await getLaunchFee();
+        //         console.log("launchFee", launchFee);
+        //         const primeRole = await getPrimeRoleUsers();
+        //         console.log("primeRole", primeRole);
+        //         const discountRole = await getDiscountRoleUsers();
+        //         console.log("discountRole", discountRole);
+        //         const discountRate = await getDiscountRate();
+        //         console.log("discountRate", discountRate);
+        //         const discountFee = launchFee * (1 - discountRate);
+        //         console.log("discountFee", discountFee);
 
         //         const account = collectionRequestCreator;
+        //         console.log("account", account);
+
+        //         const primeRoleArray = primeRole.split(" ");
+        //         const discountRoleArray = discountRole.split(" ");
+
+        //         let decimalPrice;
+        //         const calculateDecimal = (price) => {
+        //             const priceString = price.toString();
+        //             const priceArray = priceString.split(".");
+        //             if (priceArray.length === 1) {
+        //                 decimalPrice = `${priceArray[0]}.0`;
+        //             } else {
+        //                 decimalPrice = priceString;
+        //             }
+        //         };
+        //         calculateDecimal(collectionRequestMintPrice);
+        //         console.log("decimalPrice", decimalPrice);
+
+        //         let royalityPercentage;
+        //         const calculateRoyalityPercentage = (royality) => {
+        //             royalityPercentage = royality / 100;
+        //         };
+        //         calculateRoyalityPercentage(collectionRequestRoyalityPerc);
+
         //         const publicKey = account.slice(2, account.length);
         //         console.log(publicKey);
         //         const guard = { keys: [publicKey], pred: "keys-all" };
 
-        //         const pactCode = `(free.lptest001.nft-collection-request
+        //         // const pactCode = `(free.lptest001.nft-collection-request
+        //         const pactCode = `(${pactFunctions.nftCollectionRequest} 
         //         ${JSON.stringify(collectionRequestName)}
-        //         ${JSON.stringify(collectionRequestSymbol)}
-        //         ${JSON.stringify(account)}
+        //         ${JSON.stringify(collectionRequestSymbol)}  
+        //         ${JSON.stringify(account)}        
         //         (read-keyset  "guard")
         //         ${JSON.stringify(collectionRequestDescription)}
         //         ${JSON.stringify(collectionRequestCategory)}
         //         ${collectionRequestSupply}
         //         ${JSON.stringify(collectionRequestUriList)}
-        //         ${collectionRequestMintPrice}
-        //         ${collectionRequestRoyalityPerc}
+        //         ${decimalPrice}
+        //         ${royalityPercentage}
         //         ${JSON.stringify(collectionRequestRoyalityAddress)}
         //         ${JSON.stringify(collectionRequestCoverImgUrl)}
         //         ${JSON.stringify(collectionRequestBannerImgUrl)}
         //         ${JSON.stringify(collectionRequestStartDate)}
         //         (${collectionRequestStartDate})
-        //         ${JSON.stringify(collectionRequesEndDate)}
-        //         (${collectionRequesEndDate})
-        //         ${collectionRequestEnableFreeMint}
-        //         ${collectionRequestEnableWl}
-        //         ${collectionRequestEnablePresale}
-        //         ${collectionRequestEnableAirdrop}
+        //         ${JSON.stringify(collectionRequesEndDate)}       
+        //         (${collectionRequesEndDate}) 
+        //         ${collectionRequestEnableFreeMint}                 
+        //         ${collectionRequestEnableWl} 
+        //         ${collectionRequestEnablePresale} 
+        //         ${collectionRequestEnableAirdrop} 
         //         ${JSON.stringify(collectionRequestPolicy)}
         //         )
         //         `;
 
         //         console.log(pactCode);
+        //         let txn;
 
-        //         const txn = Pact.builder
-        //             .execution(pactCode)
-        //             .addData("guard", guard)
-        //             .addSigner(publicKey, (withCapability) => [
-        //                 withCapability("coin.GAS"),
-        //                 withCapability("coin.TRANSFER", account, admin, 1.0),
-        //             ])
-        //             .setMeta({
-        //                 creationTime: creationTime(),
-        //                 sender: account,
-        //                 gasLimit: 150000,
-        //                 chainId: CHAIN_ID,
-        //                 ttl: 28800,
-        //             })
-        //             .setNetworkId(NETWORKID)
-        //             .createTransaction();
+        //         if (primeRoleArray.includes(account)) {
+        //             txn = Pact.builder
+        //                 .execution(pactCode)
+        //                 .addData("guard", guard)
+        //                 .addSigner(publicKey, (withCapability) => [
+        //                     withCapability("coin.GAS"),
+        //                 ])
+        //                 .setMeta({
+        //                     creationTime: creationTime(),
+        //                     sender: account,
+        //                     gasLimit: 300000,
+        //                     chainId: CHAIN_ID,
+        //                     ttl: 28800,
+        //                 })
+        //                 .setNetworkId(NETWORKID)
+        //                 .createTransaction();
+        //         } else if (discountRoleArray.includes(account)) {
+        //             txn = Pact.builder
+        //                 .execution(pactCode)
+        //                 .addData("guard", guard)
+        //                 .addSigner(publicKey, (withCapability) => [
+        //                     withCapability("coin.GAS"),
+        //                     withCapability(
+        //                         "coin.TRANSFER",
+        //                         account,
+        //                         admin,
+        //                         discountFee
+        //                     ),
+        //                 ])
+        //                 .setMeta({
+        //                     creationTime: creationTime(),
+        //                     sender: account,
+        //                     gasLimit: 150000,
+        //                     chainId: CHAIN_ID,
+        //                     ttl: 28800,
+        //                 })
+        //                 .setNetworkId(NETWORKID)
+        //                 .createTransaction();
+        //         } else {
+        //             txn = Pact.builder
+        //                 .execution(pactCode)
+        //                 .addData("guard", guard)
+        //                 .addSigner(publicKey, (withCapability) => [
+        //                     withCapability("coin.GAS"),
+        //                     withCapability(
+        //                         "coin.TRANSFER",
+        //                         account,
+        //                         admin,
+        //                         launchFee
+        //                     ),
+        //                 ])
+        //                 .setMeta({
+        //                     creationTime: creationTime(),
+        //                     sender: account,
+        //                     gasLimit: 150000,
+        //                     chainId: CHAIN_ID,
+        //                     ttl: 28800,
+        //                 })
+        //                 .setNetworkId(NETWORKID)
+        //                 .createTransaction();
+        //         }
+
+        //         console.log("updateMintTime", txn);
 
         //         try {
         //             const localResponse = await client.local(txn, {
@@ -250,6 +333,29 @@ export const launchpadApi = createApi({
         //                     console.log("Chainweaver");
 
         //                     signedTx = await signWithChainweaver(txn);
+        //                 } else if (walletName === "WalletConnect") {
+        //                     console.log("WalletConnect");
+        //                     if (wcClient && wcSession) {
+        //                         const signWithWalletConnect =
+        //                             createWalletConnectSign(
+        //                                 wcClient,
+        //                                 wcSession,
+        //                                 // "kadena:testnet04"
+        //                                 // process.env.NEXT_PUBLIC_WALLETCONNECT_CHAIN_ID || "kadena:testnet04"
+        //                                 process.env
+        //                                     .NEXT_PUBLIC_KDA_NETWORK_TYPE ===
+        //                                     "mainnet"
+        //                                     ? process.env
+        //                                           .NEXT_PUBLIC_MAINNET_WALLETCONNECT_CHAIN_ID
+        //                                     : process.env
+        //                                           .NEXT_PUBLIC_TESTNET_WALLETCONNECT_CHAIN_ID
+        //                             );
+        //                         signedTx = await signWithWalletConnect(txn);
+        //                     } else {
+        //                         return {
+        //                             error: "WalletConnect not initialized",
+        //                         };
+        //                     }
         //                 }
 
         //                 const response = await signFunction(signedTx);
@@ -291,12 +397,6 @@ export const launchpadApi = createApi({
                     wcSession,
                 } = args;
                 console.log(args);
-
-                // Get WalletConnect client and session
-                // const { client: wcClient, session: wcSession } = useWalletConnectClient();
-                // console.log("wcClient", wcClient);
-                // console.log("wcSession", wcSession);
-
                 const launchFee = await getLaunchFee();
                 console.log("launchFee", launchFee);
                 const primeRole = await getPrimeRoleUsers();
@@ -436,6 +536,8 @@ export const launchpadApi = createApi({
                         preflight: false,
                         signatureVerification: false,
                     });
+
+                    console.log(localResponse.result,walletName)
 
                     if (localResponse.result.status === "success") {
                         let signedTx;
@@ -1056,6 +1158,68 @@ export const launchpadApi = createApi({
         //         }
         //     },
         // }),
+
+
+    //     const collectionName = "K/C-CW-110";
+    //     const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(collectionName)})`;
+    
+    //     const transaction = Pact.builder
+    //       .execution(pactCode)
+    //       .setMeta({ chainId: "1" })
+    //       .setNetworkId(NETWORK_ID)
+    //       .createTransaction();
+    
+    //     const response = await client.local(transaction, {
+    //       preflight: false,
+    //       signatureVerification: false,
+    //     });
+    
+    //     if (response.result.status == "success") {
+    //       let urisIPFS = response.result.data;
+    //       // alert(`Collection Id: ${colId}`);
+    //       console.log(`urisIPFS: ${urisIPFS}`);
+    //     }
+    //   };
+
+    getUriList: builder.query({
+        async queryFn(args) {
+            const { collectionName } = args;
+            console.log(args);
+            const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(
+                collectionName
+            )})`;
+            // const pactCode = `(${
+            //     pactFunctions.getUrisIPFS
+            // } ${JSON.stringify(collectionName)})`;
+
+            const transaction = Pact.builder
+                .execution(pactCode)
+                .setMeta({ chainId: CHAIN_ID })
+                .createTransaction();
+
+            const response = await client.local(transaction, {
+                preflight: false,
+                signatureVerification: false,
+            });
+            console.log("response", response);
+
+            if (response.result.status === "success") {
+                return { data: response.result.data };
+            } else {
+                return { error: response.result.error };
+            }
+        }
+    }),
+
+
+    
+
+
+
+
+
+
+
         reserveTokens: builder.mutation({
             async queryFn(args, api, extraOptions, baseQuery) {
                 const {
@@ -1190,7 +1354,7 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("free.lptest001.MINT-NFT", account),
+                            withCapability("free.lptest003.MINT-NFT", account),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -1208,7 +1372,7 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("free.lptest001.MINT-NFT", account),
+                            withCapability("free.lptest003.MINT-NFT", account),
                             withCapability(
                                 "coin.TRANSFER",
                                 account,
@@ -1427,6 +1591,7 @@ export const {
     useGetPriorityUsersQuery,
     useGetPassBalanceQuery,
     useGetPassClaimQuery,
+    useGetUriListQuery,
     useReserveTokensMutation,
     useBalanceMutation,
     useTransferMutation,

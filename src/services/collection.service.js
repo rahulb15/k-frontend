@@ -44,6 +44,8 @@ const updateCollection = async (body,name) => {
     }
 };
 
+
+
 const getCollection = async (walletAddress) => {
     try {
         const response = await axios.get(

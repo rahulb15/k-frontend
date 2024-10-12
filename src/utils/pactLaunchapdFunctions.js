@@ -1,22 +1,22 @@
 // pactFunctions.js
 
 const testnetFunctions = {
-    getCollectionLaunchFee: 'free.lptest001.get-collection-launch-fee',
-    getPrimeRole: 'free.lptest001.get-prime-role',
-    getDiscountRole: 'free.lptest001.get-discount-role',
-    getCollectionDiscountFee: 'free.lptest001.get-collection-discount-fee',
-    getCollectionCreator: 'free.lptest001.get-collection-creator',
-    checkPublic: 'free.lptest001.check-public',
-    checkWhitelist: 'free.lptest001.check-whitelist',
-    checkPresale: 'free.lptest001.check-presale',
-    getMintPrice: 'free.lptest001.get-mint-price',
-    getWlPrice: 'free.lptest001.get-wl-price',
-    getPresalePrice: 'free.lptest001.get-presale-price',
+    getCollectionLaunchFee: 'free.lptest003.get-collection-launch-fee',
+    getPrimeRole: 'free.lptest003.get-prime-role',
+    getDiscountRole: 'free.lptest003.get-discount-role',
+    getCollectionDiscountFee: 'free.lptest003.get-collection-discount-fee',
+    getCollectionCreator: 'free.lptest003.get-collection-creator',
+    checkPublic: 'free.lptest003.check-public',
+    checkWhitelist: 'free.lptest003.check-whitelist',
+    checkPresale: 'free.lptest003.check-presale',
+    getMintPrice: 'free.lptest003.get-mint-price',
+    getWlPrice: 'free.lptest003.get-wl-price',
+    getPresalePrice: 'free.lptest003.get-presale-price',
     getPriorityUsers: 'free.kmpasstest003.get-priority-users',
     getPassBalance: 'free.kmpasstest003.get-pass-balance',
-    getPassClaim: 'free.lptest001.get-pass-claim',
-    reserveToken: 'free.lptest001.reserve-token',
-    nftCollectionRequest: 'free.lptest001.nft-collection-request',
+    getPassClaim: 'free.lptest003.get-pass-claim',
+    reserveToken: 'free.lptest003.reserve-token',
+    nftCollectionRequest: 'free.lptest003.nft-collection-request',
     getTokenDetails: 'free.mp-ng-003.get-token-details'
 };
 

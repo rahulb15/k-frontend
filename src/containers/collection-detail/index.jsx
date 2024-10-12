@@ -612,6 +612,7 @@ import {
     useGetPriorityUsersQuery,
     useGetPassBalanceQuery,
     useGetPassClaimQuery,
+    useGetUriListQuery,
 } from "src/services/launchpad.service";
 
 const CollectionDetailsArea = ({ space, className, product, refresh }) => {
@@ -641,6 +642,8 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     // Hooks
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
+    const { data: uriList, refetch: refetchUriList } = useGetUriListQuery({ collectionName: product?.collectionName });
+    console.log("URI List:", uriList);    
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
     const { data: priorityUsers } = useGetPriorityUsersQuery();
     const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
@@ -867,7 +870,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     }, [product]);
 
     // Function to handle mint button click
-    const handleMint = () => {
+    const handleMint = async () => {
         if (!stageInfo.isLive) {
             Swal.fire({
                 icon: "error",
@@ -890,6 +893,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
 
     // Function to confirm mint
     const confirmMint = async () => {
+        console.log("Reserve Price:", reservePrice);
         setIsLoading(true);
         try {
             if (
@@ -913,6 +917,18 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                 });
                 return;
             }
+
+            const result = await refetchUriList();
+console.log("URI List Response:", result.data);
+
+const updateResponse = await collectionService.updateCollection(
+    {
+        uriList: result.data,
+    },
+    product.collectionName
+);
+console.log("Update Collection Response:", updateResponse);
+if (updateResponse?.data?.status === "success") {
 
             const response = await reserveTokensFunction({
                 reseveTknColName: product.collectionName,
@@ -956,6 +972,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                     text: "Minting failed!",
                 });
             }
+        }
         } catch (error) {
             console.error("Error during minting:", error);
             Swal.fire({

@@ -402,23 +402,22 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
     useEffect(() => {
         console.log("watch", watch("tokenList"));
-        const tokenList = watch("tokenList") || "";
-        
-        // Remove any whitespace
-        const processedTokenList = tokenList.trim();
-        
-        if (processedTokenList && !processedTokenList.includes(' ') && !processedTokenList.includes('"') && !processedTokenList.includes(',') && !processedTokenList.includes('[') && !processedTokenList.includes(']')) {
-            dispatch(setCollectionRequestUriList(processedTokenList));
-        } else {
-            dispatch(setCollectionRequestUriList([]));
-        }
-    }, [watch("tokenList")]);
+        const processedTokenList = processTokenList(watch("tokenList") || "");
+        dispatch(
+            setCollectionRequestUriList(
+                processedTokenList
+                    .split(",")
+                    .map((token) => token.replace(/"/g, "").trim())
+            )
+        );
 
-    // Remove the automatic totalSupply calculation
-useEffect(() => {
-    console.log("watch", watch("totalSupply"));
-    dispatch(setCollectionRequestSupply(parseInt(watch("totalSupply")) || 0));
-}, [watch("totalSupply")]);
+        //totalSupply
+        setValue("totalSupply", processedTokenList.split(",").length);
+
+        dispatch(
+            setCollectionRequestSupply(processedTokenList.split(",").length)
+        );
+    }, [watch("tokenList")]);
 
     useEffect(() => {
         console.log("watch", watch("royaltyAddress"));
@@ -1828,24 +1827,39 @@ const validateDateTime = () => {
                                         </div>
                                     </div>
                                     <div className="col-md-4">
-    <div className="input-box pb--20">
-        <label htmlFor="totalSupply" className="form-label">
-            Total Supply
-        </label>
-        <input
-            id="totalSupply"
-            type="number"
-            {...register("totalSupply", {
-                required: "Total Supply is required",
-                min: { value: 1, message: "Total Supply must be at least 1" },
-                validate: (value) => Number.isInteger(Number(value)) || "Total Supply must be an integer"
-            })}
-        />
-        {errors.totalSupply && (
-            <ErrorText>{errors.totalSupply?.message}</ErrorText>
-        )}
-    </div>
-</div>
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="totalSupply"
+                                                className="form-label"
+                                            >
+                                                Total Supply
+                                            </label>
+                                            <input
+                                                id="totalSupply"
+                                                // value={[formData.tokenList].length || 0}
+                                                type="number"
+                                                {...register("totalSupply", {
+                                                    pattern: {
+                                                        value: /^[0-9]+(\.[0-9]{1,18})?$/,
+                                                        message:
+                                                            "Please enter a valid number",
+                                                    },
+
+                                                    required:
+                                                        "Total Supply is required",
+                                                })}
+                                            />
+
+                                            {errors.totalSupply && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.totalSupply
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
+                                        </div>
+                                    </div>
                                     <div className="col-md-4">
                                         <div className="input-box pb--20">
                                             <label
@@ -2279,21 +2293,26 @@ const validateDateTime = () => {
                                                 htmlFor="tokenList"
                                                 className="form-label"
                                             >
-            Token URI
-            </label>
+                                                Token List
+                                            </label>
                                             <textarea
                                                 id="tokenList"
                                                 rows="5"
-                                                placeholder="Enter a single token URI"
+                                                placeholder="Enter or paste your token URLs, one per line or comma-separated"
                                                 {...register("tokenList", {
-                                                    required: "Token URI is required",
+                                                    required:
+                                                        "Token List is required",
                                                     validate: (value) => {
-                                                        const processed = value.trim();
-                                                        if (processed.includes(' ') || processed.includes('"') || processed.includes(',') || processed.includes('[') || processed.includes(']')) {
-                                                            return "Please enter a single token URI without spaces, quotes, commas, or brackets";
-                                                        }
-                                                        return true;
-                                                    }
+                                                        const processed =
+                                                            processTokenList(
+                                                                value
+                                                            );
+                                                        return (
+                                                            processed.length >
+                                                                0 ||
+                                                            "Please enter valid token URLs"
+                                                        );
+                                                    },
                                                 })}
                                             />
                                             {errors.tokenList && (

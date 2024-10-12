@@ -36,7 +36,7 @@ function reducer(state, action) {
 
 const Home = () => {
     const [page, setPage] = React.useState(1);
-    const [limit, setLimit] = React.useState(10);
+    const [limit, setLimit] = React.useState(50);
     const [search, setSearch] = React.useState("");
     const data = {
         products: [
