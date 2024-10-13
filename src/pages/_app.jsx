@@ -30,6 +30,19 @@ import "../containers/wallet-button/styles.css";
 import '../styles/sweetalert2-custom.css'
 const AppContent = ({ Component, pageProps }) => {
     const { data, isLoading, pactError, setInstance, validate, cleanImageCache } = useSettings();
+
+
+    useEffect(() => {
+        const currentVersion = process.env.NEXT_PUBLIC_VERSION;
+        const storedVersion = localStorage.getItem('appVersion');
+        
+        if (storedVersion !== currentVersion) {
+          localStorage.setItem('appVersion', currentVersion);
+          window.location.reload(true); // Force reload from server
+        }
+      }, []);
+
+
     useEffect(() => {
         console.log(DEFAULT_INSTANCE);
         if(DEFAULT_INSTANCE.name){

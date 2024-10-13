@@ -130,11 +130,13 @@ const Footer = () => {
         { key: "Ctrl + Alt + O", description: "Open orders" },
         { key: "Ctrl + Shift + F", description: "Focus search bar" },
         { key: "Alt + Shift + H", description: "Open help" },
-        { key: "Alt + Shift + I", description: "Open dev tools or inspection mode" },
+        {
+            key: "Alt + Shift + I",
+            description: "Open dev tools or inspection mode",
+        },
         { key: "Ctrl + Shift + U", description: "Open user profile" },
         { key: "Ctrl + Alt + S", description: "Save data" },
     ];
-    
 
     const handleBackward = () => {
         router.back();
@@ -178,7 +180,7 @@ const Footer = () => {
                                 <ColorSwitcher />
                             </div>
                         </div>
-                        
+
                         <div className="setting-option">
                             {/* //chain icon and chain NEXT_PUBLIC_KDA_CHAIN_ID */}
                             <motion.div
@@ -217,10 +219,9 @@ const Footer = () => {
                                         {CHAIN_ID}
                                     </span>
                                 </div>
-
-
-
                             </motion.div>
+
+                              
                         </div>
                         <div
                             className="setting-option"
@@ -228,6 +229,26 @@ const Footer = () => {
                         >
                             <IoSettings />
                         </div>
+
+                          {/* NEXT_PUBLIC_VERSION */}
+                          <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            color: "#fff",
+                                            fontSize: "1.2rem",
+                                            fontWeight: "bold",
+                                            marginRight: "5px",
+                                        }}
+                                    >
+                                        v {process.env.NEXT_PUBLIC_VERSION}
+                                    </span>
+                                </div>
                     </div>
                     <div className="footer-section middle">
                         {/* <div
@@ -280,9 +301,9 @@ const Footer = () => {
                         >
                             do chat bot here
                         </div> */}
-                         <div className="setting-option">
-        <ChatBot userId = {account?.user?._id} />
-    </div>
+                        <div className="setting-option">
+                            <ChatBot userId={account?.user?._id} />
+                        </div>
                         <div
                             className="setting-option"
                             onClick={toggleShortcuts}

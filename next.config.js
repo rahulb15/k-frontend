@@ -42,4 +42,7 @@ module.exports = {
         ];
         return config;
     },
+    generateBuildId: async () => {
+        return 'my-build-id-' + Date.now()
+      }
 };
