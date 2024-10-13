@@ -31,7 +31,7 @@
 // };
 
 // const getFee = async () => {
-//     const pactCode = `(free.mp-ng-003.get-fee "mint")`;
+//     const pactCode = `(free.mp-ng-004.get-fee "mint")`;
 
 //     const transaction = Pact.builder
 //         .execution(pactCode)
@@ -81,7 +81,7 @@
 //                 const publicKey = account.slice(2, account.length);
 //                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-//                 const pactCode = `(free.mp-ng-003.launch-collection
+//                 const pactCode = `(free.mp-ng-004.launch-collection
 //                     ${JSON.stringify(collectionRequestName)}
 //                     ${JSON.stringify(collectionRequestSymbol)}
 //                     ${JSON.stringify(account)}
@@ -160,7 +160,7 @@
 //                 let mintPrice = reserveTknAmount * price;
 //                 let mintFee = mintPrice * fee;
 
-//                 const pactCode = `(free.mp-ng-003.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
+//                 const pactCode = `(free.mp-ng-004.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
 
 //                 let txn;
 //                 if (account === creator) {
@@ -169,7 +169,7 @@
 //                         .addData("guard", guard)
 //                         .addSigner(publicKey, (withCapability) => [
 //                             withCapability("coin.GAS"),
-//                             withCapability("free.mp-ng-003.MINT-NFT", account),
+//                             withCapability("free.mp-ng-004.MINT-NFT", account),
 //                             withCapability("coin.TRANSFER", account, admin, mintFee),
 //                         ])
 //                         .setMeta({
@@ -187,7 +187,7 @@
 //                         .addData("guard", guard)
 //                         .addSigner(publicKey, (withCapability) => [
 //                             withCapability("coin.GAS"),
-//                             withCapability("free.mp-ng-003.MINT-NFT", account),
+//                             withCapability("free.mp-ng-004.MINT-NFT", account),
 //                             withCapability("coin.TRANSFER", account, admin, mintFee),
 //                             withCapability("coin.TRANSFER", account, creator, mintPrice),
 //                         ])
@@ -236,7 +236,7 @@
 
 // // Helper functions
 // const checkPublicPrice = async (colName) => {
-//     const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(colName)})`;
+//     const pactCode = `(free.mp-ng-004.get-mint-price ${JSON.stringify(colName)})`;
 
 //     const transaction = Pact.builder
 //         .execution(pactCode)
@@ -257,7 +257,7 @@
 // };
 
 // const getColCreator = async (colName) => {
-//     const pactCode = `(free.mp-ng-003.get-collection-creator ${JSON.stringify(colName)})`;
+//     const pactCode = `(free.mp-ng-004.get-collection-creator ${JSON.stringify(colName)})`;
 
 //     const transaction = Pact.builder
 //         .execution(pactCode)
@@ -319,7 +319,7 @@ const coin_fungible = {
 };
 
 const getFee = async () => {
-    // const pactCode = `(free.mp-ng-003.get-fee "mint")`;
+    // const pactCode = `(free.mp-ng-004.get-fee "mint")`;
     // const pactCode = `(${
     //     pactFunctions.getCollectionCreator
     // } ${JSON.stringify(colName)})`;
@@ -349,6 +349,118 @@ export const marketplaceApi = createApi({
     reducerPath: "marketplaceApi",
     baseQuery: fetchBaseQuery({ baseUrl: API_HOST }),
     endpoints: (builder) => ({
+        // launchCollection: builder.mutation({
+        //     async queryFn(args) {
+        //         const {
+        //             collectionRequestName,
+        //             collectionRequestSymbol,
+        //             collectionRequestCreator,
+        //             collectionRequestDescription,
+        //             collectionRequestCategory,
+        //             collectionRequestMintPrice,
+        //             collectionRequestRoyalityPerc,
+        //             collectionRequestRoyalityAddress,
+        //             collectionRequestCoverImgUrl,
+        //             collectionRequestBannerImgUrl,
+        //             collectionRequestStartDate,
+        //             collectionRequesEndDate,
+        //             collectionRequestEnableAirdrop,
+        //             collectionRequestPolicy,
+        //             collectionRequestUriList,
+        //             collectionRequestSupply,
+        //             walletName,
+        //         } = args;
+        //         console.log(walletName);
+
+
+        //         let decimalPrice;
+        //         const calculateDecimal = (price) => {
+        //           const priceString = price.toString();
+        //           const priceArray = priceString.split(".");
+        //           if (priceArray.length === 1) {
+        //             decimalPrice = `${priceArray[0]}.0`;
+        //           } else {
+        //             decimalPrice = priceString;
+        //           }
+        //         };
+        //         calculateDecimal(collectionRequestMintPrice);
+        //         console.log("decimalPrice", decimalPrice);
+
+
+        //         let royalityPercentage;
+        //         const calculateRoyalityPercentage = (royality) => {
+        //             royalityPercentage = royality / 100;
+        //         };
+        //         calculateRoyalityPercentage(collectionRequestRoyalityPerc);
+
+
+        //         const account = collectionRequestCreator;
+        //         const publicKey = account.slice(2, account.length);
+        //         const guard = { keys: [publicKey], pred: "keys-all" };
+
+        //         // const pactCode = `(free.mp-ng-004.launch-collection
+        //         const pactCode = `(${marketplacePactFunctions.launchCollection}
+        //             ${JSON.stringify(collectionRequestName)}  
+        //             ${JSON.stringify(collectionRequestSymbol)}  
+        //             ${JSON.stringify(account)}        
+        //             (read-keyset "guard")
+        //             ${JSON.stringify(collectionRequestDescription)}
+        //             ${JSON.stringify(collectionRequestCategory)}
+        //             ${collectionRequestSupply}
+        //             ${JSON.stringify(collectionRequestUriList)}
+        //             ${decimalPrice}
+        //             ${royalityPercentage}
+        //             ${JSON.stringify(collectionRequestRoyalityAddress)}
+        //             ${JSON.stringify(collectionRequestCoverImgUrl)}
+        //             ${JSON.stringify(collectionRequestBannerImgUrl)}
+        //             ${JSON.stringify(collectionRequestStartDate)}
+        //             (${collectionRequestStartDate})
+        //             ${JSON.stringify(collectionRequesEndDate)}       
+        //             (${collectionRequesEndDate})
+        //             ${collectionRequestEnableAirdrop} 
+        //             ${JSON.stringify(collectionRequestPolicy)}
+        //         )`;
+
+        //         const txn = Pact.builder
+        //             .execution(pactCode)
+        //             .addData("guard", guard)
+        //             .addSigner(publicKey)
+        //             .setMeta({
+        //                 creationTime: creationTime(),
+        //                 sender: account,
+        //                 gasLimit: 150000,
+        //                 chainId: CHAIN_ID,
+        //                 ttl: 28800,
+        //             })
+        //             .setNetworkId(NETWORKID)
+        //             .createTransaction();
+
+        //         try {
+        //             const localResponse = await client.local(txn, {
+        //                 preflight: false,
+        //                 signatureVerification: false,
+        //             });
+
+        //             if (localResponse.result.status === "success") {
+        //                 let signedTx;
+        //                 if (walletName === "Ecko Wallet") {
+        //                     console.log("Ecko Wallet");
+        //                     signedTx = await eckoWallet(txn);
+        //                 } else if (walletName === "Chainweaver") {
+        //                     console.log("Chainweaver");
+        //                     signedTx = await signWithChainweaver(txn);
+        //                 }
+        //                 const response = await signFunction(signedTx);
+        //                 return { data: response };
+        //             } else {
+        //                 return { error: localResponse.result.error };
+        //             }
+        //         } catch (error) {
+        //             return { error: error.message };
+        //         }
+        //     },
+        // }),
+
         launchCollection: builder.mutation({
             async queryFn(args) {
                 const {
@@ -398,7 +510,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.launch-collection
+                // const pactCode = `(free.mp-ng-004.launch-collection
                 const pactCode = `(${marketplacePactFunctions.launchCollection}
                     ${JSON.stringify(collectionRequestName)}  
                     ${JSON.stringify(collectionRequestSymbol)}  
@@ -482,7 +594,7 @@ export const marketplaceApi = createApi({
                 let mintPrice = reserveTknAmount * price;
                 let mintFee = mintPrice * fee;
 
-                // const pactCode = `(free.mp-ng-003.reserve-token ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.reserve-token ${JSON.stringify(
                 //     reseveTknColName
                 // )} ${JSON.stringify(account)} ${reserveTknAmount})`;
                 const pactCode = `(${marketplacePactFunctions.reserveToken} ${JSON.stringify(
@@ -498,7 +610,7 @@ export const marketplaceApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            // withCapability("free.mp-ng-003.MINT-NFT", account),
+                            // withCapability("free.mp-ng-004.MINT-NFT", account),
                             withCapability(`${marketplacePactFunctions.mintNft}`, account),
                             withCapability(
                                 "coin.TRANSFER",
@@ -522,7 +634,7 @@ export const marketplaceApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            // withCapability("free.mp-ng-003.MINT-NFT", account),
+                            // withCapability("free.mp-ng-004.MINT-NFT", account),
                             withCapability(`${marketplacePactFunctions.mintNft}`, account),
                             withCapability(
                                 "coin.TRANSFER",
@@ -582,7 +694,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.get-unrevealed-tokens-for-collection ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-unrevealed-tokens-for-collection ${JSON.stringify(
                 //     unrevealedColName
                 // )} (read-keyset  "guard"))`;
                 const pactCode = `(${marketplacePactFunctions.getUnrevealedTokens} ${JSON.stringify(
@@ -626,7 +738,7 @@ export const marketplaceApi = createApi({
         //     async queryFn(args) {
         //         const { colName } = args;
         //         console.log(args);
-        //         const pactCode = `(free.mp-ng-003.check-public ${JSON.stringify(
+        //         const pactCode = `(free.mp-ng-004.check-public ${JSON.stringify(
         //             colName
         //         )})`;
 
@@ -651,7 +763,7 @@ export const marketplaceApi = createApi({
         //     async queryFn(args) {
         //         const { colName } = args;
         //         console.log(args);
-        //         const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(
+        //         const pactCode = `(free.mp-ng-004.get-mint-price ${JSON.stringify(
         //             colName
         //         )})`;
 
@@ -677,7 +789,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.check-public ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.check-public ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.checkPublic} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -703,7 +815,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.check-whitelist ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.check-whitelist ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.checkWhitelist} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -729,7 +841,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.check-presale ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.check-presale ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.checkPresale} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -755,7 +867,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.get-mint-price ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.getMintPrice} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -781,7 +893,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.get-wl-price ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.get-wl-price ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.getWlPrice} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -807,7 +919,7 @@ export const marketplaceApi = createApi({
             async queryFn(args) {
                 const { colName } = args;
                 console.log(args);
-                // const pactCode = `(free.mp-ng-003.get-presale-price ${JSON.stringify(colName)})`;
+                // const pactCode = `(free.mp-ng-004.get-presale-price ${JSON.stringify(colName)})`;
                 const pactCode = `(${marketplacePactFunctions.getPresalePrice} ${JSON.stringify(colName)})`;
 
                 const transaction = Pact.builder
@@ -899,7 +1011,7 @@ export const marketplaceApi = createApi({
 
     //             let mintPrice = reserveTknAmount * price;
 
-    //             const pactCode = `(free.mp-ng-003.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
+    //             const pactCode = `(free.mp-ng-004.reserve-token ${JSON.stringify(reseveTknColName)} ${JSON.stringify(account)} ${reserveTknAmount})`;
 
     //             let txn;
     //             if (account === creator) {
@@ -908,7 +1020,7 @@ export const marketplaceApi = createApi({
     //                     .addData("guard", guard)
     //                     .addSigner(publicKey, (withCapability) => [
     //                         withCapability("coin.GAS"),
-    //                         withCapability("free.mp-ng-003.MINT-NFT", account),
+    //                         withCapability("free.mp-ng-004.MINT-NFT", account),
     //                     ])
     //                     .setMeta({
     //                         creationTime: creationTime(),
@@ -925,7 +1037,7 @@ export const marketplaceApi = createApi({
     //                 .addData("guard", guard)
     //                 .addSigner(publicKey, (withCapability) => [
     //                     withCapability("coin.GAS"),
-    //                     withCapability("free.mp-ng-003.MINT-NFT", account),
+    //                     withCapability("free.mp-ng-004.MINT-NFT", account),
     //                     withCapability(
     //                         "coin.TRANSFER",
     //                         account,
@@ -985,7 +1097,7 @@ export const marketplaceApi = createApi({
         getRoyaltyAddress: builder.mutation({
             async queryFn(args) {
                 const { colName } = args;
-                // const pactCode = `(free.mp-ng-003.get-royalty-info ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-royalty-info ${JSON.stringify(
                 //     colName
                 // )} "account")`;
                 const pactCode = `(${marketplacePactFunctions.getRoyaltyInfo} ${JSON.stringify(
@@ -1018,7 +1130,7 @@ export const marketplaceApi = createApi({
         getRoyaltyPerc: builder.mutation({
             async queryFn(args) {
                 const { colName } = args;
-                // const pactCode = `(free.mp-ng-003.get-royalty-info ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-royalty-info ${JSON.stringify(
                 //     colName
                 // )} "rate")`;
                 const pactCode = `(${marketplacePactFunctions.getRoyaltyInfo} ${JSON.stringify(
@@ -1076,7 +1188,7 @@ export const marketplaceApi = createApi({
                 };
                 const formattedSyncTkns = `[${syncTkns}]`;
 
-                // const pactCode = `(free.mp-ng-003.bulk-sync-with-ng ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.bulk-sync-with-ng ${JSON.stringify(
                 //     syncColName
                 // )} ${formattedSyncTkns} )`;
                 const pactCode = `(${marketplacePactFunctions.bulkSyncWithNg} ${JSON.stringify(
@@ -1162,7 +1274,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.create-airdrop  
+                // const pactCode = `(free.mp-ng-004.create-airdrop  
                 //     ${JSON.stringify(createAirdropCol)} 
                 //     (read-keyset  "guard") 
                 //     ${JSON.stringify(accounts)} )`;
@@ -1219,7 +1331,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.bulk-airdrop ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.bulk-airdrop ${JSON.stringify(
                 //     airdropCol
                 // )} 
                 //     ${JSON.stringify(tokens)} 
@@ -1325,7 +1437,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.launch-single-nft
+                // const pactCode = `(free.mp-ng-004.launch-single-nft
                 const pactCode = `(${marketplacePactFunctions.launchSingleNft}
                     ${JSON.stringify(account)}
                     (read-keyset "guard")
@@ -1391,7 +1503,7 @@ export const marketplaceApi = createApi({
 
                 let mintFee = price * fee;
 
-                // const pactCode = `(free.mp-ng-003.reserve-single-nft ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.reserve-single-nft ${JSON.stringify(
                 //     account
                 // )} (read-keyset "guard") ${JSON.stringify(nftName)})`;
                 const pactCode = `(${marketplacePactFunctions.reserveSingleNft} ${JSON.stringify(
@@ -1481,7 +1593,7 @@ export const marketplaceApi = createApi({
                 const publicKey = account.slice(2, account.length);
                 const guard = { keys: [publicKey], pred: "keys-all" };
 
-                // const pactCode = `(free.mp-ng-003.deny-collection ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.deny-collection ${JSON.stringify(
                 //     launchCollectionName
                 // )})`;
                 const pactCode = `(${marketplacePactFunctions.denyCollection} ${JSON.stringify(
@@ -1493,7 +1605,7 @@ export const marketplaceApi = createApi({
                     .addData("guard", guard)
                     .addSigner(publicKey, (withCapability) => [
                         withCapability("coin.GAS"),
-                        // withCapability("free.mp-ng-003.IS_ADMIN"),
+                        // withCapability("free.mp-ng-004.IS_ADMIN"),
                         withCapability(marketplacePactFunctions.isAdmin),
                     ])
                     .setMeta({
@@ -1533,7 +1645,7 @@ export const marketplaceApi = createApi({
         getTokenDetails: builder.query({
             async queryFn(args) {
                 const { account } = args;
-                // const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-token-details ${JSON.stringify(
                 //     account
                 // )})`;
                 const pactCode = `(${marketplacePactFunctions.getTokenDetails} ${JSON.stringify(
@@ -1653,7 +1765,7 @@ export const marketplaceApi = createApi({
         getMinter: builder.query({
             async queryFn(args) {
                 const { nftName } = args;
-                // const pactCode = `(free.mp-ng-003.get-single-nft-minter ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-single-nft-minter ${JSON.stringify(
                 //     nftName
                 // )})`;
                 const pactCode = `(${marketplacePactFunctions.getSingleNftMinter} ${JSON.stringify(
@@ -1706,7 +1818,7 @@ export const marketplaceApi = createApi({
                     pred: "keys-all",
                 };
 
-                // const pactCode = `(free.mp-ng-003.mint-single-nft ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.mint-single-nft ${JSON.stringify(
                 //     account
                 // )} (read-keyset "guard") ${JSON.stringify(singleNftName)} )`;
                 const pactCode = `(${marketplacePactFunctions.mintSingleNft} ${JSON.stringify(
@@ -1769,7 +1881,7 @@ export const marketplaceApi = createApi({
         getTokensOwned: builder.query({
             async queryFn(args) {
                 const { account } = args;
-                // const pactCode = `(free.mp-ng-003.get-all-tokens-by-account ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-all-tokens-by-account ${JSON.stringify(
                 //     account
                 // )})`;
                 const pactCode = `(${marketplacePactFunctions.getAllTokensByAccount} ${JSON.stringify(
@@ -1867,7 +1979,7 @@ export const {
 
 // Helper functions
 const checkPublicPrice = async (colName) => {
-    // const pactCode = `(free.mp-ng-003.get-mint-price ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-mint-price ${JSON.stringify(
     //     colName
     // )})`;
     const pactCode = `(${marketplacePactFunctions.getMintPrice} ${JSON.stringify(
@@ -1893,7 +2005,7 @@ const checkPublicPrice = async (colName) => {
 };
 
 const getColCreator = async (colName) => {
-    // const pactCode = `(free.mp-ng-003.get-collection-creator ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-collection-creator ${JSON.stringify(
     //     colName
     // )})`;
 
@@ -1920,7 +2032,7 @@ const getColCreator = async (colName) => {
 };
 
 const getRoyaltyAddress = async ({ colName }) => {
-    // const pactCode = `(free.mp-ng-003.get-royalty-info ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-royalty-info ${JSON.stringify(
     //     colName
     // )} "account")`;
     const pactCode = `(${marketplacePactFunctions.getRoyaltyInfo} ${JSON.stringify(
@@ -1946,7 +2058,7 @@ const getRoyaltyAddress = async ({ colName }) => {
 };
 
 const getRoyaltyPerc = async ({ colName }) => {
-    // const pactCode = `(free.mp-ng-003.get-royalty-info ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-royalty-info ${JSON.stringify(
     //     colName
     // )} "rate")`;
     const pactCode = `(${marketplacePactFunctions.getRoyaltyInfo} ${JSON.stringify(
@@ -1973,7 +2085,7 @@ const getRoyaltyPerc = async ({ colName }) => {
 };
 
 const collectionId = async (colNameId) => {
-    // const pactCode = `(free.mp-ng-003.get-collection-id ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-collection-id ${JSON.stringify(
     //     colNameId
     // )})`;
     const pactCode = `(${marketplacePactFunctions.getCollectionId} ${JSON.stringify(
@@ -2000,7 +2112,7 @@ const collectionId = async (colNameId) => {
 };
 
 const checkSingleNftPrice = async (nftName) => {
-    // const pactCode = `(free.mp-ng-003.get-single-nft-mint-price ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-single-nft-mint-price ${JSON.stringify(
     //     nftName
     // )})`;
     const pactCode = `(${marketplacePactFunctions.getSingleNftMintPrice} ${JSON.stringify(
@@ -2026,7 +2138,7 @@ const checkSingleNftPrice = async (nftName) => {
 };
 
 const getSingleNftCreator = async (nftName) => {
-    // const pactCode = `(free.mp-ng-003.get-single-nft-creator ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-single-nft-creator ${JSON.stringify(
     //     nftName
     // )})`;
     const pactCode = `(${marketplacePactFunctions.getSingleNftCreator} ${JSON.stringify(
@@ -2052,7 +2164,7 @@ const getSingleNftCreator = async (nftName) => {
 };
 
 const getRoyaltyAddressSingleNft = async (nftName) => {
-    // const pactCode = `(free.mp-ng-003.get-royalty-info-single-nft ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-royalty-info-single-nft ${JSON.stringify(
     //     nftName
     // )} "account")`;
     const pactCode = `(${marketplacePactFunctions.getRoyaltyInfoSingleNft} ${JSON.stringify(
@@ -2078,7 +2190,7 @@ const getRoyaltyAddressSingleNft = async (nftName) => {
 };
 
 const getRoyaltyPercSingleNft = async (nftName) => {
-    // const pactCode = `(free.mp-ng-003.get-royalty-info-single-nft ${JSON.stringify(
+    // const pactCode = `(free.mp-ng-004.get-royalty-info-single-nft ${JSON.stringify(
     //     nftName
     // )} "rate")`;
     const pactCode = `(${marketplacePactFunctions.getRoyaltyInfoSingleNft} ${JSON.stringify(

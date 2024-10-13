@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState } from "react";
 // import PropTypes from "prop-types";
 // import clsx from "clsx";
@@ -44,9 +43,9 @@
 //     const [reservePrice, setReservePrice] = useState(0);
 //     const { data: priorityUsers } = useGetPriorityUsersQuery();
 //     const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
-//     const { data: passClaimed } = useGetPassClaimQuery({ 
-//         colName: product?.collectionName, 
-//         account: account?.user?.walletAddress 
+//     const { data: passClaimed } = useGetPassClaimQuery({
+//         colName: product?.collectionName,
+//         account: account?.user?.walletAddress
 //     });
 //     console.log("Priority Users:", priorityUsers);
 
@@ -56,7 +55,6 @@
 //         passClaimed: false,
 //         passAccFlag: false,
 //     });
-
 
 //     useEffect(() => {
 //         if (priorityUsers && passBalance !== undefined && passClaimed !== undefined) {
@@ -410,7 +408,7 @@
 //                                                             width: "100%",
 //                                                             borderRadius: "4px",
 //                                                             background: `linear-gradient(to right,
-//                                                             #FF0000 0%,     
+//                                                             #FF0000 0%,
 //                                                             #FFFF00 ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -430,7 +428,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%, 
+//                                                             }%,
 //                                                             #0000FF ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -440,7 +438,7 @@
 //                                                                               1)) *
 //                                                                       100
 //                                                                     : 0
-//                                                             }%, 
+//                                                             }%,
 //                                                             rgb(204, 204, 204) ${
 //                                                                 product
 //                                                                     ? (product.reservePrice /
@@ -590,7 +588,13 @@
 
 // export default CollectionDetailsArea;
 
-import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+    useRef,
+    useMemo,
+} from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import axios from "axios";
@@ -642,18 +646,26 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     // Hooks
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
-    const { data: uriList, refetch: refetchUriList } = useGetUriListQuery({ collectionName: product?.collectionName });
-    console.log("URI List:", uriList);    
+    const { data: uriList, refetch: refetchUriList } = useGetUriListQuery({
+        collectionName: product?.collectionName,
+    });
+    console.log("URI List:", uriList);
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
     const { data: priorityUsers } = useGetPriorityUsersQuery();
-    const { data: passBalance } = useGetPassBalanceQuery(account?.user?.walletAddress);
+    console.log("Priority Users:", priorityUsers);
+    const { data: passBalance } = useGetPassBalanceQuery(
+        account?.user?.walletAddress
+    );
     const { data: passClaimed } = useGetPassClaimQuery({
         colName: product?.collectionName,
         account: account?.user?.walletAddress,
     });
 
     // Memoized values and functions
-    const memoizedCollectionName = useMemo(() => product.collectionName, [product.collectionName]);
+    const memoizedCollectionName = useMemo(
+        () => product.collectionName,
+        [product.collectionName]
+    );
     const {
         checkIsPublic,
         checkIsWhitelist,
@@ -662,12 +674,15 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
         reserveTokensFunction,
     } = useCollectionTypeFunctions(product.collectionType);
 
-    const memoizedFunctions = useMemo(() => ({
-        checkIsPublic,
-        checkIsWhitelist,
-        checkIsPresale,
-        checkPrice
-    }), [checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]);
+    const memoizedFunctions = useMemo(
+        () => ({
+            checkIsPublic,
+            checkIsWhitelist,
+            checkIsPresale,
+            checkPrice,
+        }),
+        [checkIsPublic, checkIsWhitelist, checkIsPresale, checkPrice]
+    );
 
     // Ref for tracking the number of times checkStages has been called
     const checkCountRef = useRef(0);
@@ -678,28 +693,46 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
 
         setIsLoading(true);
         try {
-            const { checkIsPresale, checkIsWhitelist, checkIsPublic, checkPrice } = memoizedFunctions;
+            const {
+                checkIsPresale,
+                checkIsWhitelist,
+                checkIsPublic,
+                checkPrice,
+            } = memoizedFunctions;
             const presaleCheck = await checkIsPresale(memoizedCollectionName);
             if (presaleCheck.data === true) {
-                const price = await checkPrice(memoizedCollectionName, "presale");
+                const price = await checkPrice(
+                    memoizedCollectionName,
+                    "presale"
+                );
                 setStageInfo({
                     currentStage: "Presale",
                     isLive: true,
                     price: price.data,
                 });
             } else {
-                const whitelistCheck = await checkIsWhitelist(memoizedCollectionName);
+                const whitelistCheck = await checkIsWhitelist(
+                    memoizedCollectionName
+                );
                 if (whitelistCheck.data === true) {
-                    const price = await checkPrice(memoizedCollectionName, "whitelist");
+                    const price = await checkPrice(
+                        memoizedCollectionName,
+                        "whitelist"
+                    );
                     setStageInfo({
                         currentStage: "Whitelist",
                         isLive: true,
                         price: price.data,
                     });
                 } else {
-                    const publicCheck = await checkIsPublic(memoizedCollectionName);
+                    const publicCheck = await checkIsPublic(
+                        memoizedCollectionName
+                    );
                     if (publicCheck.data === true) {
-                        const price = await checkPrice(memoizedCollectionName, "public");
+                        const price = await checkPrice(
+                            memoizedCollectionName,
+                            "public"
+                        );
                         setStageInfo({
                             currentStage: "Public",
                             isLive: true,
@@ -733,11 +766,13 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
 
         const formatTimeLeft = (targetTime) => {
             const duration = moment.duration(targetTime.diff(now));
+            const months = duration.months();
             const days = duration.days();
             const hours = duration.hours();
             const minutes = duration.minutes();
             const seconds = duration.seconds();
 
+            if (months > 0) return `${months}m ${days}d`;
             if (days > 0) return `${days}d ${hours}h`;
             if (hours > 0) return `${hours}h ${minutes}m`;
             if (minutes > 0) return `${minutes}m ${seconds}s`;
@@ -765,7 +800,9 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
             }
 
             if (product.enableWhitelist && product.whitelistStartDateAndTime) {
-                const whitelistStart = moment(product.whitelistStartDateAndTime);
+                const whitelistStart = moment(
+                    product.whitelistStartDateAndTime
+                );
                 const mintStart = moment(product.mintStartDate);
 
                 if (now.isBefore(whitelistStart)) {
@@ -819,9 +856,10 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     useEffect(() => {
         const timer = setInterval(() => {
             const newLaunchInfo = renderLaunchInfo();
-            setLaunchInfo(prevLaunchInfo => {
+            setLaunchInfo((prevLaunchInfo) => {
                 if (
-                    (newLaunchInfo.status === "Upcoming" || newLaunchInfo.status === "Live") &&
+                    (newLaunchInfo.status === "Upcoming" ||
+                        newLaunchInfo.status === "Live") &&
                     newLaunchInfo.status !== prevLaunchInfo.status
                 ) {
                     checkStages();
@@ -919,60 +957,71 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
             }
 
             const result = await refetchUriList();
-console.log("URI List Response:", result.data);
+            console.log("URI List Response:", result.data);
 
-const updateResponse = await collectionService.updateCollection(
-    {
-        uriList: result.data,
-    },
-    product.collectionName
-);
-console.log("Update Collection Response:", updateResponse);
-if (updateResponse?.data?.status === "success") {
-
-            const response = await reserveTokensFunction({
-                reseveTknColName: product.collectionName,
-                reserverAcc: account?.user?.walletAddress,
-                reserveTknAmount: parseInt(reservePrice),
-                walletName: account?.user?.walletName,
-                wcClient,
-                wcSession,
-            });
-            console.log("Reserve Tokens Response:", response);
-
-            if (response.data.result.status === "success") {
-                const updateResponse = await collectionService.updateCollection(
-                    {
-                        reservePrice: product.reservePrice + parseInt(reservePrice),
-                    },
-                    product.collectionName
-                );
-
-                const data = {
-                    collectionName: product.collectionName,
-                    reserveTknAmount: parseInt(reservePrice),
-                };
-                const responsenft = await createNFT(data);
-                console.log("Create NFT Response:", responsenft);
-
-                if (updateResponse?.data?.status === "success") {
-                    await refresh();
-                    setSwap(false);
-                    setReservePrice(0);
-                    Swal.fire({
-                        icon: "success",
-                        title: "Success!",
-                        text: "Minted successfully!",
-                    });
-                }
-            } else {
+            if (!result.data) {
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Minting failed!",
+                    text: "There was an error fetching the URI list. Please try again later.",
                 });
+                return;
             }
-        }
+
+            const updateResponse = await collectionService.updateCollection(
+                {
+                    uriList: result.data,
+                },
+                product.collectionName
+            );
+            console.log("Update Collection Response:", updateResponse);
+            if (updateResponse?.data?.status === "success") {
+                const response = await reserveTokensFunction({
+                    reseveTknColName: product.collectionName,
+                    reserverAcc: account?.user?.walletAddress,
+                    reserveTknAmount: parseInt(reservePrice),
+                    walletName: account?.user?.walletName,
+                    wcClient,
+                    wcSession,
+                });
+                console.log("Reserve Tokens Response:", response);
+
+                if (response.data.result.status === "success") {
+                    const updateResponse =
+                        await collectionService.updateCollection(
+                            {
+                                reservePrice:
+                                    product.reservePrice +
+                                    parseInt(reservePrice),
+                            },
+                            product.collectionName
+                        );
+
+                    const data = {
+                        collectionName: product.collectionName,
+                        reserveTknAmount: parseInt(reservePrice),
+                    };
+                    const responsenft = await createNFT(data);
+                    console.log("Create NFT Response:", responsenft);
+
+                    if (updateResponse?.data?.status === "success") {
+                        await refresh();
+                        setSwap(false);
+                        setReservePrice(0);
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success!",
+                            text: "Minted successfully!",
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Minting failed!",
+                    });
+                }
+            }
         } catch (error) {
             console.error("Error during minting:", error);
             Swal.fire({
@@ -1257,12 +1306,16 @@ if (updateResponse?.data?.status === "success") {
                                         )
                                     </p>
                                 </div>
+                                {console.log("Pass Info:", passInfo)}
                                 {passInfo.isPriorityUser && (
-                                    <div className="pass-info" style={{ marginTop: "20px" }}>
+                                    <div
+                                        className="pass-info"
+                                        style={{ marginTop: "20px" }}
+                                    >
                                         <h6>Pass Information</h6>
-                                        {/* <p>
+                                        <p>
                                             Pass Balance: {passInfo.passBalance}
-                                        </p> */}
+                                        </p>
                                         <p>
                                             Pass Claimed:{" "}
                                             {passInfo.passClaimed
@@ -1299,10 +1352,12 @@ if (updateResponse?.data?.status === "success") {
                                         {/* {stageInfo.isLive
                                             ? "Mint Here!"
                                             : "Minting Not Available"} */}
-                                            {stageInfo.isLive
-                                            ? passInfo.passClaimed ? "Mint Here!" : "Claim Pass"
+                                        {stageInfo.isLive
+                                            ? !passInfo.isPriorityUser ||
+                                              passInfo.passClaimed
+                                                ? "Mint Here!"
+                                                : "Claim Pass"
                                             : "Minting Not Available"}
-                                            
                                     </button>
                                 ) : (
                                     <motion.div
@@ -1371,7 +1426,8 @@ CollectionDetailsArea.propTypes = {
         reservePrice: PropTypes.number.isRequired,
         enablePresale: PropTypes.bool.isRequired,
         enableWhitelist: PropTypes.bool.isRequired,
-        collectionType: PropTypes.oneOf(["marketplace", "launchpad"]).isRequired,
+        collectionType: PropTypes.oneOf(["marketplace", "launchpad"])
+            .isRequired,
         presaleStartDateAndTime: PropTypes.string,
         presaleEndDateAndTime: PropTypes.string,
         whitelistStartDateAndTime: PropTypes.string,

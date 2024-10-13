@@ -17,7 +17,8 @@ const testnetFunctions = {
     getPassClaim: 'free.lptest003.get-pass-claim',
     reserveToken: 'free.lptest003.reserve-token',
     nftCollectionRequest: 'free.lptest003.nft-collection-request',
-    getTokenDetails: 'free.mp-ng-003.get-token-details'
+    getTokenDetails: 'free.mp-ng-004.get-token-details',
+    mintNftCapability: 'free.lptest003.MINT-NFT',
 };
 
 const mainnetFunctions = {
@@ -37,7 +38,8 @@ const mainnetFunctions = {
     getPassClaim: 'free.KMLPV2.get-pass-claim',
     reserveToken: 'free.KMLPV2.reserve-token',
     nftCollectionRequest: 'free.KMLPV2.nft-collection-request',
-    getTokenDetails: 'free.KMMMV2.get-token-details'
+    getTokenDetails: 'free.KMMMV2.get-token-details',
+    mintNftCapability: 'free.KMLPV2.MINT-NFT',
 };
 
 const networkType = process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE || 'testnet';

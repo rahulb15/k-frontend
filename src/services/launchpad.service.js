@@ -218,10 +218,10 @@ export const launchpadApi = createApi({
         //         const guard = { keys: [publicKey], pred: "keys-all" };
 
         //         // const pactCode = `(free.lptest001.nft-collection-request
-        //         const pactCode = `(${pactFunctions.nftCollectionRequest} 
+        //         const pactCode = `(${pactFunctions.nftCollectionRequest}
         //         ${JSON.stringify(collectionRequestName)}
-        //         ${JSON.stringify(collectionRequestSymbol)}  
-        //         ${JSON.stringify(account)}        
+        //         ${JSON.stringify(collectionRequestSymbol)}
+        //         ${JSON.stringify(account)}
         //         (read-keyset  "guard")
         //         ${JSON.stringify(collectionRequestDescription)}
         //         ${JSON.stringify(collectionRequestCategory)}
@@ -234,12 +234,12 @@ export const launchpadApi = createApi({
         //         ${JSON.stringify(collectionRequestBannerImgUrl)}
         //         ${JSON.stringify(collectionRequestStartDate)}
         //         (${collectionRequestStartDate})
-        //         ${JSON.stringify(collectionRequesEndDate)}       
-        //         (${collectionRequesEndDate}) 
-        //         ${collectionRequestEnableFreeMint}                 
-        //         ${collectionRequestEnableWl} 
-        //         ${collectionRequestEnablePresale} 
-        //         ${collectionRequestEnableAirdrop} 
+        //         ${JSON.stringify(collectionRequesEndDate)}
+        //         (${collectionRequesEndDate})
+        //         ${collectionRequestEnableFreeMint}
+        //         ${collectionRequestEnableWl}
+        //         ${collectionRequestEnablePresale}
+        //         ${collectionRequestEnableAirdrop}
         //         ${JSON.stringify(collectionRequestPolicy)}
         //         )
         //         `;
@@ -477,7 +477,7 @@ export const launchpadApi = createApi({
                         .setMeta({
                             creationTime: creationTime(),
                             sender: account,
-                            gasLimit: 300000,
+                            gasLimit: 150000,
                             chainId: CHAIN_ID,
                             ttl: 28800,
                         })
@@ -537,7 +537,7 @@ export const launchpadApi = createApi({
                         signatureVerification: false,
                     });
 
-                    console.log(localResponse.result,walletName)
+                    console.log(localResponse.result, walletName);
 
                     if (localResponse.result.status === "success") {
                         let signedTx;
@@ -592,10 +592,11 @@ export const launchpadApi = createApi({
                 }
             },
         }),
-        getLaunchFee: builder.query({
+        getLaunchFee: builder.mutation({
             async queryFn() {
                 // const pactCode = `(free.lptest001.get-collection-launch-fee)`;
                 const pactCode = `(${pactFunctions.getCollectionLaunchFee})`;
+                console.log(pactCode);
 
                 const txn = Pact.builder
                     .execution(pactCode)
@@ -701,7 +702,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -730,7 +731,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -758,7 +759,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -787,7 +788,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -815,7 +816,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -844,7 +845,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -873,7 +874,7 @@ export const launchpadApi = createApi({
 
                 const transaction = Pact.builder
                     .execution(pactCode)
-                    .setMeta({ chainId: "1" })
+                    .setMeta({ chainId: CHAIN_ID })
                     .createTransaction();
 
                 const response = await client.local(transaction, {
@@ -1159,66 +1160,56 @@ export const launchpadApi = createApi({
         //     },
         // }),
 
+        //     const collectionName = "K/C-CW-110";
+        //     const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(collectionName)})`;
 
-    //     const collectionName = "K/C-CW-110";
-    //     const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(collectionName)})`;
-    
-    //     const transaction = Pact.builder
-    //       .execution(pactCode)
-    //       .setMeta({ chainId: "1" })
-    //       .setNetworkId(NETWORK_ID)
-    //       .createTransaction();
-    
-    //     const response = await client.local(transaction, {
-    //       preflight: false,
-    //       signatureVerification: false,
-    //     });
-    
-    //     if (response.result.status == "success") {
-    //       let urisIPFS = response.result.data;
-    //       // alert(`Collection Id: ${colId}`);
-    //       console.log(`urisIPFS: ${urisIPFS}`);
-    //     }
-    //   };
+        //     const transaction = Pact.builder
+        //       .execution(pactCode)
+        //       .setMeta({ chainId: "1" })
+        //       .setNetworkId(NETWORK_ID)
+        //       .createTransaction();
 
-    getUriList: builder.query({
-        async queryFn(args) {
-            const { collectionName } = args;
-            console.log(args);
-            const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(
-                collectionName
-            )})`;
-            // const pactCode = `(${
-            //     pactFunctions.getUrisIPFS
-            // } ${JSON.stringify(collectionName)})`;
+        //     const response = await client.local(transaction, {
+        //       preflight: false,
+        //       signatureVerification: false,
+        //     });
 
-            const transaction = Pact.builder
-                .execution(pactCode)
-                .setMeta({ chainId: CHAIN_ID })
-                .createTransaction();
+        //     if (response.result.status == "success") {
+        //       let urisIPFS = response.result.data;
+        //       // alert(`Collection Id: ${colId}`);
+        //       console.log(`urisIPFS: ${urisIPFS}`);
+        //     }
+        //   };
 
-            const response = await client.local(transaction, {
-                preflight: false,
-                signatureVerification: false,
-            });
-            console.log("response", response);
+        getUriList: builder.query({
+            async queryFn(args) {
+                const { collectionName } = args;
+                console.log(args);
+                const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(
+                    collectionName
+                )})`;
+                // const pactCode = `(${
+                //     pactFunctions.getUrisIPFS
+                // } ${JSON.stringify(collectionName)})`;
 
-            if (response.result.status === "success") {
-                return { data: response.result.data };
-            } else {
-                return { error: response.result.error };
-            }
-        }
-    }),
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .createTransaction();
 
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+                console.log("response", response);
 
-    
-
-
-
-
-
-
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
 
         reserveTokens: builder.mutation({
             async queryFn(args, api, extraOptions, baseQuery) {
@@ -1354,7 +1345,10 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("free.lptest003.MINT-NFT", account),
+                            withCapability(
+                                pactFunctions.mintNftCapability,
+                                account
+                            ),
                         ])
                         .setMeta({
                             creationTime: creationTime(),
@@ -1372,7 +1366,8 @@ export const launchpadApi = createApi({
                         .addData("guard", guard)
                         .addSigner(publicKey, (withCapability) => [
                             withCapability("coin.GAS"),
-                            withCapability("free.lptest003.MINT-NFT", account),
+                            // withCapability("free.lptest003.MINT-NFT", account),
+                            withCapability(pactFunctions.mintNftCapability, account),
                             withCapability(
                                 "coin.TRANSFER",
                                 account,
@@ -1536,7 +1531,7 @@ export const launchpadApi = createApi({
             async queryFn(args) {
                 const { account } = args;
                 console.log("account", account);
-                // const pactCode = `(free.mp-ng-003.get-token-details ${JSON.stringify(
+                // const pactCode = `(free.mp-ng-004.get-token-details ${JSON.stringify(
                 //     account
                 // )})`;
                 const pactCode = `(${
@@ -1576,7 +1571,7 @@ export const launchpadApi = createApi({
 
 export const {
     useCollectionRequestMutation,
-    useGetLaunchFeeQuery,
+    useGetLaunchFeeMutation,
     useGetPrimeRoleUsersQuery,
     useGetDiscountRoleUsersQuery,
     useGetDiscountRateQuery,

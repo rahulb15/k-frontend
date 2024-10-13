@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import ErrorText from "@ui/error-text";
 import Loader from "@components/loader";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLaunchCollectionMutation } from "src/services/marketplace.service";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -70,8 +70,12 @@ const policies = [
     "ROYALTY",
 ];
 
-const defaultPolicies = ["COLLECTION", "MARKETPLACE", "NON-FUNGIBLE", "INSTANT-MINT"];
-
+const defaultPolicies = [
+    "COLLECTION",
+    "MARKETPLACE",
+    "NON-FUNGIBLE",
+    "INSTANT-MINT",
+];
 
 function getStyles(name, personName, theme) {
     return {
@@ -110,6 +114,8 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const dispatch = useDispatch();
     const [launchCollection, { isLoading, isError, error }] =
         useLaunchCollectionMutation();
+    // const balance = useSelector((state) => state.balance.value);
+    // console.log(balance, "balance");
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedBannerImage, setSelectedBannerImage] = useState(null);
     const [hasImageError, setHasImageError] = useState(false);
@@ -122,6 +128,8 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     console.log("Account:", account);
     const [selectedWallet, setSelectedWallet] = useState(null);
     const [connectedWallet, setConnectedWallet] = useState(null);
+    const [haveSufficientBalance, setHaveSufficientBalance] = useState(false);
+    const [tokenList, setTokenList] = useState([]);
 
     useEffect(() => {
         if (account?.user?.walletName) {
@@ -139,7 +147,30 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     } = useForm({
         mode: "onChange",
     });
-    const tokenList = watch("tokenList");
+    // const tokenList = watch("tokenList");
+
+    useEffect(() => {
+        console.log("watch", watch("tokenList"));
+        const tokenList = watch("tokenList") || "";
+
+        // Remove any whitespace
+        const processedTokenList = tokenList.trim();
+
+        if (
+            processedTokenList &&
+            !processedTokenList.includes(" ") &&
+            !processedTokenList.includes('"') &&
+            !processedTokenList.includes(",") &&
+            !processedTokenList.includes("[") &&
+            !processedTokenList.includes("]")
+        ) {
+            // dispatch(setCollectionRequestUriList(processedTokenList));
+            setTokenList(processedTokenList);
+        } else {
+            // dispatch(setCollectionRequestUriList([]));
+            setTokenList([]);
+        }
+    }, [watch("tokenList")]);
 
     useEffect(() => {
         console.log("Account:", account?.user?.walletAddress);
@@ -147,15 +178,24 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
             setValue("creatorWallet", account?.user?.walletAddress);
         }
     }, [account, setValue]);
-    useEffect(() => {
-        if (tokenList) {
-            const count = tokenList
-                .split(",")
-                .filter((token) => token.trim() !== "").length;
-            setTokenCount(count);
-            setValue("totalSupply", count);
-        }
-    }, [tokenList, setValue]);
+
+    // useEffect(() => {
+    //     if (balance >= parseFloat(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES)) {
+    //         setHaveSufficientBalance(true);
+    //     } else {
+    //         setHaveSufficientBalance(false);
+    //     }
+    // }, [balance]);
+
+    // useEffect(() => {
+    //     if (tokenList) {
+    //         const count = tokenList
+    //             .split(",")
+    //             .filter((token) => token.trim() !== "").length;
+    //         setTokenCount(count);
+    //         setValue("totalSupply", count);
+    //     }
+    // }, [tokenList, setValue]);
 
     // const handlePolicyChange = (event) => {
     //     const {
@@ -282,9 +322,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
             collectionRequestDescription: data.projectDescription,
             collectionRequestCategory: data.projectCategory.toUpperCase(),
             collectionRequestSupply: data.totalSupply,
-            collectionRequestUriList: data.tokenList
-                .split(",")
-                .map((token) => token.replace(/"/g, "").trim()),
+            collectionRequestUriList: tokenList,
             collectionRequestMintPrice: data.mintPrice,
             collectionRequestRoyalityPerc: data.royaltyPercentage,
             collectionRequestRoyalityAddress: data.royaltyAddress,
@@ -306,7 +344,6 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
             if (selectedWallet === "Stripe") {
                 // Implement Stripe payment logic here
                 console.log("Proceeding with Stripe payment");
-                
             } else {
                 const result = await launchCollection(collectionData).unwrap();
                 if (result.result.status === "success") {
@@ -714,9 +751,29 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                             <input
                                                 id="totalSupply"
                                                 type="number"
-                                                {...register("totalSupply")}
-                                                disabled
+                                                {...register("totalSupply", {
+                                                    required:
+                                                        "Total Supply is required",
+                                                    min: {
+                                                        value: 1,
+                                                        message:
+                                                            "Total Supply must be at least 1",
+                                                    },
+                                                    validate: (value) =>
+                                                        Number.isInteger(
+                                                            Number(value)
+                                                        ) ||
+                                                        "Total Supply must be an integer",
+                                                })}
                                             />
+                                            {errors.totalSupply && (
+                                                <ErrorText>
+                                                    {
+                                                        errors.totalSupply
+                                                            ?.message
+                                                    }
+                                                </ErrorText>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-md-6">
@@ -965,25 +1022,44 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                                 htmlFor="tokenList"
                                                 className="form-label"
                                             >
-                                                Token List
+                                                Token URI
                                             </label>
                                             <textarea
                                                 id="tokenList"
-                                                rows="3"
-                                                placeholder={`e. g. "token1","token2","token3"`}
+                                                rows="5"
+                                                placeholder="Enter a single token URI"
                                                 {...register("tokenList", {
-                                                    pattern: {
-                                                        value: /^("[^"]*"(,"[^"]*")*)?$/,
-                                                        message:
-                                                            "Please enter a valid token list",
-                                                    },
                                                     required:
-                                                        "Token List is required",
+                                                        "Token URI is required",
+                                                    validate: (value) => {
+                                                        const processed =
+                                                            value.trim();
+                                                        if (
+                                                            processed.includes(
+                                                                " "
+                                                            ) ||
+                                                            processed.includes(
+                                                                '"'
+                                                            ) ||
+                                                            processed.includes(
+                                                                ","
+                                                            ) ||
+                                                            processed.includes(
+                                                                "["
+                                                            ) ||
+                                                            processed.includes(
+                                                                "]"
+                                                            )
+                                                        ) {
+                                                            return "Please enter a single token URI without spaces, quotes, commas, or brackets";
+                                                        }
+                                                        return true;
+                                                    },
                                                 })}
                                             />
                                             {errors.tokenList && (
                                                 <ErrorText>
-                                                    {errors.tokenList.message}
+                                                    {errors.tokenList?.message}
                                                 </ErrorText>
                                             )}
                                         </div>
@@ -1046,7 +1122,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                             </Select>
                                         </div>
                                     </div> */}
-{/* 
+                                    {/* 
                                     <div className="col-md-12">
                                         <div className="input-box pb--20">
                                             <label
@@ -1109,48 +1185,80 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                         </div>
                                     </div> */}
 
-<div className="col-md-12">
-                <div className="input-box pb--20">
-                    <label htmlFor="policy" className="form-label">
-                        Policy
-                    </label>
-                    <Select
-                        labelId="policy-multiple-chip-label"
-                        id="policy-multiple-chip"
-                        className={styles["form-select"]}
-                        multiple
-                        value={policy}
-                        onChange={handlePolicyChange}
-                        input={<OutlinedInput id="select-multiple-chip" />}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip 
-                                        key={value} 
-                                        label={value} 
-                                        style={{
-                                            opacity: defaultPolicies.includes(value) ? 0.7 : 1,
-                                            cursor: defaultPolicies.includes(value) ? 'not-allowed' : 'default'
-                                        }}
-                                    />
-                                ))}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                    >
-                        {policies.map((name) => (
-                            <MenuItem
-                                key={name}
-                                value={name}
-                                style={getStyles(name, policy, theme)}
-                                disabled={defaultPolicies.includes(name)}
-                            >
-                                {name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </div>
-            </div>
+                                    <div className="col-md-12">
+                                        <div className="input-box pb--20">
+                                            <label
+                                                htmlFor="policy"
+                                                className="form-label"
+                                            >
+                                                Policy
+                                            </label>
+                                            <Select
+                                                labelId="policy-multiple-chip-label"
+                                                id="policy-multiple-chip"
+                                                className={
+                                                    styles["form-select"]
+                                                }
+                                                multiple
+                                                value={policy}
+                                                onChange={handlePolicyChange}
+                                                input={
+                                                    <OutlinedInput id="select-multiple-chip" />
+                                                }
+                                                renderValue={(selected) => (
+                                                    <Box
+                                                        sx={{
+                                                            display: "flex",
+                                                            flexWrap: "wrap",
+                                                            gap: 0.5,
+                                                        }}
+                                                    >
+                                                        {selected.map(
+                                                            (value) => (
+                                                                <Chip
+                                                                    key={value}
+                                                                    label={
+                                                                        value
+                                                                    }
+                                                                    style={{
+                                                                        opacity:
+                                                                            defaultPolicies.includes(
+                                                                                value
+                                                                            )
+                                                                                ? 0.7
+                                                                                : 1,
+                                                                        cursor: defaultPolicies.includes(
+                                                                            value
+                                                                        )
+                                                                            ? "not-allowed"
+                                                                            : "default",
+                                                                    }}
+                                                                />
+                                                            )
+                                                        )}
+                                                    </Box>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {policies.map((name) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                        style={getStyles(
+                                                            name,
+                                                            policy,
+                                                            theme
+                                                        )}
+                                                        disabled={defaultPolicies.includes(
+                                                            name
+                                                        )}
+                                                    >
+                                                        {name}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
                                     {/* <div className="col-md-3">
                                         <div className="input-box pb--20 rn-check-box">
                                             <input
