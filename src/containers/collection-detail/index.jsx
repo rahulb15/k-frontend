@@ -1008,7 +1008,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                     if (updateResponse?.data?.status === "success") {
                         await refresh();
                         setSwap(false);
-                        setReservePrice(0);
+                        // setReservePrice(0);
                         Swal.fire({
                             icon: "success",
                             title: "Success!",
