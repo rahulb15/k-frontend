@@ -191,7 +191,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             console.log("🚀 ~ fetchLaunchFee ~ response", response);
             setLaunchpadFee(response?.data || 0);
             // { data: 1 }
-            if (balance >= response?.data) {
+            if (balance >= 1) {
                 setHaveSufficientBalance(true);
             } else {
                 setHaveSufficientBalance(false);
