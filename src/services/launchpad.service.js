@@ -16,6 +16,7 @@ import {
 } from "src/constants/contextConstants";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 import pactFunctions from "@utils/pactLaunchapdFunctions";
+import marketplacePactFunctions from "@utils/pactMarketplaceFunctions";
 
 const API_HOST = NETWORK;
 console.log(API_HOST);
@@ -1183,11 +1184,20 @@ export const launchpadApi = createApi({
 
         getUriList: builder.query({
             async queryFn(args) {
-                const { collectionName } = args;
+                const { collectionName, isMarketplace  } = args;
                 console.log(args);
-                const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(
-                    collectionName
-                )})`;
+                // const pactCode = `(free.lptest003.get-urisIPFS ${JSON.stringify(
+                //     collectionName
+                // )})`;
+                const pactCode = isMarketplace
+                    ? `(${marketplacePactFunctions.uriIPFS} ${JSON.stringify(
+                            collectionName
+                        )})`
+                    : `(${pactFunctions.uriIPFS} ${JSON.stringify(
+                            collectionName
+                        )})`;
+
+
                 // const pactCode = `(${
                 //     pactFunctions.getUrisIPFS
                 // } ${JSON.stringify(collectionName)})`;

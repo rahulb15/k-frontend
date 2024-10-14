@@ -19,6 +19,7 @@ const testnetFunctions = {
     nftCollectionRequest: 'free.lptest003.nft-collection-request',
     getTokenDetails: 'free.mp-ng-004.get-token-details',
     mintNftCapability: 'free.lptest003.MINT-NFT',
+    uriIPFS: 'free.lptest003.get-urisIPFS',
 };
 
 const mainnetFunctions = {
@@ -40,6 +41,7 @@ const mainnetFunctions = {
     nftCollectionRequest: 'free.KMLPV2.nft-collection-request',
     getTokenDetails: 'free.KMMMV2.get-token-details',
     mintNftCapability: 'free.KMLPV2.MINT-NFT',
+    uriIPFS: 'free.KMLPV2.get-urisIPFS',
 };
 
 const networkType = process.env.NEXT_PUBLIC_KDA_NETWORK_TYPE || 'testnet';

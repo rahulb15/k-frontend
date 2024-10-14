@@ -646,8 +646,9 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
     // Hooks
     const account = useAccountContext();
     const [createNFT] = useCreateNFTMutation();
+    console.log("product:", product);
     const { data: uriList, refetch: refetchUriList } = useGetUriListQuery({
-        collectionName: product?.collectionName,
+        collectionName: product?.collectionName, isMarketplace: product?.collectionType === "marketplace" ? true : false
     });
     console.log("URI List:", uriList);
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
@@ -1307,7 +1308,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                                     </p>
                                 </div>
                                 {console.log("Pass Info:", passInfo)}
-                                {passInfo.isPriorityUser && (
+                                {product?.collectionType !== "marketplace" && passInfo.isPriorityUser && (
                                     <div
                                         className="pass-info"
                                         style={{ marginTop: "20px" }}

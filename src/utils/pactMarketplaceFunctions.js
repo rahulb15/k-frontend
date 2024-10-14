@@ -39,6 +39,7 @@ const testnetFunctions = {
     getSingleNftMintPrice: "free.mp-ng-004.get-single-nft-mint-price",
     getSingleNftCreator: "free.mp-ng-004.get-single-nft-creator",
     getRoyaltyInfoSingleNft: "free.mp-ng-004.get-royalty-info-single-nft",
+    uriIPFS: 'free.mp-ng-004.get-urisIPFS',
     marmaladeLedgerSale:
         `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     marmaladeLedgerOffer:
@@ -81,6 +82,7 @@ const mainnetFunctions = {
     getSingleNftMintPrice: "free.KMMMV2.get-single-nft-mint-price",
     getSingleNftCreator: "free.KMMMV2.get-single-nft-creator",
     getRoyaltyInfoSingleNft: "free.KMMMV2.get-royalty-info-single-nft",
+    uriIPFS: 'free.KMMMV2.get-urisIPFS',
     marmaladeLedgerSale:
         `${DEFAULT_INSTANCE?.ns}.ledger.sale`,
     marmaladeLedgerOffer:
