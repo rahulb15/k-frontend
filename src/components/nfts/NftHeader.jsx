@@ -18,7 +18,8 @@ const NftHeader = ({ data, isFullScreen, toggleFullScreen, onClose }) => (
         <Typography variant="h5" color="textSecondary">
           Rarity Score: {data?.rarityScore}
         </Typography> */}
-                {!data?.collectionName === "Priority Pass" && (
+        {console.log(data)}
+                {data?.collectionName !== "Priority Pass" && (
                     <>
                         <Typography variant="h5" color="textSecondary">
                             Rarity Rank: {data?.rarityRank}

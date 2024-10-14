@@ -131,10 +131,11 @@ const NftContent = ({
                             Place Bid
                         </Button>
                     )}
+                    {console.log("data", data)}
                     {!data?.onMarketplace &&
                         !data?.onAuction &&
                         !data?.onSale &&
-                        !data?.collectionName === "Priority Pass" &&
+                        data?.collectionName !== "Priority Pass" &&
                         !showSellOptions && (
                             <Button
                                 className="nft-bid-button"

@@ -46,6 +46,12 @@ const NftDetailsSection = ({ data }) => {
 
     return (
         <Box className="nft-basic-info">
+             <Typography variant="h5" paragraph>
+                Name:{" "}
+                <strong>
+                    {data?.nftData?.name ? `${data?.nftData?.name}` : "--"}
+                </strong>
+            </Typography>
             <Typography variant="h5" paragraph className="nft-creator-info">
                 <CopyableText label="Creator" text={data?.creator} />
             </Typography>
