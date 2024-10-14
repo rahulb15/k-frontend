@@ -204,13 +204,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         setShowConnectModal((prev) => !prev);
     };
 
-    // const handlePolicyChange = (event) => {
-    //     const {
-    //         target: { value },
-    //     } = event;
-    //     setPolicy(typeof value === "string" ? value.split(",") : value);
-    // };
-
     const handlePolicyChange = (event) => {
         const {
             target: { value },
