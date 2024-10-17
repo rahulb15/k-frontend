@@ -532,99 +532,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         }
     };
 
-    // useEffect(() => {
-    // "ipfs://bafkreifabzsykcr23o2xyzovys6olid63oaxrb3i3byzz32caklymlvm5u","ipfs://bafkreic5iyftd6mus6o7llctwpgxyarkcxzz55jiptayot3rya6y3y5teu","ipfs://bafkreid3gpivbqhqcjvpcol5l7zpn4oj2na5dthygsrlkdxyjmnm4qaqta","ipfs://bafkreicm7uen4kb3y7nwoexrsx7sre6ckfmtbfufslidbesfsbzfi2lguy"
-    //     console.log("formData", formData);
-    //     if (formData && step === 2) {
-    //         dispatch(setCollectionRequestName(formData.collectionName));
-    //         dispatch(setCollectionRequestCreator(formData.creatorWallet));
-    //         dispatch(setCollectionRequestSymbol(""));
-    //         dispatch(
-    //             setCollectionRequestDescription(formData.projectDescription)
-    //         );
-    //         dispatch(
-    //             setCollectionRequestCategory(
-    //                 formData.projectCategory?.toUpperCase()
-    //             )
-    //         );
-    //         dispatch(
-    //             setCollectionRequestStartDate(formData.expectedLaunchDate)
-    //         );
-    //         dispatch(
-    //             // setCollectionRequestUriList([
-    //             //     "ipfs://bafkreifabzsykcr23o2xyzovys6olid63oaxrb3i3byzz32caklymlvm5u",
-    //             //     "ipfs://bafkreic5iyftd6mus6o7llctwpgxyarkcxzz55jiptayot3rya6y3y5teu",
-    //             //     "ipfs://bafkreid3gpivbqhqcjvpcol5l7zpn4oj2na5dthygsrlkdxyjmnm4qaqta",
-    //             //     "ipfs://bafkreicm7uen4kb3y7nwoexrsx7sre6ckfmtbfufslidbesfsbzfi2lguy",
-    //             // ])
-    //             setCollectionRequestUriList(formData?.tokenList?.split(',').map(token => token.replace(/"/g, '').trim()))
-    //         );
-    //         dispatch(setCollectionRequestMintPrice(formData.mintPrice));
-    //         dispatch(
-    //             setCollectionRequestRoyalityPerc(formData.royaltyPercentage)
-    //         );
-
-    //         // add date and time
-    //         // formData.mintStartTime add in mintStartDate
-    //         //  make this format tpe = (time "2024-03-22T14:00:00Z")
-    //         const mintStartDate = moment( `${formData.mintStartDate} ${formData.mintStartTime}`).format("YYYY-MM-DDTHH:mm:ss");
-    //         const formattedStartDate = `time "${mintStartDate}Z"`;
-    //         console.log("formattedDate", formattedStartDate);
-
-    //         const mintEndDate = moment( `${formData.mintEndDate} ${formData.mintEndTime}`).format("YYYY-MM-DDTHH:mm:ss");
-    //         const formattedEndDate = `time "${mintEndDate}Z"`;
-    //         console.log("formattedEndDate", formattedEndDate);
-
-    //         dispatch(setCollectionRequestStartDate(formattedStartDate));
-    //         dispatch(setCollectionRequesEndDate(formattedEndDate));
-    //         dispatch(setCollectionRequestSupply(formData?.tokenList?.split(',').map(token => token.replace(/"/g, '').trim()).length));
-    //         dispatch(setCollectionRequestCoverImgUrl(formData.coverImage));
-    //         dispatch(setCollectionRequestBannerImgUrl(formData.profileImage));
-    //         dispatch(
-    //             // setCollectionRequestRoyalityAddress(
-    //             //     "k:a2ff4689f89f0f3bb6a32fa35b8547c0cb4070f6b4af76fb53892f44fe1f9069"
-    //             // )
-    //             setCollectionRequestRoyalityAddress(formData.royaltyAddress)
-    //         );
-
-    //         dispatch(
-    //             setCollectionRequestEnableFreeMint(formData.allowFreeMints)
-    //         );
-    //         dispatch(setCollectionRequestEnableWl(formData.enableWhitelist));
-    //         dispatch(setCollectionRequestEnablePresale(formData.enablePresale));
-    //         dispatch(setCollectionRequestEnableAirdrop(formData.enableAirdrop));
-    //         dispatch(
-    //             setCollectionRequestPolicy(
-    //                 "COLLECTION INSTANT-MINT MARKETPLACE FIXED-SALE"
-    //             )
-    //             // setCollectionRequestPolicy(policy.toString())
-    //         );
-    //     }
-    //     console.log("selectedWallet", selectedWallet);
-
-    //     if (selectedWallet !== "Stripe") {
-    //         dispatch(setWalletName(selectedWallet));
-    //     }
-    // }, [formData]);
-
-    const processTokenList = (input) => {
-        // Split the input by newlines or commas
-        const tokens = input
-            .split(/[\n,]+/)
-            .map((token) => token.trim()) // Trim whitespace
-            .filter((token) => token.length > 0) // Remove empty entries
-            .map((token) => {
-                // If the token doesn't start with a quote, add quotes
-                if (!token.startsWith('"')) {
-                    token = `"${token}"`;
-                }
-                return token;
-            });
-
-        // Join the processed tokens with commas
-        return tokens.join(",");
-    };
-
     console.log("formData", collectionRequestUriList);
 
     const handleWalletSubmit = async () => {
@@ -856,15 +763,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
         const response = await collectionService.launchCollection(body);
         if (response?.data?.status === "success") {
-            // if (selectedImage) {
-            //     await uploadImage("coverImage", selectedImage);
-            // }
-            // if (selectedBannerImage) {
-            //     await uploadImage("profileImage", selectedBannerImage);
-            // }
-            // console.log("🚀 ~ createCollectionRequest ~ response", response);
-
-            // setCollectionData(response.data.data);
             return response;
         } else {
             if (response?.data?.message === "Conflict") {
@@ -944,11 +842,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                         selectedWallet === "WalletConnect"
                     ) {
                         console.log("EckoWallet");
-
-                        // const createResponse = await createCollectionRequest();
-                        // if (createResponse?.data?.status === "success") {
-                        //     handleWalletSubmit(createResponse.data.data);
-                        // }
                         handleWalletSubmit();
                     }
                 }
@@ -1192,64 +1085,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         }
     };
 
-    const updateCollectionRequest = async () => {
-        // const body = {
-        //     contractType: data.contractType,
-        //     totalSupply: data.totalSupply,
-        //     mintPrice: data.mintPrice,
-        //     mintPriceCurrency: data.mintPriceCurrency,
-        //     royaltyPercentage: data.royaltyPercentage,
-        //     mintStartDate: data.mintStartDate,
-        //     mintStartTime: data.mintStartTime,
-        //     allowFreeMints: data.allowFreeMints,
-        //     enableWhitelist: data.enableWhitelist,
-        //     enablePresale: data.enablePresale,
-        //     enableAirdrop: data.enableAirdrop,
-        // };
-        // const response = await collectionService.updateCollection(
-        //     body,
-        //     data.collectionName
-        // );
-        // console.log("🚀 ~ handleSubmit ~ response", response);
-        // if (response?.data?.status === "success") {
-        //     toast.success("Collection updated successfully");
-        //     // setFormData((prev) => ({ ...prev, ...data }));
-        //     // data and images
-        //     setFormData((prev) => ({
-        //         ...prev,
-        //         ...data,
-        //         profileImage: response.data.data.collectionBannerImage,
-        //         coverImage: response.data.data.collectionCoverImage,
-        //         id: response.data.data._id,
-        //     }));
-        //     if (selectedWallet === "Stripe") {
-        //         const stripe = await loadStripe(
-        //             process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-        //         );
-        //         const body = {
-        //             collectionName: formData.collectionName,
-        //             mintPrice: formData.mintPrice,
-        //             mintPriceCurrency: formData.mintPriceCurrency,
-        //             type: "apply-launchpad",
-        //         };
-        //         const response =
-        //             await collectionService.createCheckoutSession(body);
-        //         const session = response.data.data;
-        //         const result = await stripe.redirectToCheckout({
-        //             sessionId: session.id,
-        //         });
-        //     }
-        //     if (
-        //         selectedWallet === "EckoWallet" ||
-        //         selectedWallet === "Chainweaver"
-        //     ) {
-        //         console.log("EckoWallet");
-        //         handleWalletSubmit(e);
-        //     }
-        // } else {
-        //     console.log("failed");
-        // }
-    };
 
     const renderStage1Form = () => (
         <>
