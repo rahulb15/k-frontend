@@ -162,14 +162,14 @@ const LaunchpadChainHeader = ({ className, space, state, filterHandler }) => (
                                     </button>
                                 </Tooltip>
                             </li>
-                            <li className="filter-item">
+                            {/* <li className="filter-item">
                                 {state && (
                                     <FilterButton
                                         open={state.filterToggle}
                                         onClick={filterHandler}
                                     />
                                 )}
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
                 </div>

@@ -130,6 +130,14 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
     const [connectedWallet, setConnectedWallet] = useState(null);
     const [haveSufficientBalance, setHaveSufficientBalance] = useState(false);
     const [tokenList, setTokenList] = useState([]);
+    const [imageCoverProgress, setImageCoverProgress] = useState(0);
+    const [imageBannerProgress, setImageBannerProgress] = useState(0);
+    const [isCoverUploading, setIsCoverUploading] = useState(false);
+    const [isBannerUploading, setIsBannerUploading] = useState(false);
+    const [coverUploadError, setCoverUploadError] = useState(null);
+    const [bannerUploadError, setBannerUploadError] = useState(null);
+    console.log("imageCoverProgress", imageCoverProgress);
+    console.log("imageBannerProgress", imageBannerProgress);
 
     useEffect(() => {
         if (account?.user?.walletName) {
@@ -239,45 +247,211 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
         setPolicy(newValue);
     };
 
-    const uploadImage = async (name, file) => {
-        if (name === "coverImage") setImageCoverLoading(true);
-        if (name === "profileImage") setImageBannerLoading(true);
+    // const uploadImage = async (name, file) => {
+    //     if (name === "coverImage") setImageCoverLoading(true);
+    //     if (name === "profileImage") setImageBannerLoading(true);
 
-        try {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append(name, file);
+    //         const response = await collectionService.uploadImageById(formData);
+    //         console.log("Image Upload Response:", response.data);
+
+    //         if (response?.data?.status === "success") {
+    //             const imageUrl =
+    //                 response.data.data.collectionCoverImage ||
+    //                 response.data.data.collectionBannerImage;
+    //             console.log("Image URL:", imageUrl);
+
+    //             if (name === "coverImage") {
+    //                 setSelectedImage(imageUrl); // Use the server URL
+    //                 setImageCoverLoading(false);
+    //             }
+    //             if (name === "profileImage") {
+    //                 setSelectedBannerImage(imageUrl); // Use the server URL
+    //                 setImageBannerLoading(false);
+    //             }
+    //         } else {
+    //             toast.error("Image Upload Failed");
+    //             setImageCoverLoading(false);
+    //             setImageBannerLoading(false);
+    //         }
+    //     } catch (error) {
+    //         console.log("Image Upload Error:", error);
+    //         setImageCoverLoading(false);
+    //         setImageBannerLoading(false);
+    //     } finally {
+    //         // Reset the file input to allow re-uploading the same file
+    //         document.getElementById(
+    //             name === "coverImage" ? "coverFile" : "bannerFile"
+    //         ).value = null;
+    //     }
+    // };
+
+    // const uploadImage = async (name, file) => {
+    //     const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
+    //     if (name === "coverImage") setImageCoverLoading(true);
+    //     if (name === "profileImage") setImageBannerLoading(true);
+
+    //     return new Promise((resolve, reject) => {
+    //         const xhr = new XMLHttpRequest();
+    //         const formData = new FormData();
+    //         formData.append(name, file);
+
+    //         xhr.open(
+    //             "POST",
+    //             `${API_URL}launch-collection/upload-image-data-ipfs`,
+    //             true
+    //         );
+
+    //         // Add your authentication token
+    //         const token = localStorage.getItem("token");
+    //         xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+    //         xhr.upload.onprogress = (event) => {
+    //             if (event.lengthComputable) {
+    //                 const percentComplete = (event.loaded / event.total) * 100;
+    //                 // Update your progress state here
+    //                 if (name === "coverImage") {
+    //                     setImageCoverProgress(percentComplete);
+    //                 } else if (name === "profileImage") {
+    //                     setImageBannerProgress(percentComplete);
+    //                 }
+    //             }
+    //         };
+
+    //         xhr.onload = function () {
+    //             if (this.status >= 200 && this.status < 300) {
+    //                 const response = JSON.parse(xhr.responseText);
+    //                 console.log("Image Upload Response:", response.data);
+
+    //                 if (response.status === "success") {
+    //                     const imageUrl =
+    //                         name === "coverImage"
+    //                             ? response.data.collectionCoverImage
+    //                             : response.data.collectionBannerImage;
+
+    //                     if (name === "coverImage") {
+    //                         setSelectedImage(imageUrl);
+    //                         setImageCoverLoading(false);
+    //                     } else if (name === "profileImage") {
+    //                         setSelectedBannerImage(imageUrl);
+    //                         setImageBannerLoading(false);
+    //                     }
+    //                     resolve(response);
+    //                 } else {
+    //                     toast.error("Image Upload Failed");
+    //                     setImageCoverLoading(false);
+    //                     setImageBannerLoading(false);
+    //                     reject(new Error("Image Upload Failed"));
+    //                 }
+    //             } else {
+    //                 console.error("Image Upload Error:", xhr.statusText);
+    //                 setImageCoverLoading(false);
+    //                 setImageBannerLoading(false);
+    //                 reject(new Error(xhr.statusText));
+    //             }
+    //         };
+
+    //         xhr.onerror = function () {
+    //             console.error("Image Upload Error:", xhr.statusText);
+    //             setImageCoverLoading(false);
+    //             setImageBannerLoading(false);
+    //             reject(new Error("Network Error"));
+    //         };
+
+    //         xhr.send(formData);
+    //     });
+    // };
+
+    const uploadImage = async (name, file) => {
+        const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
+        const isProfileImage = name === "profileImage";
+        
+        if (isProfileImage) {
+            setIsBannerUploading(true);
+            setBannerUploadError(null);
+        } else {
+            setIsCoverUploading(true);
+            setCoverUploadError(null);
+        }
+
+        if (isProfileImage) setImageBannerLoading(true);
+        else setImageCoverLoading(true);
+
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
             const formData = new FormData();
             formData.append(name, file);
-            const response = await collectionService.uploadImageById(formData);
-            console.log("Image Upload Response:", response.data);
 
-            if (response?.data?.status === "success") {
-                const imageUrl =
-                    response.data.data.collectionCoverImage ||
-                    response.data.data.collectionBannerImage;
-                console.log("Image URL:", imageUrl);
+            xhr.open(
+                "POST",
+                `${API_URL}launch-collection/upload-image-data-ipfs`,
+                true
+            );
 
-                if (name === "coverImage") {
-                    setSelectedImage(imageUrl); // Use the server URL
-                    setImageCoverLoading(false);
+            const token = localStorage.getItem("token");
+            xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    if (isProfileImage) {
+                        setImageBannerProgress(percentComplete);
+                    } else {
+                        setImageCoverProgress(percentComplete);
+                    }
                 }
-                if (name === "profileImage") {
-                    setSelectedBannerImage(imageUrl); // Use the server URL
+            };
+
+            xhr.onload = function () {
+                if (this.status >= 200 && this.status < 300) {
+                    const response = JSON.parse(xhr.responseText);
+                    console.log("Image Upload Response:", response.data);
+
+                    if (response.status === "success") {
+                        const imageUrl = isProfileImage
+                            ? response.data.collectionBannerImage
+                            : response.data.collectionCoverImage;
+
+                        if (isProfileImage) {
+                            setSelectedBannerImage(imageUrl);
+                            setImageBannerLoading(false);
+                        } else {
+                            setSelectedImage(imageUrl);
+                            setImageCoverLoading(false);
+                        }
+                        isProfileImage ? setIsBannerUploading(false) : setIsCoverUploading(false);
+                        resolve(response);
+                    } else {
+                        const errorMessage = "Image Upload Failed";
+                        isProfileImage ? setBannerUploadError(errorMessage) : setCoverUploadError(errorMessage);
+                        setImageBannerLoading(false);
+                        setImageCoverLoading(false);
+                        isProfileImage ? setIsBannerUploading(false) : setIsCoverUploading(false);
+                        reject(new Error(errorMessage));
+                    }
+                } else {
+                    const errorMessage = `Error: ${xhr.statusText}`;
+                    isProfileImage ? setBannerUploadError(errorMessage) : setCoverUploadError(errorMessage);
                     setImageBannerLoading(false);
+                    setImageCoverLoading(false);
+                    isProfileImage ? setIsBannerUploading(false) : setIsCoverUploading(false);
+                    reject(new Error(errorMessage));
                 }
-            } else {
-                toast.error("Image Upload Failed");
-                setImageCoverLoading(false);
+            };
+
+            xhr.onerror = function () {
+                const errorMessage = "Network Error";
+                isProfileImage ? setBannerUploadError(errorMessage) : setCoverUploadError(errorMessage);
                 setImageBannerLoading(false);
-            }
-        } catch (error) {
-            console.log("Image Upload Error:", error);
-            setImageCoverLoading(false);
-            setImageBannerLoading(false);
-        } finally {
-            // Reset the file input to allow re-uploading the same file
-            document.getElementById(
-                name === "coverImage" ? "coverFile" : "bannerFile"
-            ).value = null;
-        }
+                setImageCoverLoading(false);
+                isProfileImage ? setIsBannerUploading(false) : setIsCoverUploading(false);
+                reject(new Error(errorMessage));
+            };
+
+            xhr.send(formData);
+        });
     };
 
     console.log("Selected Image:", selectedImage);
@@ -469,7 +643,7 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                     </IconButton>
                     <div className="row g-5">
                         <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
-                            <div className="upload-area">
+                            {/* <div className="upload-area">
                                 <div className="upload-formate mb--30">
                                     <h6 className="title">
                                         Upload Collection Cover Image
@@ -499,11 +673,15 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                         title="No File Chosen"
                                     >
                                         {imageCoverLoading ? (
-                                            <MutatingDots
-                                                color="#fff"
-                                                size={30}
-                                                speed={1}
-                                            />
+                                            // <MutatingDots
+                                            //     color="#fff"
+                                            //     size={30}
+                                            //     speed={1}
+                                            // />
+                                            <div>
+                                                Uploading cover image:{" "}
+                                                {imageCoverProgress.toFixed(2)}%
+                                            </div>
                                         ) : (
                                             <i className="feather-upload" />
                                         )}
@@ -520,60 +698,107 @@ const MarketplaceCreateCollectionWrapper = ({ className, space, onBack }) => {
                                         Cover Image is required
                                     </ErrorText>
                                 )}
-                            </div>
+                            </div> */}
 
-                            <div className="upload-area mt--50">
-                                <div className="upload-formate mb--30">
-                                    <h6 className="title">
-                                        Upload Collection Banner Image
-                                    </h6>
-                                    <p className="formate">
-                                        Drag or choose your image to upload
-                                    </p>
-                                </div>
-                                <div className="                                brows-file-wrapper">
-                                    <input
-                                        name="bannerFile"
-                                        id="bannerFile"
-                                        type="file"
-                                        className="inputfile"
-                                        onChange={handleBannerImageChange}
-                                    />
-                                    {selectedBannerImage && (
-                                        <img
-                                            id="createBannerImage"
-                                            src={selectedBannerImage}
-                                            alt=""
-                                            data-black-overlay="6"
-                                        />
-                                    )}
-                                    <label
-                                        htmlFor="bannerFile"
-                                        title="No File Chosen"
-                                    >
-                                        {imageBannerLoading ? (
+<div className="upload-area">
+                    <div className="upload-formate mb--30">
+                        <h6 className="title">Upload Collection Cover Image</h6>
+                        <p className="formate">Drag or choose your image to upload</p>
+                    </div>
+                    <div className="brows-file-wrapper">
+                        <input
+                            name="coverFile"
+                            id="coverFile"
+                            type="file"
+                            className="inputfile"
+                            onChange={handleCoverImageChange}
+                        />
+                        {selectedImage && (
+                            <img
+                                id="createCoverImage"
+                                src={selectedImage}
+                                alt=""
+                                data-black-overlay="6"
+                            />
+                        )}
+                        <label htmlFor="coverFile" title="No File Chosen">
+                            {imageCoverLoading ? (
+                                <div>
+                                    {imageCoverProgress < 100 ? (
+                                        `Uploading cover image: ${imageCoverProgress.toFixed(2)}%`
+                                    ) : (
+                                        <>
+                                            Please wait...
                                             <MutatingDots
                                                 color="#fff"
                                                 size={30}
                                                 speed={1}
                                             />
-                                        ) : (
-                                            <i className="feather-upload" />
-                                        )}
-                                        <span className="text-center">
-                                            Choose a Banner Image
-                                        </span>
-                                        <p className="text-center mt--10">
-                                            PNG, GIF, JPEG, JPG. Max 1Gb.
-                                        </p>
-                                    </label>
+                                        </>
+                                    )}
                                 </div>
-                                {hasImageError && !selectedBannerImage && (
-                                    <ErrorText>
-                                        Banner Image is required
-                                    </ErrorText>
-                                )}
-                            </div>
+                            ) : (
+                                <i className="feather-upload" />
+                            )}
+                            <span className="text-center">Choose a Cover Image</span>
+                            <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                        </label>
+                    </div>
+                    {coverUploadError && <ErrorText>{coverUploadError}</ErrorText>}
+                    {hasImageError && !selectedImage && (
+                        <ErrorText>Cover Image is required</ErrorText>
+                    )}
+                </div>
+
+                <div className="upload-area mt--50">
+                    <div className="upload-formate mb--30">
+                        <h6 className="title">Upload Collection Banner Image</h6>
+                        <p className="formate">Drag or choose your image to upload</p>
+                    </div>
+                    <div className="brows-file-wrapper">
+                        <input
+                            name="bannerFile"
+                            id="bannerFile"
+                            type="file"
+                            className="inputfile"
+                            onChange={handleBannerImageChange}
+                        />
+                        {selectedBannerImage && (
+                            <img
+                                id="createBannerImage"
+                                src={selectedBannerImage}
+                                alt=""
+                                data-black-overlay="6"
+                            />
+                        )}
+                        <label htmlFor="bannerFile" title="No File Chosen">
+                            {imageBannerLoading ? (
+                                <div>
+                                    {imageBannerProgress < 100 ? (
+                                        `Uploading banner image: ${imageBannerProgress.toFixed(2)}%`
+                                    ) : (
+                                        <>
+                                            Please wait...
+                                            <MutatingDots
+                                                color="#fff"
+                                                size={30}
+                                                speed={1}
+                                            />
+                                        </>
+                                    )}
+                                </div>
+                            ) : (
+                                <i className="feather-upload" />
+                            )}
+                            <span className="text-center">Choose a Banner Image</span>
+                            <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                        </label>
+                    </div>
+                    {bannerUploadError && <ErrorText>{bannerUploadError}</ErrorText>}
+                    {hasImageError && !selectedBannerImage && (
+                        <ErrorText>Banner Image is required</ErrorText>
+                    )}
+                </div>
                         </div>
 
                         <div className="col-lg-7">

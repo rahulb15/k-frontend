@@ -55,6 +55,7 @@ import moment from "moment";
 import ConnectModal from "@components/modals/connect-modal";
 import { useRouter } from "next/router";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
+import axios from "axios";
 
 import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -119,7 +120,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         useCollectionRequestMutation();
     const [getLaunchFee] = useGetLaunchFeeMutation();
     const account = useAccountContext();
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(2);
     // Get WalletConnect client and session
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
     const [formData, setFormData] = useState({
@@ -175,6 +176,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     const [launchpadFee, setLaunchpadFee] = useState(0);
     console.log(process.env.NEXT_PUBLIC_LAUNCHPAD_CHARGES);
     const [disabledPolicies, setDisabledPolicies] = useState([]);
+    const [uploadProgress, setUploadProgress] = useState({
+        coverImage: 0,
+        profileImage: 0,
+    });
+
 
     const [connectedWallet, setConnectedWallet] = useState(null);
     console.log("connectedWallet", connectedWallet);
@@ -1007,29 +1013,105 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     }
     // };
 
+    // const uploadImage = async (name, file) => {
+    //     if (name === "coverImage") setImageCoverLoading(true);
+    //     if (name === "profileImage") setImageBannerLoading(true);
+
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append(name, file);
+    //         const response = await collectionService.uploadImageById(formData);
+    //         console.log("Image Upload Response:", response.data);
+
+    //         if (response?.data?.status === "success") {
+    //             const imageUrl =
+    //                 response.data.data.collectionCoverImage ||
+    //                 response.data.data.collectionBannerImage;
+    //             console.log("Image URL:", imageUrl);
+
+    //             if (name === "coverImage") {
+    //                 setSelectedImage(imageUrl); // Use the server URL
+    //                 setImageCoverLoading(false);
+    //                 dispatch(setCollectionRequestCoverImgUrl(imageUrl));
+    //             }
+    //             if (name === "profileImage") {
+    //                 setSelectedBannerImage(imageUrl); // Use the server URL
+    //                 setImageBannerLoading(false);
+    //                 dispatch(setCollectionRequestBannerImgUrl(imageUrl));
+    //             }
+    //         } else {
+    //             toast.error("Image Upload Failed");
+    //             setImageCoverLoading(false);
+    //             setImageBannerLoading(false);
+    //         }
+    //     } catch (error) {
+    //         console.log("Image Upload Error:", error);
+    //         setImageCoverLoading(false);
+    //         setImageBannerLoading(false);
+    //     } finally {
+    //         // Reset the file input to allow re-uploading the same file
+    //         document.getElementById(
+    //             name === "coverImage" ? "coverFile" : "bannerFile"
+    //         ).value = null;
+    //     }
+    // };
+
+    // console.log("Selected Image:", selectedImage);
+    // console.log("Selected Banner Image:", selectedBannerImage);
+
+    // const handleCoverImageChange = (e) => {
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         const file = e.target.files[0];
+    //         uploadImage("coverImage", file);
+    //     }
+    // };
+
+    // const handleBannerImageChange = (e) => {
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         const file = e.target.files[0];
+    //         uploadImage("profileImage", file);
+    //     }
+    // };
+
+
     const uploadImage = async (name, file) => {
         if (name === "coverImage") setImageCoverLoading(true);
         if (name === "profileImage") setImageBannerLoading(true);
 
         try {
+            const API_URL = process.env.NEXT_PUBLIC_BASE_URL;
             const formData = new FormData();
             formData.append(name, file);
-            const response = await collectionService.uploadImageById(formData);
+
+            const token = localStorage.getItem("token");
+            const response = await axios.post(
+                `${API_URL}launch-collection/upload-image-data-ipfs`,
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(prev => ({ ...prev, [name]: percentCompleted }));
+                    },
+                }
+            );
+
             console.log("Image Upload Response:", response.data);
 
             if (response?.data?.status === "success") {
-                const imageUrl =
-                    response.data.data.collectionCoverImage ||
-                    response.data.data.collectionBannerImage;
+                const imageUrl = response.data.data.collectionCoverImage || response.data.data.collectionBannerImage;
                 console.log("Image URL:", imageUrl);
 
                 if (name === "coverImage") {
-                    setSelectedImage(imageUrl); // Use the server URL
+                    setSelectedImage(imageUrl);
                     setImageCoverLoading(false);
                     dispatch(setCollectionRequestCoverImgUrl(imageUrl));
                 }
                 if (name === "profileImage") {
-                    setSelectedBannerImage(imageUrl); // Use the server URL
+                    setSelectedBannerImage(imageUrl);
                     setImageBannerLoading(false);
                     dispatch(setCollectionRequestBannerImgUrl(imageUrl));
                 }
@@ -1040,18 +1122,15 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             }
         } catch (error) {
             console.log("Image Upload Error:", error);
+            toast.error("Image Upload Failed");
             setImageCoverLoading(false);
             setImageBannerLoading(false);
         } finally {
             // Reset the file input to allow re-uploading the same file
-            document.getElementById(
-                name === "coverImage" ? "coverFile" : "bannerFile"
-            ).value = null;
+            document.getElementById(name === "coverImage" ? "coverFile" : "bannerFile").value = null;
+            setUploadProgress(prev => ({ ...prev, [name]: 0 }));
         }
     };
-
-    console.log("Selected Image:", selectedImage);
-    console.log("Selected Banner Image:", selectedBannerImage);
 
     const handleCoverImageChange = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -1725,7 +1804,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 <div className="container">
                     <div className="row g-5">
                         <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
-                            <div className="upload-area">
+                            {/* <div className="upload-area">
                                 <div className="upload-formate mb--30">
                                     <h6 className="title">
                                         Upload Collection Cover Image
@@ -1830,6 +1909,81 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                 {hasImageError && !selectedBannerImage && (
                                     <ErrorText>Image is required</ErrorText>
                                 )}
+                            </div> */}
+
+
+<div className="upload-area">
+                                <div className="upload-formate mb--30">
+                                    <h6 className="title">Upload Collection Cover Image</h6>
+                                    <p className="formate">Drag or choose your image to upload</p>
+                                </div>
+                                <div className="brows-file-wrapper">
+                                    <input
+                                        name="coverFile"
+                                        id="coverFile"
+                                        type="file"
+                                        className="inputfile"
+                                        onChange={handleCoverImageChange}
+                                    />
+                                    {selectedImage && (
+                                        <img
+                                            id="createCoverImage"
+                                            src={selectedImage}
+                                            alt=""
+                                            data-black-overlay="6"
+                                        />
+                                    )}
+                                    <label htmlFor="coverFile" title="No File Chosen">
+                                        {imageCoverLoading ? (
+                                            <div>
+                                                <MutatingDots color="#fff" size={30} speed={1} />
+                                                <p>Uploading: {uploadProgress.coverImage}%</p>
+                                            </div>
+                                        ) : (
+                                            <i className="feather-upload" />
+                                        )}
+                                        <span className="text-center">Choose a Cover Image</span>
+                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                                    </label>
+                                </div>
+                                {hasImageError && !selectedImage && <ErrorText>Image is required</ErrorText>}
+                            </div>
+
+                            <div className="upload-area mt--50">
+                                <div className="upload-formate mb--30">
+                                    <h6 className="title">Upload Collection Banner Image</h6>
+                                    <p className="formate">Drag or choose your image to upload</p>
+                                </div>
+                                <div className="brows-file-wrapper">
+                                    <input
+                                        name="bannerFile"
+                                        id="bannerFile"
+                                        type="file"
+                                        className="inputfile"
+                                        onChange={handleBannerImageChange}
+                                    />
+                                    {selectedBannerImage && (
+                                        <img
+                                            id="createBannerImage"
+                                            src={selectedBannerImage}
+                                            alt=""
+                                            data-black-overlay="6"
+                                        />
+                                    )}
+                                    <label htmlFor="bannerFile" title="No File Chosen">
+                                        {imageBannerLoading ? (
+                                            <div>
+                                                <MutatingDots color="#fff" size={30} speed={1} />
+                                                <p>Uploading: {uploadProgress.profileImage}%</p>
+                                            </div>
+                                        ) : (
+                                            <i className="feather-upload" />
+                                        )}
+                                        <span className="text-center">Choose a Banner Image</span>
+                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
+                                    </label>
+                                </div>
+                                {hasImageError && !selectedBannerImage && <ErrorText>Image is required</ErrorText>}
                             </div>
 
                             <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
@@ -2693,29 +2847,29 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
 
                                         {/* Connected wallet or all wallets */}
                                         {wallets
-                                            .filter(
+                                            ?.filter(
                                                 (wallet) =>
-                                                    wallet.name !== "Stripe"
+                                                    wallet?.name !== "Stripe"
                                             )
-                                            .filter((wallet) => {
+                                            ?.filter((wallet) => {
                                                 console.log(
                                                     connectedWallet
-                                                        .split(" ")
-                                                        .join("")
+                                                        ?.split(" ")
+                                                        ?.join("")
                                                 );
                                                 return (
                                                     !connectedWallet ||
-                                                    wallet.name ===
+                                                    wallet?.name ===
                                                         connectedWallet
-                                                            .split(" ")
-                                                            .join("") ||
+                                                            ?.split(" ")
+                                                            ?.join("") ||
                                                     connectedWallet ===
                                                         "WalletConnect"
                                                 );
                                             })
-                                            .map((wallet) => (
+                                            ?.map((wallet) => (
                                                 <motion.div
-                                                    key={wallet.name}
+                                                    key={wallet?.name}
                                                     className="rn-check-box"
                                                     whileHover={{
                                                         scale: 1.03,
@@ -2741,10 +2895,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     }}
                                                 >
                                                     <Image
-                                                        src={wallet.src}
-                                                        alt={wallet.name}
-                                                        width={wallet.width}
-                                                        height={wallet.height}
+                                                        src={wallet?.src}
+                                                        alt={wallet?.name}
+                                                        width={wallet?.width}
+                                                        height={wallet?.height}
                                                     />
                                                 </motion.div>
                                             ))}

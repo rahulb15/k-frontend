@@ -186,6 +186,67 @@ const getAllLaunched = async (page, limit, search) => {
     }
 }
 
+const getLiveCollections = async (page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/getLiveCollections`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const getUpcomingCollections = async (page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/getUpcomingCollections`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const getEndedCollections = async (page, limit, search) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            API_URL + `launch-collection/getEndedCollections`,
+            { page, limit, search },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        console.log(response, "response");
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
+
+
 const getAllMarketplaceCollections = async (page, limit, search, timeRange) => {
     console.log(page, limit, search);
     try {
@@ -358,8 +419,38 @@ const getCollectionsAllCategory = async () => {
 }
 
 
+// getPrioritizedCollections
+const getPrioritizedCollections = async (limit = 5) => {
+    try {
+        const token = localStorage.getItem("token");
+        // const response = await axios.get(
+        //     `${API_URL}launch-collection/prioritized?limit=${limit}`,
+        //     {
+        //         headers: {
+        //             Authorization: `Bearer ${token}`,
+        //         },
+        //     }
+        // );
+
+        //post api
+        const response = await axios.post(
+            `${API_URL}launch-collection/prioritized`,
+            { limit },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
 
 
+        console.log("Prioritized collections response:", response);
+        return response;
+    } catch (error) {
+        console.error("Error fetching prioritized collections:", error);
+        throw error;
+    }
+}
 
 
 
@@ -381,5 +472,9 @@ export default {
     getCreatedCollections,
     getAllCollectionMarketplace,
     getCollectionsAllCategory,
-    getCreatedCollectionsMarketPlace
+    getCreatedCollectionsMarketPlace,
+    getPrioritizedCollections,
+    getLiveCollections,
+    getUpcomingCollections,
+    getEndedCollections
 };

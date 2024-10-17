@@ -481,6 +481,200 @@
     Banner Style 6  
 ---------------------------*/
 
+// .slider-style-6 {
+//     padding: 15px;
+//     background: var(--background-color-2);
+//     border-radius: 5px;
+
+//     &.wide-wrapper {
+//         margin: 0 -110px;
+//         @media #{$laptop-device} {
+//             margin: 0;
+//         }
+//         @media #{$lg-layout} {
+//             margin: 0;
+//         }
+//         @media #{$md-layout} {
+//             margin: 0;
+//         }
+//         @media #{$sm-layout} {
+//             margin: 0;
+//         }
+//     }
+//     .slide {
+//         position: relative;
+//         z-index: 1;
+//         min-height: 676px;
+//         display: flex;
+//         align-items: center;
+//         @media #{$sm-layout} {
+//             min-height: auto;
+//             padding: 50px 0;
+//         }
+//         .banner-read-thumb-lg {
+//             padding: 20px 50px;
+//             position: relative;
+//             z-index: 2; /* Ensure this is higher than the overlay */
+//             max-width: 40%;
+//             @media #{$sm-layout} {
+//                 padding: 20px 30px;
+//             }
+//             h4 {
+//                 margin-bottom: 15px;
+//                 font-size: 50px;
+//                 font-weight: 400;
+
+//                 @media #{$md-layout} {
+//                     font-size: 36px;
+//                 }
+
+//                 @media #{$sm-layout} {
+//                     font-size: 36px;
+//                 }
+
+//                 @media #{$large-mobile} {
+//                     font-size: 26px;
+//                 }
+//             }
+
+//             p {
+//                 margin-bottom: 30px;
+//                 color: #fff8d1;
+
+//                 @media #{$smlg-device} {
+//                     max-width: 70%;
+//                 }
+
+//                 @media #{$md-layout} {
+//                     max-width: 80%;
+//                 }
+
+//                 @media #{$sm-layout} {
+//                     max-width: 100%;
+//                     font-size: 18px;
+//                     margin-bottom: 19px;
+//                 }
+
+//                 @media #{$small-mobile} {
+//                     max-width: 100%;
+//                 }
+//             }
+
+//             .mint-info {
+//                 display: flex;
+//                 justify-content: space-between;
+//                 align-items: center;
+//                 margin: 20px 0;
+//                 background: rgba(0, 0, 0, 0.6);
+//                 border-radius: 10px;
+//                 padding: 15px 20px;
+//                 backdrop-filter: blur(5px);
+//                 width: 100%;
+
+//                 @media (max-width: 768px) {
+//                     flex-direction: column;
+//                     align-items: flex-start;
+//                 }
+
+//                 .mint-price, .mint-period {
+//                     display: flex;
+//                     flex-direction: column;
+//                     align-items: flex-start;
+//                     flex: 1;
+
+//                     span {
+//                         font-size: 14px;
+//                         color: #ffd700;
+//                         margin-bottom: 5px;
+//                     }
+
+//                     strong {
+//                         font-size: 18px;
+//                         color: #fff;
+//                         white-space: nowrap;
+//                         overflow: hidden;
+//                         text-overflow: ellipsis;
+//                         max-width: 100%;
+//                     }
+
+//                     small {
+//                         font-size: 12px;
+//                         color: #fff8d1;
+//                     }
+//                 }
+//             }
+            
+//             .banner-read-thumb-lg__title {
+//                 // font-size: 30px;
+//                 // font-weight: 400;
+//                 // margin-bottom: 15px;
+//                 color: #ffd700;
+//                 font-weight: 700;
+//                 line-height: 40px;
+//                 display: block;
+//                 margin-bottom: 10px;
+//                 padding-bottom: 10px;
+//                 border-radius: 5px;
+//                 text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+//                 @media #{$md-layout} {
+//                     font-size: 24px;
+//                 }
+//                 @media #{$sm-layout} {
+//                     font-size: 24px;
+//                 }
+//                 @media #{$large-mobile} {
+//                     font-size: 20px;
+//                 }
+//             }
+//             .banner-read-thumb-lg__description
+//             {
+//                 font-size: 18px;
+//                 color: #fff8d1;
+//                 margin-bottom: 30px;
+//                 text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+//                 font-weight: 700;
+//                 // line-height: 20px;
+
+//                 @media #{$md-layout} {
+//                     font-size: 16px;
+//                 }
+//                 @media #{$sm-layout} {
+//                     font-size: 16px;
+//                 }
+//                 @media #{$large-mobile} {
+//                     font-size: 14px;
+//                 }
+//             }
+
+//         }
+//     }
+//     .slide::before {
+//         content: '';
+//         position: absolute;
+//         top: 0;
+//         left: 0;
+//         width: 60%; /* Adjust the width of the overlay as needed */
+//         height: 100%;
+//         background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 50%);
+//         z-index: 1;
+//     }
+
+//     &.slick-arrow-between {
+//         button {
+//             &.slide-arrow {
+//                 &.slick-prev {
+//                     left: 0px !important;
+//                 }
+//                 &.slick-next {
+//                     right: 0px !important;
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
 .slider-style-6 {
     padding: 15px;
     background: var(--background-color-2);
@@ -507,17 +701,62 @@
         min-height: 676px;
         display: flex;
         align-items: center;
+        overflow: hidden;
         @media #{$sm-layout} {
             min-height: auto;
             padding: 50px 0;
         }
+        
+        .image-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: scale(1.1);
+            transition: transform 0.5s ease-out;
+            
+            img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
+                transform: scale(1.05);
+                transition: transform 0.5s ease-out;
+            }
+        }
+        
+        &:hover {
+            .image-wrapper {
+                transform: scale(1);
+                
+                img {
+                    transform: scale(1.1);
+                }
+            }
+        }
+
         .banner-read-thumb-lg {
             padding: 20px 50px;
+            margin-left: 50px;
             position: relative;
-            z-index: 2; /* Ensure this is higher than the overlay */
+            z-index: 2;
+            max-width: 40%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.3s ease-out;
+            
+            &:hover {
+                transform: perspective(1000px) rotateY(0deg);
+            }
+
             @media #{$sm-layout} {
                 padding: 20px 30px;
+                max-width: 80%;
             }
+
             h4 {
                 margin-bottom: 15px;
                 font-size: 50px;
@@ -537,9 +776,8 @@
             }
 
             p {
-                max-width: 60%;
                 margin-bottom: 30px;
-                color: var(--color-body);
+                color: #fff8d1;
 
                 @media #{$smlg-device} {
                     max-width: 70%;
@@ -559,10 +797,52 @@
                     max-width: 100%;
                 }
             }
+
+            .mint-info {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 20px 0;
+                background: rgba(0, 0, 0, 0.6);
+                border-radius: 10px;
+                padding: 15px 20px;
+                backdrop-filter: blur(5px);
+                width: 100%;
+
+                @media (max-width: 768px) {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .mint-price, .mint-period {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    flex: 1;
+
+                    span {
+                        font-size: 14px;
+                        color: #ffd700;
+                        margin-bottom: 5px;
+                    }
+
+                    strong {
+                        font-size: 18px;
+                        color: #fff;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        max-width: 100%;
+                    }
+
+                    small {
+                        font-size: 12px;
+                        color: #fff8d1;
+                    }
+                }
+            }
+            
             .banner-read-thumb-lg__title {
-                // font-size: 30px;
-                // font-weight: 400;
-                // margin-bottom: 15px;
                 color: #ffd700;
                 font-weight: 700;
                 line-height: 40px;
@@ -582,14 +862,12 @@
                     font-size: 20px;
                 }
             }
-            .banner-read-thumb-lg__description
-            {
+            .banner-read-thumb-lg__description {
                 font-size: 18px;
                 color: #fff8d1;
                 margin-bottom: 30px;
                 text-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 font-weight: 700;
-                // line-height: 20px;
 
                 @media #{$md-layout} {
                     font-size: 16px;
@@ -601,18 +879,7 @@
                     font-size: 14px;
                 }
             }
-
         }
-    }
-    .slide::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 60%; /* Adjust the width of the overlay as needed */
-        height: 100%;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 50%);
-        z-index: 1;
     }
 
     &.slick-arrow-between {
@@ -628,7 +895,6 @@
         }
     }
 }
-
 /*--------------------------
     Banner Style 7 
 ---------------------------*/
