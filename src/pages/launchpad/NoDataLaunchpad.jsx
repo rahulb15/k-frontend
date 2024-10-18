@@ -1,48 +1,52 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { AlertCircle } from 'lucide-react';
 
 const NoData = ({ message }) => {
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '456px',
+    textAlign: 'center',
+    color: '#9ca3af',
+    backgroundColor: 'rgb(46 47 33)',
+    borderRadius: '8px',
+    padding: '24px'
+  };
+
+  const headingStyle = {
+    marginTop: '16px',
+    fontSize: '1.25rem',
+    fontWeight: '600',
+    color: '#d1d5db'
+  };
+
+  const messageStyle = {
+    marginTop: '8px',
+    color: '#9ca3af'
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '300px',
-        textAlign: 'center',
-        color: '#666',
-        backgroundColor: '#f8f8f8',
-        borderRadius: '8px',
-        padding: '20px'
-      }}
+      style={containerStyle}
     >
-      <motion.svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 10 }}
       >
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="8" x2="12" y2="12" />
-        <line x1="12" y1="16" x2="12.01" y2="16" />
-      </motion.svg>
+        <AlertCircle size={48} color="#eab308" />
+      </motion.div>
       <motion.h3
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        style={{ marginTop: '20px', fontSize: '1.5rem' }}
+        style={headingStyle}
       >
         No Data Available
       </motion.h3>
@@ -50,8 +54,9 @@ const NoData = ({ message }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
+        style={messageStyle}
       >
-        {message || "There are no items to display at the moment."}
+        {message || "There are no past collections to display."}
       </motion.p>
     </motion.div>
   );

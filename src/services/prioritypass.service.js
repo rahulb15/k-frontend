@@ -198,6 +198,39 @@ export const priorityPassApi = createApi({
             },
         }),
 
+        checkPublicPrice: builder.mutation({
+            async queryFn(args) {
+                const { colName } = args;
+                console.log(args);
+                // const pactCode = `(free.lptest001.get-mint-price ${JSON.stringify(
+                //     colName
+                // )})`;
+                const collectionName = "priority_pass";
+                const pactCode = `(${
+                    priorityPassPactFunctions.getMintPrice
+                } ${JSON.stringify(collectionName)})`;
+
+                const transaction = Pact.builder
+                    .execution(pactCode)
+                    .setMeta({ chainId: CHAIN_ID })
+                    .createTransaction();
+
+                    console.log("checkPublicPrice", transaction);
+
+                const response = await client.local(transaction, {
+                    preflight: false,
+                    signatureVerification: false,
+                });
+                console.log("response", response);
+
+                if (response.result.status === "success") {
+                    return { data: response.result.data };
+                } else {
+                    return { error: response.result.error };
+                }
+            },
+        }),
+
         reserveTokens: builder.mutation({
             async queryFn(args) {
                 const {
@@ -336,5 +369,6 @@ export const priorityPassApi = createApi({
 export const {
     useCreateCollectionMutation,
     useUnrevealedTokensMutation,
+    useCheckPublicPriceMutation,
     useReserveTokensMutation,
 } = priorityPassApi;

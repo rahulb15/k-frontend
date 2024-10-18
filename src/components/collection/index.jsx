@@ -285,6 +285,7 @@ import Image from "next/image";
 import { Rings } from "react-loader-spinner";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const Collection = ({
     title,
@@ -408,7 +409,7 @@ const Collection = ({
             className={`rn-collection-inner-one ${data?.collectionName === "Priority Pass" ? "priority-pass" : ""}`}
             >
             <div className="collection-wrapper">
-                {image && (
+                {/* {image && (
                     <div className="collection-big-thumbnail">
                         <Image
                             src={image}
@@ -417,6 +418,29 @@ const Collection = ({
                             height={339}
                         />
                     </div>
+                )} */}
+
+{image && (
+                    <motion.div 
+                        className="image"
+                        whileHover={{ 
+                            scale: 1.05,
+                            // boxShadow: "0 0 2px #fbf39c, 0 0 5px #cbd02e, 0 0 10px #fef2a1"
+                        }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <img
+                            src={image}
+                            alt={image?.alt || "Nft_Profile"}
+                            style={{
+                                width: "auto",
+                                maxWidth: "385px",
+                                height: "auto",
+                                maxHeight: "400px",
+                                borderRadius: "10px",
+                            }}
+                        />
+                    </motion.div>
                 )}
                 <div className="collection-deg">
                     <h6 className="title">{title}</h6>

@@ -431,7 +431,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                         )}
                     </div>
                     <div className="profile-share">
-                       <span style={{color: "white", fontSize: "14px", fontWeight: "bold"}}>{nft?.onAuction ? "Auction" : nft?.onDutchAuction ? "Dutch Auction" : "Fixed Sale"}</span>
+                       <span style={{color: "white", fontSize: "14px", fontWeight: "bold"}}>{nft?.onAuction ? "Auction" : nft?.onDutchAuction ? "Dutch Auction" : nft?.onSale ? "Fixed Sale" : "Not for sale"}</span>
                     </div>
                     {!disableShareDropdown && <ShareDropdown />}
                 </div>

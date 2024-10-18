@@ -5,7 +5,7 @@ import Image from "next/image";
 const SocialAuth = ({ className, title }) => (
     <div className={clsx("social-share-media form-wrapper-one", className)}>
         <h6>{title}</h6>
-        <p>Lorem ipsum dolor sit, amet sectetur adipisicing elit.cumque.</p>
+        <p>By logging in, you agree to our Terms of Service & Privacy Policy.</p>
         <button type="button" className="another-login login-facebook">
             <span className="small-image">
                 <Image

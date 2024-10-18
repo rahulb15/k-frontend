@@ -9,7 +9,7 @@
             "buttons": [
                 {
                     "id": 1,
-                    "path": "/login",
+                    "path": "/connect",
                     "content": "Get Started"
                 },
                 {
@@ -53,7 +53,7 @@
                 {
                     "id": 2,
                     "title": "Create your collection",
-                    "path": "/collection",
+                    "path": "/create",
                     "subtitle": "Step-02",
                     "description": "A great collection of beautiful website templates for your need. Choose the best suitable template.",
                     "images": [

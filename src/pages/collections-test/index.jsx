@@ -90,7 +90,7 @@ const Home = () => {
             description:
                 "Introducing priority pass A one-of-a-kind VIP pass that grants you access to mint 12 free NFTs You will have first priority to mint one free NFT per <br/> collection for any NFTS projects you choose from our launchpad",
             buttons: [
-                { id: 1, path: "/login", content: "Get Started" },
+                { id: 1, path: "/connect", content: "Get Started" },
                 {
                     id: 2,
                     path: "/launchpad/kadena/Priority Pass",
@@ -106,7 +106,7 @@ const Home = () => {
             description:
                 "DB COOPER is a Token, NFT, and Gaming project proudly bulding on Kadena, Join our TELEGRAM the greatest global Kadena community of all time",
             buttons: [
-                { id: 1, path: "/login", content: "Get Started" },
+                { id: 1, path: "/connect", content: "Get Started" },
                 {
                     id: 2,
                     path: "/launchpad/kadena/DB COOPER",

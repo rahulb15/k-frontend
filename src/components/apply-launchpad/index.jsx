@@ -120,7 +120,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         useCollectionRequestMutation();
     const [getLaunchFee] = useGetLaunchFeeMutation();
     const account = useAccountContext();
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(1);
     // Get WalletConnect client and session
     const { client: wcClient, session: wcSession } = useWalletConnectClient();
     const [formData, setFormData] = useState({

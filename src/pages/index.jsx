@@ -31,7 +31,7 @@ const Home = () => {
             description:
                 "Kryptomerch is a decentralized marketplace for NFTs, digital assets, and collectibles. Buy, sell, and discover exclusive digital assets.",
             buttons: [
-                { id: 1, path: "/login", content: "Get Started" },
+                { id: 1, path: "/connect", content: "Get Started" },
                 // {
                 //     id: 2,
                 //     path: "/launchpad/kadena/Priority Pass",
@@ -46,7 +46,7 @@ const Home = () => {
             title: "Lots of NFTs",
             description: "Buy, sell, and discover exclusive digital assets.",
             buttons: [
-                { id: 1, path: "/login", content: "Get Started" },
+                { id: 1, path: "/connect", content: "Get Started" },
                 // {
                 //     id: 2,
                 //     path: "/launchpad/kadena/Priority Pass",
@@ -62,7 +62,7 @@ const Home = () => {
             description:
                 "Collect unique digital assets from creators around the world.",
             buttons: [
-                { id: 1, path: "/login", content: "Get Started" },
+                { id: 1, path: "/connect", content: "Get Started" },
                 // {
                 //     id: 2,
                 //     path: "/launchpad/kadena/Priority Pass",

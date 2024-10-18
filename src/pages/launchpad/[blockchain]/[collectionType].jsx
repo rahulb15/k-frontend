@@ -184,6 +184,7 @@ const CollectionDetails = ({ initialCollection }) => {
     const fetchCollectionData = async () => {
         try {
             const response = await collectionService.getLaunchCollectionByName(collection.collectionType);
+            console.log("🚀 ~ fetchCollectionData ~ response", response);
             setCollection(prevState => ({
                 ...prevState,
                 data: response?.data || {}

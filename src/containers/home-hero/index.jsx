@@ -37,7 +37,7 @@ const HomeHeroArea = ({ data }) => (
             {data && (
                 <Slider
                     options={SliderOptions}
-                    className="slider-style-6 wide-wrapper slick-activation-06 slick-arrow-between"
+                    className="slider-style-6a wide-wrapper slick-activation-06 slick-arrow-between"
                 >
                     {data.map(
                         (banner) => (

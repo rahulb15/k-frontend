@@ -742,6 +742,7 @@ const LaunchpadCategory = ({ className, space }) => {
                                                                     style={{
                                                                         width: "100%",
                                                                         height: "auto",
+                                                                        maxHeight: "400px",
                                                                         borderRadius: "10px",
                                                                         boxShadow: "0 0 2px #fbf39c, 0 0 5px #cbd02e, 0 0 10px #fef2a1",
                                                                     }}

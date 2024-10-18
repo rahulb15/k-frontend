@@ -627,6 +627,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
         isLive: false,
         price: 0,
     });
+    console.log("Stage Info:", stageInfo);
     const [kdatoUsd, setKdatoUsd] = useState(0);
     const [iagree, setIagree] = useState(false);
     const [swap, setSwap] = useState(false);
@@ -734,6 +735,7 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
                             memoizedCollectionName,
                             "public"
                         );
+                        console.log("Price:", price);
                         setStageInfo({
                             currentStage: "Public",
                             isLive: true,

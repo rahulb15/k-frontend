@@ -739,6 +739,7 @@ export const launchpadApi = createApi({
                     preflight: false,
                     signatureVerification: false,
                 });
+                console.log("response", response);
 
                 if (response.result.status === "success") {
                     return { data: response.result.data };

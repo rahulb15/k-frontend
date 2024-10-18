@@ -12,12 +12,15 @@ import { useAccountContext } from "src/contexts";
 import collectionService from "src/services/collection.service";
 import {
     useCheckPublicMutation,
-    useCheckPublicPriceMutation,
     useCheckWlMutation,
     useCheckWlPriceMutation,
     useCheckPresaleMutation,
     useCheckPresalePriceMutation,
 } from "src/services/launchpad.service";
+
+import {
+    useCheckPublicPriceMutation,
+} from "src/services/prioritypass.service";
 import { useReserveTokensMutation } from "src/services/prioritypass.service";
 import axios from "axios";
 import Loader from "@components/loader";
@@ -97,6 +100,8 @@ const PriorityPassDetailsArea = ({ space, className, product, refresh }) => {
         const checkStages = async () => {
             setIsLoading(true);
             try {
+                // const priceCheck = await checkPublicPrice({ collectionName: product.collectionName });
+                // console.log("Price Check:", priceCheck);
                 setStageInfo({
                     currentStage: "Public",
                     isLive: true,
