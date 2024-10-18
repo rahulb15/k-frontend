@@ -409,7 +409,7 @@ const Collection = ({
             className={`rn-collection-inner-one ${data?.collectionName === "Priority Pass" ? "priority-pass" : ""}`}
             >
             <div className="collection-wrapper">
-                {/* {image && (
+                {image && (
                     <div className="collection-big-thumbnail">
                         <Image
                             src={image}
@@ -418,8 +418,8 @@ const Collection = ({
                             height={339}
                         />
                     </div>
-                )} */}
-
+                )}
+{/* 
 {image && (
                     <motion.div 
                         className="image"
@@ -441,7 +441,7 @@ const Collection = ({
                             }}
                         />
                     </motion.div>
-                )}
+                )} */}
                 <div className="collection-deg">
                     <h6 className="title">{title}</h6>
                     <button className="btn btn-primary">Mint</button>

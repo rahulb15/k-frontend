@@ -21,8 +21,6 @@ import {
     useCollectionRequestMutation,
     useGetLaunchFeeMutation,
 } from "src/services/launchpad.service";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -30,7 +28,6 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import { MutatingDots } from "react-loader-spinner";
 import { useTheme } from "@mui/material/styles";
-import { FaPlus } from "react-icons/fa";
 import {
     setCollectionRequestName,
     setCollectionRequestSymbol,
@@ -59,28 +56,9 @@ import ConnectModal from "@components/modals/connect-modal";
 import { useRouter } from "next/router";
 import { useWalletConnectClient } from "src/contexts/WalletConnectContext";
 import axios from "axios";
+
+import { FaTwitter, FaGlobe, FaDiscord, FaInstagram } from "react-icons/fa";
 import Swal from "sweetalert2";
-import {
-    EmailIcon,
-    FacebookIcon,
-    LinkedinIcon,
-    TelegramIcon,
-    XIcon,
-    WhatsappIcon,
-} from "react-share";
-import { Instagram } from "lucide-react";
-
-
-const socialMediaConfig = {
-    facebook: { icon: FacebookIcon, pattern: /^https?:\/\/(www\.)?facebook\.com\/.+/i },
-    X: { icon: XIcon, pattern: /^https?:\/\/(www\.)?x\.com\/.+/i },
-    instagram: { icon: Instagram, pattern: /^https?:\/\/(www\.)?instagram\.com\/.+/i },
-    linkedin: { icon: LinkedinIcon, pattern: /^https?:\/\/(www\.)?linkedin\.com\/.+/i },
-    telegram: { icon: TelegramIcon, pattern: /^https?:\/\/(t\.me|telegram\.me)\/.+/i },
-    whatsapp: { icon: WhatsappIcon, pattern: /^https?:\/\/(api\.)?whatsapp\.com\/.+/i },
-    email: { icon: EmailIcon, pattern: /^mailto:.+@.+\..+/i },
-};
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -202,276 +180,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         coverImage: 0,
         profileImage: 0,
     });
+
+
     const [connectedWallet, setConnectedWallet] = useState(null);
     console.log("connectedWallet", connectedWallet);
 
-    const [availableSocialMedia, setAvailableSocialMedia] = useState([
-        { name: "Facebook", value: "facebook" },
-        { name: "X", value: "X" },
-        { name: "Instagram", value: "instagram" },
-        { name: "LinkedIn", value: "linkedin" },
-        { name: "Telegram", value: "telegram" },
-        { name: "WhatsApp", value: "whatsapp" },
-        { name: "Email", value: "email" },
-    ]);
-    const [selectedSocialMedia, setSelectedSocialMedia] = useState("");
-    const [socialMediaUrl, setSocialMediaUrl] = useState("");
-    const [socialMediaLinks, setSocialMediaLinks] = useState({});
-    console.log("socialMediaLinks", socialMediaLinks);
-
-    const handleSocialMediaChange = (event) => {
-        setSelectedSocialMedia(event.target.value);
-    };
-
-    const handleSocialMediaUrlChange = (event) => {
-        setSocialMediaUrl(event.target.value);
-    };
-
-    // const addSocialMediaLink = () => {
-    //     if (selectedSocialMedia && socialMediaUrl) {
-    //         setSocialMediaLinks((prev) => ({
-    //             ...prev,
-    //             [selectedSocialMedia]: socialMediaUrl,
-    //         }));
-    //         setAvailableSocialMedia((prev) =>
-    //             prev.filter((item) => item.value !== selectedSocialMedia)
-    //         );
-    //         setSelectedSocialMedia("");
-    //         setSocialMediaUrl("");
-    //     }
-    // };
-
-
-    const addSocialMediaLink = () => {
-        if (selectedSocialMedia && socialMediaUrl) {
-            const pattern = socialMediaConfig[selectedSocialMedia]?.pattern;
-            if (pattern && !pattern.test(socialMediaUrl)) {
-                toast.error(`Invalid ${selectedSocialMedia} URL`);
-                return;
-            }
-            setSocialMediaLinks((prev) => ({
-                ...prev,
-                [selectedSocialMedia]: socialMediaUrl,
-            }));
-            setAvailableSocialMedia((prev) =>
-                prev.filter((item) => item.value !== selectedSocialMedia)
-            );
-            setSelectedSocialMedia("");
-            setSocialMediaUrl("");
-        }
-    };
-    const removeSocialMediaLink = (platform) => {
-        const { [platform]: _, ...rest } = socialMediaLinks;
-        setSocialMediaLinks(rest);
-        setAvailableSocialMedia((prev) => [
-            ...prev,
-            {
-                name: platform.charAt(0).toUpperCase() + platform.slice(1),
-                value: platform,
-            },
-        ]);
-    };
-
-    // Add this to your form submission logic
-    useEffect(() => {
-        setFormData((prev) => ({
-            ...prev,
-            socialMediaLinks,
-        }));
-    }, [socialMediaLinks]);
-
-    // const renderSocialMediaSection = () => (
-    //     <>
-    //         <div className="col-md-12">
-    //             <div className="input-box pb--20">
-    //                 <label htmlFor="socialMedia" className="form-label">
-    //                     Social Media Links
-    //                 </label>
-    //             </div>
-    //         </div>
-    //         <div className="col-md-5">
-    //             <div className="input-box pb--20">
-    //                 <select
-    //                     style={{
-    //                         padding: "10px",
-    //                         borderRadius: "5px",
-    //                         border: "1px solid #363545",
-    //                         marginBottom: "10px",
-    //                         height: "50px",
-    //                         backgroundColor: "#242435",
-    //                         width: "100%",
-    //                         fontSize: "16px",
-    //                     }}
-    //                     id="socialMedia"
-    //                     value={selectedSocialMedia}
-    //                     onChange={handleSocialMediaChange}
-    //                 >
-    //                     <option value="">Select a platform</option>
-    //                     {availableSocialMedia.map(({ name, value }) => (
-    //                         <option key={value} value={value}>
-    //                             {name}
-    //                         </option>
-    //                     ))}
-    //                 </select>
-    //             </div>
-    //         </div>
-    //         <div className="col-md-5">
-    //             <div className="input-box pb--20">
-    //                 <input
-    //                     type="text"
-    //                     id="socialMediaUrl"
-    //                     placeholder="Enter social media URL"
-    //                     value={socialMediaUrl}
-    //                     onChange={handleSocialMediaUrlChange}
-    //                     style={{
-    //                         width: "100%",
-    //                         padding: "10px",
-    //                         borderRadius: "5px",
-    //                         border: "1px solid #363545",
-    //                         backgroundColor: "#242435",
-    //                         color: "#fff",
-    //                         fontSize: "16px",
-    //                         height: "50px",
-    //                     }}
-    //                 />
-    //             </div>
-    //         </div>
-    //         <div className="col-md-2">
-    //             <div className="input-box pb--20">
-    //                 <button
-    //                     type="button"
-    //                     onClick={addSocialMediaLink}
-    //                     style={{
-    //                         width: "100%",
-    //                         height: "50px",
-    //                         padding: "10px",
-    //                         borderRadius: "5px",
-    //                         border: "1px solid #363545",
-    //                         backgroundColor: "#242435",
-    //                         color: "#fff",
-    //                         cursor: "pointer",
-    //                         display: "flex",
-    //                         justifyContent: "center",
-    //                         alignItems: "center",
-    //                     }}
-    //                 >
-    //                     <FaPlus size={20} />
-    //                 </button>
-    //             </div>
-    //         </div>
-    //         <div className="col-md-12">
-    //                 {Object.entries(socialMediaLinks).map(([platform, url]) => (
-    //                     <Chip
-    //                         key={platform}
-    //                         label={`${platform}: ${url}`}
-    //                         sx={{ color: "#fff", backgroundColor: "#363545",width: "fit-content" }}
-    //                         onDelete={() => removeSocialMediaLink(platform)}
-    //                         style={{ margin: "5px" }}
-    //                     />
-    //                 ))}
-    //             </div>
-    //     </>
-    // );
-
-
-    const renderSocialMediaSection = () => (
-        <>
-            <div className="col-md-12">
-                <div className="input-box pb--20">
-                    <label htmlFor="socialMedia" className="form-label">
-                        Social Media Links
-                    </label>
-                </div>
-            </div>
-            <div className="col-md-5">
-                <div className="input-box pb--20">
-                    <select
-                        style={{
-                            padding: "10px",
-                            borderRadius: "5px",
-                            border: "1px solid #363545",
-                            marginBottom: "10px",
-                            height: "50px",
-                            backgroundColor: "#242435",
-                            width: "100%",
-                            fontSize: "16px",
-                        }}
-                        id="socialMedia"
-                        value={selectedSocialMedia}
-                        onChange={handleSocialMediaChange}
-                    >
-                       <option value="">Select a platform</option>
-    {availableSocialMedia.map(({ name, value }) => {
-        const Icon = socialMediaConfig[value]?.icon;
-        return (
-            <option key={value} value={value}>
-                {Icon && <Icon size={16} round />} {name}
-            </option>
-        );
-    })}
-                    </select>
-                </div>
-            </div>
-            <div className="col-md-5">
-                <div className="input-box pb--20">
-                    <input
-                        type="text"
-                        id="socialMediaUrl"
-                        placeholder="Enter social media URL"
-                        value={socialMediaUrl}
-                        onChange={handleSocialMediaUrlChange}
-                        style={{
-                            width: "100%",
-                            padding: "10px",
-                            borderRadius: "5px",
-                            border: "1px solid #363545",
-                            backgroundColor: "#242435",
-                            color: "#fff",
-                            fontSize: "16px",
-                            height: "50px",
-                        }}
-                    />
-                </div>
-            </div>
-            <div className="col-md-2">
-                <div className="input-box pb--20">
-                    <button
-                        type="button"
-                        onClick={addSocialMediaLink}
-                        style={{
-                            width: "100%",
-                            height: "50px",
-                            padding: "10px",
-                            borderRadius: "5px",
-                            border: "1px solid #363545",
-                            backgroundColor: "#242435",
-                            color: "#fff",
-                            cursor: "pointer",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <FaPlus size={20} />
-                    </button>
-                </div>
-            </div>
-            <div className="col-md-12">
-            {Object.entries(socialMediaLinks).map(([platform, url]) => {
-                const Icon = socialMediaConfig[platform]?.icon;
-                return (
-                    <Chip
-                        key={platform}
-                        icon={Icon && <Icon size={16} round />}
-                        label={`${platform}: ${url}`}
-                        onDelete={() => removeSocialMediaLink(platform)}
-                        style={{ margin: "5px", backgroundColor: "#363545", color: "#fff" }}
-                    />
-                );
-            })}
-        </div>
-        </>
-    );
     useEffect(() => {
         if (account?.user?.walletName) {
             setConnectedWallet(account.user.walletName);
@@ -1022,11 +735,10 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             projectDescription: collectionRequestDescription,
             projectCategory: collectionRequestCategory,
             expectedLaunchDate: expectedLaunchDate,
-            // twitter: formData.twitter,
-            // discord: formData.discord,
-            // instagram: formData.instagram,
-            // website: formData.website,
-            socialMediaLinks: socialMediaLinks,
+            twitter: formData.twitter,
+            discord: formData.discord,
+            instagram: formData.instagram,
+            website: formData.website,
             contractType: formData.contractType,
             totalSupply: collectionRequestSupply,
             mintPrice: collectionRequestMintPrice,
@@ -1110,7 +822,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                             );
                             const body = {
                                 collectionName: collectionRequestName,
-                                mintPrice: launchpadFee,
+                                mintPrice: collectionRequestMintPrice,
                                 mintPriceCurrency: mintPriceCurrency,
                                 type: "apply-launchpad",
                             };
@@ -1254,6 +966,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     }
     // };
 
+
     const uploadImage = async (name, file) => {
         if (name === "coverImage") setImageCoverLoading(true);
         if (name === "profileImage") setImageBannerLoading(true);
@@ -1273,13 +986,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                         "Content-Type": "multipart/form-data",
                     },
                     onUploadProgress: (progressEvent) => {
-                        const percentCompleted = Math.round(
-                            (progressEvent.loaded * 100) / progressEvent.total
-                        );
-                        setUploadProgress((prev) => ({
-                            ...prev,
-                            [name]: percentCompleted,
-                        }));
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(prev => ({ ...prev, [name]: percentCompleted }));
                     },
                 }
             );
@@ -1287,9 +995,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             console.log("Image Upload Response:", response.data);
 
             if (response?.data?.status === "success") {
-                const imageUrl =
-                    response.data.data.collectionCoverImage ||
-                    response.data.data.collectionBannerImage;
+                const imageUrl = response.data.data.collectionCoverImage || response.data.data.collectionBannerImage;
                 console.log("Image URL:", imageUrl);
 
                 if (name === "coverImage") {
@@ -1314,10 +1020,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             setImageBannerLoading(false);
         } finally {
             // Reset the file input to allow re-uploading the same file
-            document.getElementById(
-                name === "coverImage" ? "coverFile" : "bannerFile"
-            ).value = null;
-            setUploadProgress((prev) => ({ ...prev, [name]: 0 }));
+            document.getElementById(name === "coverImage" ? "coverFile" : "bannerFile").value = null;
+            setUploadProgress(prev => ({ ...prev, [name]: 0 }));
         }
     };
 
@@ -1380,6 +1084,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             toast.error("Oops! Something went wrong. Please try again later.");
         }
     };
+
 
     const renderStage1Form = () => (
         <>
@@ -1752,7 +1457,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             </div>
                                         </div>
 
-                                        {/* <div className="col-md-4">
+                                        <div className="col-md-4">
                                             <div className="input-box pb--20">
                                                 <label
                                                     htmlFor="twitter"
@@ -1815,9 +1520,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                     {...register("website")}
                                                 />
                                             </div>
-                                        </div> */}
-
-                                        {renderSocialMediaSection()}
+                                        </div>
 
                                         <div className="col-md-12">
                                             <div className="input-box pb--20 rn-check-box">
@@ -2043,14 +1746,11 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                 )}
                             </div> */}
 
-                            <div className="upload-area">
+
+<div className="upload-area">
                                 <div className="upload-formate mb--30">
-                                    <h6 className="title">
-                                        Upload Collection Cover Image
-                                    </h6>
-                                    <p className="formate">
-                                        Drag or choose your image to upload
-                                    </p>
+                                    <h6 className="title">Upload Collection Cover Image</h6>
+                                    <p className="formate">Drag or choose your image to upload</p>
                                 </div>
                                 <div className="brows-file-wrapper">
                                     <input
@@ -2068,46 +1768,26 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             data-black-overlay="6"
                                         />
                                     )}
-                                    <label
-                                        htmlFor="coverFile"
-                                        title="No File Chosen"
-                                    >
+                                    <label htmlFor="coverFile" title="No File Chosen">
                                         {imageCoverLoading ? (
                                             <div>
-                                                <MutatingDots
-                                                    color="#fff"
-                                                    size={30}
-                                                    speed={1}
-                                                />
-                                                <p>
-                                                    Uploading:{" "}
-                                                    {uploadProgress.coverImage}%
-                                                </p>
+                                                <MutatingDots color="#fff" size={30} speed={1} />
+                                                <p>Uploading: {uploadProgress.coverImage}%</p>
                                             </div>
                                         ) : (
                                             <i className="feather-upload" />
                                         )}
-                                        <span className="text-center">
-                                            Choose a Cover Image
-                                        </span>
-                                        <p className="text-center mt--10">
-                                            PNG, GIF, JPEG, JPG. Max 1Gb.
-                                        </p>
+                                        <span className="text-center">Choose a Cover Image</span>
+                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
                                     </label>
                                 </div>
-                                {hasImageError && !selectedImage && (
-                                    <ErrorText>Image is required</ErrorText>
-                                )}
+                                {hasImageError && !selectedImage && <ErrorText>Image is required</ErrorText>}
                             </div>
 
                             <div className="upload-area mt--50">
                                 <div className="upload-formate mb--30">
-                                    <h6 className="title">
-                                        Upload Collection Banner Image
-                                    </h6>
-                                    <p className="formate">
-                                        Drag or choose your image to upload
-                                    </p>
+                                    <h6 className="title">Upload Collection Banner Image</h6>
+                                    <p className="formate">Drag or choose your image to upload</p>
                                 </div>
                                 <div className="brows-file-wrapper">
                                     <input
@@ -2125,39 +1805,20 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                             data-black-overlay="6"
                                         />
                                     )}
-                                    <label
-                                        htmlFor="bannerFile"
-                                        title="No File Chosen"
-                                    >
+                                    <label htmlFor="bannerFile" title="No File Chosen">
                                         {imageBannerLoading ? (
                                             <div>
-                                                <MutatingDots
-                                                    color="#fff"
-                                                    size={30}
-                                                    speed={1}
-                                                />
-                                                <p>
-                                                    Uploading:{" "}
-                                                    {
-                                                        uploadProgress.profileImage
-                                                    }
-                                                    %
-                                                </p>
+                                                <MutatingDots color="#fff" size={30} speed={1} />
+                                                <p>Uploading: {uploadProgress.profileImage}%</p>
                                             </div>
                                         ) : (
                                             <i className="feather-upload" />
                                         )}
-                                        <span className="text-center">
-                                            Choose a Banner Image
-                                        </span>
-                                        <p className="text-center mt--10">
-                                            PNG, GIF, JPEG, JPG. Max 1Gb.
-                                        </p>
+                                        <span className="text-center">Choose a Banner Image</span>
+                                        <p className="text-center mt--10">PNG, GIF, JPEG, JPG. Max 1Gb.</p>
                                     </label>
                                 </div>
-                                {hasImageError && !selectedBannerImage && (
-                                    <ErrorText>Image is required</ErrorText>
-                                )}
+                                {hasImageError && !selectedBannerImage && <ErrorText>Image is required</ErrorText>}
                             </div>
 
                             <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
