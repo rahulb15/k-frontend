@@ -158,7 +158,7 @@ const Home = () => {
                         />
                     </Tabs>
                     
-                    <div className="horizontal-line" style={{ marginBottom: "30px" }}></div>
+                    <div className="horizontal-line"></div>
                     
                     {isLoadingCollection ? (
                         <CollectionAreaSkeleton />

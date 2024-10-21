@@ -78,8 +78,8 @@
 //                             className="nft-image"
 //                         />
 //                     )}
-//                     {nft.duration && <CountdownTimer date={nft.duration} />} 
-                 
+//                     {nft.duration && <CountdownTimer date={nft.duration} />}
+
 //                 </div>
 //                 <div className="product-share-wrapper">
 //                     <div className="profile-share">
@@ -235,8 +235,6 @@
 
 // export default Product;
 
-
-
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import PropTypes from "prop-types";
@@ -251,6 +249,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NftMarketPlaceDetailModal from "@components/marketplace-nft/NftMarketPlaceDetailModal";
 import { addToCart, selectIsInCart } from "src/features/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import MerchModal from "@components/merchandisingModal/modal-merch";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
@@ -266,6 +265,7 @@ const Product = ({ nft, disableShareDropdown }) => {
     const [isHovered, setIsHovered] = useState(false);
     const dispatch = useDispatch();
     const isItemInCart = useSelector((state) => selectIsInCart(state, nft._id));
+    const [showMerchModal, setShowMerchModal] = useState(false);
 
     const handleOpenModal = () => {
         setShowDetailModal(true);
@@ -277,6 +277,15 @@ const Product = ({ nft, disableShareDropdown }) => {
 
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
+    };
+
+    const handleMerchModal = (e) => {
+        e.stopPropagation(); // Prevent triggering the card's onClick
+        setShowMerchModal(true);
+    };
+
+    const handleCloseMerchModal = () => {
+        setShowMerchModal(false);
     };
 
     const copyTokenId = () => {
@@ -347,9 +356,31 @@ const Product = ({ nft, disableShareDropdown }) => {
                         width={533}
                         height={533}
                     />
-                    {isOnAuction && (
-                        <CountdownTimer date={nft.timeout} />
-                    )}
+                    {/* Updated interactive logo overlay */}
+                    <motion.div
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            zIndex: 10,
+                            width: "40px",
+                            height: "40px",
+                            overflow: "hidden",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleMerchModal}
+                    >
+                        <Image
+                            src="/assets-images/merch-image.jpeg"
+                            alt="Logo"
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </motion.div>
+                    {isOnAuction && <CountdownTimer date={nft.timeout} />}
 
                     {isRevealed && isOnMarketplace && isHovered && (
                         <motion.div
@@ -399,7 +430,11 @@ const Product = ({ nft, disableShareDropdown }) => {
                                     whileHover={{
                                         scale: 1.05,
                                         // backgroundColor: "#d9a400",
-                                        backgroundColor: `${nft.onDutchAuction ? "#d72700" : "#f0b90b"}`,
+                                        backgroundColor: `${
+                                            nft.onDutchAuction
+                                                ? "#d72700"
+                                                : "#f0b90b"
+                                        }`,
                                     }}
                                     whileTap={{ scale: 0.95 }}
                                     transition={{
@@ -409,7 +444,9 @@ const Product = ({ nft, disableShareDropdown }) => {
                                     }}
                                 >
                                     {/* Place Bid */}
-                                    {nft.onDutchAuction ? "Buy Now" : "Place Bid"}
+                                    {nft.onDutchAuction
+                                        ? "Buy Now"
+                                        : "Place Bid"}
                                 </motion.button>
                             )}
                         </motion.div>
@@ -422,7 +459,9 @@ const Product = ({ nft, disableShareDropdown }) => {
                                 onClick={handleAddToCart}
                                 style={{
                                     color: "white",
-                                    backgroundColor: isItemInCart ? "#cccccc" : "#a5c600",
+                                    backgroundColor: isItemInCart
+                                        ? "#cccccc"
+                                        : "#a5c600",
                                 }}
                                 disabled={isItemInCart}
                             >
@@ -431,7 +470,21 @@ const Product = ({ nft, disableShareDropdown }) => {
                         )}
                     </div>
                     <div className="profile-share">
-                       <span style={{color: "white", fontSize: "14px", fontWeight: "bold"}}>{nft?.onAuction ? "Auction" : nft?.onDutchAuction ? "Dutch Auction" : nft?.onSale ? "Fixed Sale" : "Not for sale"}</span>
+                        <span
+                            style={{
+                                color: "white",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                            }}
+                        >
+                            {nft?.onAuction
+                                ? "Auction"
+                                : nft?.onDutchAuction
+                                ? "Dutch Auction"
+                                : nft?.onSale
+                                ? "Fixed Sale"
+                                : "Not for sale"}
+                        </span>
                     </div>
                     {!disableShareDropdown && <ShareDropdown />}
                 </div>
@@ -485,12 +538,12 @@ const Product = ({ nft, disableShareDropdown }) => {
                             </span>{" "}
                             <span style={{ fontWeight: "bold" }}>
                                 {/* {nft.currentPrice} */}
-                                {nft?.onAuction ? nft?.currentPrice : nft?.nftPrice}
+                                {nft?.onAuction
+                                    ? nft?.currentPrice
+                                    : nft?.nftPrice}
                             </span>{" "}
                             {/* {nft.currency} */}
-                            <span style={{ fontSize: "14px" }}>
-                                KDA
-                            </span>
+                            <span style={{ fontSize: "14px" }}>KDA</span>
                         </>
                     ) : isOnSale ? (
                         <>
@@ -499,9 +552,7 @@ const Product = ({ nft, disableShareDropdown }) => {
                                 {nft.nftPrice}
                             </span>{" "}
                             {/* {nft.currency} */}
-                            <span style={{ fontSize: "14px" }}>
-                                KDA
-                            </span>
+                            <span style={{ fontSize: "14px" }}>KDA</span>
                         </>
                     ) : (
                         "Not for sale"
@@ -525,6 +576,26 @@ const Product = ({ nft, disableShareDropdown }) => {
                     data={nft}
                 />
             )}
+
+            {showMerchModal && (
+                <MerchModal
+                    open={showMerchModal}
+                    onClose={handleCloseMerchModal}
+                    // Add any props the LogoModal might need
+                />
+            )}
+            {/* 
+<style jsx>{`
+                .card-thumbnail {
+                    position: relative;
+                }
+                .logo-overlay {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    z-index: 10;
+                }
+            `}</style> */}
         </>
     );
 };

@@ -406,8 +406,10 @@ const Collection = ({
     return (
         <Anchor
             path={`/launchpad/kadena/${path}`}
-            className={`rn-collection-inner-one ${data?.collectionName === "Priority Pass" ? "priority-pass" : ""}`}
-            >
+            className={`rn-collection-inner-one ${
+                data?.collectionName === "Priority Pass" ? "priority-pass" : ""
+            }`}
+        >
             <div className="collection-wrapper">
                 {image && (
                     <div className="collection-big-thumbnail">
@@ -417,9 +419,38 @@ const Collection = ({
                             width={507}
                             height={339}
                         />
+                        <div className="mint-box">
+                            {/* <button className="mint-button">Mint Now</button> */}
+
+                            {launchInfo.status === "Live" ? (
+                                <button className="mint-button">
+                                    Mint Now
+                                </button>
+                            ) : (
+                                <>
+                                    {launchInfo.status === "Upcoming" ? (
+                                        <butto
+                                            className="mint-button"
+                                            style={{
+                                                backgroundColor: "orange",
+                                            }}
+                                        >
+                                            Minting Soon
+                                        </butto>
+                                    ) : (
+                                        <button
+                                            className="mint-button"
+                                            style={{ backgroundColor: "red" }}
+                                        >
+                                            Mint Ended
+                                        </button>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
                 )}
-{/* 
+                {/* 
 {image && (
                     <motion.div 
                         className="image"
@@ -444,7 +475,7 @@ const Collection = ({
                 )} */}
                 <div className="collection-deg">
                     <h6 className="title">{title}</h6>
-                    <button className="btn btn-primary">Mint</button>
+                    {/* <button className="btn btn-primary">Mint</button> */}
                 </div>
                 <div
                     className="collection-deg"
@@ -475,11 +506,15 @@ const Collection = ({
                             style={{ fontWeight: "bold", marginLeft: "10px" }}
                         >
                             {/* {launchInfo.text} */}
-                            {data?.collectionName === "Priority Pass" ? "" : launchInfo.text}
+                            {data?.collectionName === "Priority Pass"
+                                ? ""
+                                : launchInfo.text}
                         </span>
                         <span style={{ fontWeight: "bold", marginLeft: "5px" }}>
                             {/* {launchInfo.time} */}
-                            {data?.collectionName === "Priority Pass" ? "" : launchInfo.time}
+                            {data?.collectionName === "Priority Pass"
+                                ? ""
+                                : launchInfo.time}
                         </span>
                     </div>
                 </div>
@@ -501,7 +536,7 @@ const Collection = ({
                     <div className="collection-item">
                         <span style={{ fontWeight: "bold" }}>{total_item}</span>
                     </div>
-                    <div className="collection-item">
+                    <div className="collection-item" style={{ marginRight: "20px" }}>
                         <span style={{ fontWeight: "bold" }}>{price} KDA</span>
                     </div>
                     <div className="collection-item">

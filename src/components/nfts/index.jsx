@@ -376,7 +376,7 @@ import { useSyncSingleNftMutation } from "src/services/marketplace.service";
 import { useAccountContext } from "src/contexts";
 import { toast } from "react-toastify";
 import nftServices from "src/services/nftServices";
-
+import MerchModal from "@components/merchandisingModal/modal-merch";
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
 });
@@ -395,6 +395,7 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
     const [syncSingleNft, { isLoading }] = useSyncSingleNftMutation();
     const account = useAccountContext();
     const pathname = usePathname();
+    const [showMerchModal, setShowMerchModal] = useState(false);
 
     const isAuthorRoute = pathname.includes('/author');
 
@@ -492,6 +493,16 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
         color: "white",
     };
 
+    const handleMerchModal = (e) => {
+        e.stopPropagation(); // Prevent triggering the card's onClick
+        setShowMerchModal(true);
+    };
+
+    const handleCloseMerchModal = () => {
+        setShowMerchModal(false);
+    };
+
+
     return (
         <>
             <div
@@ -506,12 +517,37 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                 <div className="card-thumbnail" onClick={isRevealed ? handleOpenModal : undefined}>
                     {console.log("nftimage", nft.tokenImage)}
                     {isRevealed ? (
+                        <>
                         <Image
                             src={nft.tokenImage}
                             alt={nft.nftData?.name || "NFT"}
                             width={533}
                             height={533}
                         />
+                         <motion.div
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            zIndex: 10,
+                            width: "40px",
+                            height: "40px",
+                            overflow: "hidden",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleMerchModal}
+                    >
+                        <Image
+                            src="/assets-images/merch-image.jpeg"
+                            alt="Logo"
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </motion.div>
+                        </>
                     ) : (
                         <Image
                             src="/assets-images/nft/nft2.jpeg"
@@ -672,6 +708,13 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                     onClose={handleCloseModal}
                     data={nft}
                     refetchOwnedNfts={refetchOwnedNfts}
+                />
+            )}
+              {showMerchModal && (
+                <MerchModal
+                    open={showMerchModal}
+                    onClose={handleCloseMerchModal}
+                    // Add any props the LogoModal might need
                 />
             )}
         </>

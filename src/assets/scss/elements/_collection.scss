@@ -122,6 +122,183 @@
     }
 }
 
+// .rn-collection-inner-one {
+//     .collection-wrapper {
+//         position: relative;
+//         padding: 18px;
+//         background: var(--background-color-1);
+//         border-radius: 5px;
+//         transition: all 0.15s ease; // Faster transition
+
+//         &::before {
+//             content: "";
+//             position: absolute;
+//             top: -2px;
+//             left: -2px;
+//             right: -2px;
+//             bottom: -2px;
+//             border: 2px solid var(--color-primary-alta);
+//             border-radius: 7px;
+//             z-index: -1;
+//             opacity: 0;
+//             transition: opacity 0.15s ease; // Faster transition
+//         }
+
+//         &:hover::before {
+//             opacity: 1;
+//             animation: rotate 8s linear infinite; // Slower rotation
+//         }
+
+//         // .collection-big-thumbnail {
+//         //     overflow: hidden;
+//         //     border-radius: 5px;
+//         //     img {
+//         //         border-radius: 5px;
+//         //         object-fit: cover;
+//         //         width: 100%;
+//         //         height: auto;
+//         //         max-height: 300px;
+//         //         transition: var(--transition);
+//         //     }
+//         // }
+//         .collection-big-thumbnail {
+//             overflow: hidden;
+//             border-radius: 5px;
+//             position: relative;
+//             width: 100%;
+//             padding-top: 76.67%; /* 3:2 Aspect Ratio */
+//         }
+        
+//         .collection-big-thumbnail img {
+//             position: absolute;
+//             top: 0;
+//             left: 0;
+//             width: 100%;
+//             height: 100%;
+//             object-fit: fill;
+//             border-radius: 5px;
+//             transition: transform 0.3s ease;
+//         }
+        
+//         .collenction-small-thumbnail {
+//             display: flex;
+//             justify-content: space-between;
+//             margin-left: -4px;
+//             margin-left: -4px;
+//             margin-top: 4px;
+//             & > div {
+//                 display: inline-block;
+//                 width: 33.33%;
+//                 padding: 4px;
+//                 line-height: 1;
+//                 margin-bottom: -4px;
+//             }
+//             img {
+//                 border-radius: 10px;
+//             }
+//         }
+
+//         .collection-profile {
+//             position: absolute;
+//             top: 48%;
+//             left: 50%;
+//             transform: translate(-50%, 0);
+//             max-width: 80px;
+//             height: 80px;
+//             border-radius: 50%;
+//             border: 5px solid var(--color-primary-alta);
+//             transition: var(--transition);
+
+//             @media #{$md-layout} {
+//                 max-width: 60px;
+//                 height: 60px;
+//             }
+
+//             @media #{$sm-layout} {
+//                 max-width: 60px;
+//                 height: 60px;
+//             }
+
+//             @media #{$large-mobile} {
+//                 max-width: 80px;
+//                 height: 80px;
+//             }
+
+//             @media #{$large-mobile} {
+//                 top: 56%;
+//             }
+
+//             @media #{$small-mobile} {
+//                 top: 53%;
+//             }
+//             img {
+//                 border-radius: 50% !important;
+//             }
+//         }
+
+//         .collection-deg {
+//             display: flex;
+//             margin-top: 15px;
+//             justify-content: space-between;
+//             align-items: center;
+
+//             h6 {
+//                 margin: 0;
+//                 font-weight: 400;
+//                 transition: var(--transition);
+
+//                 &:hover {
+//                     animation: textColorRotate 8s linear infinite;
+//                 }
+//             }
+
+//             span {
+//                 &.items {
+//                     padding: 7px 10px;
+//                     background: var(--color-primary-alta);
+//                     border-radius: 5px;
+//                     color: var(--color-white);
+//                     transition: var(--transition);
+
+//                     &:hover {
+//                         background: var(--color-primary) !important;
+//                         color: var(--color-white) !important;
+//                     }
+//                 }
+//             }
+//         }
+
+//         &:hover {
+//             .collection-big-thumbnail {
+//                 img {
+//                     transform: scale(1.1);
+//                 }
+//             }
+//             .collection-deg {
+//                 h6 {
+//                     // Remove the previous gradient effect
+//                     // background: none;
+//                     // -webkit-background-clip: initial;
+//                     // -webkit-text-fill-color: initial;
+
+//                     // // Apply the color rotation animation
+//                     // animation: textColorRotate 8s linear infinite;
+//                 }
+//                 span {
+//                     color: var(--color-primary-alta);
+//                 }
+//             }
+
+//             .collection-footer {
+//                 .collection-item {
+//                     span {
+//                         color: var(--color-primary-alta);
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
 .rn-collection-inner-one {
     .collection-wrapper {
         position: relative;
@@ -129,6 +306,8 @@
         background: var(--background-color-1);
         border-radius: 5px;
         transition: all 0.15s ease; // Faster transition
+        overflow: hidden;  // Add this to contain the sliding mint box
+
 
         &::before {
             content: "";
@@ -178,6 +357,37 @@
             object-fit: fill;
             border-radius: 5px;
             transition: transform 0.3s ease;
+        }
+
+        .mint-box {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: transparent;
+            color: white;
+            padding: 20px;
+            transition: bottom 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mint-button {
+            padding: 10px 20px;
+            background: #b2b522;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            max-width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: darken(#b2b522, 10%);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
         }
         
         .collenction-small-thumbnail {
@@ -274,6 +484,10 @@
                     transform: scale(1.1);
                 }
             }
+
+            .mint-box {
+                bottom: 5px; // Adjust this value to control how high the box appears
+            }
             .collection-deg {
                 h6 {
                     // Remove the previous gradient effect
@@ -299,7 +513,6 @@
         }
     }
 }
-
 @keyframes textColorRotate {
     0% {
         color: hsl(49, 100%, 50%);

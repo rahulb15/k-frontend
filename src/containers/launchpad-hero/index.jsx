@@ -916,7 +916,7 @@ const LaunchpadHeroArea = ({ data }) => {
 
     return (
         <div className="rn-banner-area rn-section-gapTop">
-            <div className="container" style={{ width: "90%", marginTop: "-70px" }}>
+            <div className="container" style={{ width: "100%", marginTop: "-70px" }}>
                 {data && data.length > 0 && (
                     <Slider
                         options={SliderOptions}
@@ -1018,13 +1018,21 @@ const LaunchpadHeroArea = ({ data }) => {
                                             >
                                                 {collection.buttons.map(
                                                     ({ id, content, ...btn }, i) => (
-                                                        <Button
+                                                        // <Button
+                                                        //     key={id}
+                                                        //     {...btn}
+                                                        //     className={i === 0 ? "mr--15" : ""}
+                                                        // >
+                                                        //     {content}
+                                                        // </Button>
+                                                        <button
                                                             key={id}
                                                             {...btn}
                                                             className={i === 0 ? "mr--15" : ""}
                                                         >
                                                             {content}
-                                                        </Button>
+                                                        </button>
+
                                                     )
                                                 )}
                                             </motion.div>

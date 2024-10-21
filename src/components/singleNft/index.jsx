@@ -19,6 +19,7 @@ import {
     useCreateOneNFTMutation,
 } from "src/services/nft.service";
 import singleNftService from "src/services/singleNft.service";
+import MerchModal from "@components/merchandisingModal/modal-merch";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
@@ -54,6 +55,7 @@ const SingleNft = ({
     const [reserveSingleNft, { isLoading }] = useReserveSingleNftMutation();
     const account = useAccountContext();
     const [createOneNFT] = useCreateOneNFTMutation();
+    const [showMerchModal, setShowMerchModal] = useState(false);
 
     const handleOpenModal = () => {
         setShowDetailModal(true);
@@ -138,6 +140,15 @@ const SingleNft = ({
         }
     };
 
+    const handleMerchModal = (e) => {
+        e.stopPropagation(); // Prevent triggering the card's onClick
+        setShowMerchModal(true);
+    };
+
+    const handleCloseMerchModal = () => {
+        setShowMerchModal(false);
+    };
+
     return (
         <>
             <div
@@ -173,12 +184,37 @@ const SingleNft = ({
                         data?.isRevealed
                     )}
                     {data?.isRevealed === false ? (
+                        <>
                         <Image
                             src="/assets-images/nft/nft2.jpeg"
                             alt="NFT_portfolio"
                             width={533}
                             height={533}
                         />
+                          <motion.div
+                        style={{
+                            position: "absolute",
+                            top: "10px",
+                            right: "10px",
+                            zIndex: 10,
+                            width: "40px",
+                            height: "40px",
+                            overflow: "hidden",
+                            borderRadius: "50%",
+                            cursor: "pointer",
+                        }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={handleMerchModal}
+                    >
+                        <Image
+                            src="/assets-images/merch-image.jpeg"
+                            alt="Logo"
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </motion.div>
+                        </>
                     ) : (
                         // <Image
                         //     src={data?.image}
@@ -260,6 +296,14 @@ const SingleNft = ({
                     open={showDetailModal}
                     onClose={handleCloseModal}
                     data={data}
+                />
+            )}
+
+{showMerchModal && (
+                <MerchModal
+                    open={showMerchModal}
+                    onClose={handleCloseMerchModal}
+                    // Add any props the LogoModal might need
                 />
             )}
         </>
