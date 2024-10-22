@@ -280,24 +280,24 @@ const RenderDescription = ({ collection }) => {
 
             <div style={disclaimerStyle}>
                 <p>
-                    Certain information has been prepared by third parties,
-                    including the Creator using Launchpad. Kryptomerch is not
-                    affiliated with such third parties or the Creator, and is
-                    not responsible for the information provided on Launchpad.
-                    Such information is provided for informational purposes only
-                    and is in no way investment advice. Kryptomerch is not
-                    liable for any errors, changes or amendments to such
-                    information, including any actions taken in reliance on such
-                    information. Kryptomerch makes no representation on the
-                    accuracy, suitability, or validity of any information
-                    provided in relation to any NFT project that chooses to use
-                    Launchpad.
+                    Disclaimer: Certain content and information available on the
+                    Launchpad has been prepared by third parties, including
+                    creators utilizing the platform. Kryptomerch is not
+                    associated with these third parties or creators and assumes
+                    no responsibility for the content they provide. The
+                    information is intended for general informational purposes
+                    only and does not constitute investment advice. Kryptomerch
+                    is not liable for any inaccuracies, modifications, or
+                    omissions in the information, nor for any actions taken
+                    based on it. We make no claims regarding the accuracy,
+                    relevance, or reliability of any details related to NFT
+                    projects using the Launchpad.
                 </p>
                 <p>
-                    By clicking "Mint", I acknowledge that I am choosing to mint
-                    the NFT with the understanding that it may be worth
-                    significantly less than the mint price, and may end up being
-                    worth nothing at all.
+                    By clicking "Mint," I acknowledge that I am choosing to mint
+                    the NFT with the understanding that its value may be
+                    substantially lower than the mint price, and could
+                    potentially be worth nothing.
                 </p>
             </div>
         </div>

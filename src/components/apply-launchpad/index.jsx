@@ -70,17 +70,30 @@ import {
 } from "react-share";
 import { Instagram } from "lucide-react";
 
-
 const socialMediaConfig = {
-    facebook: { icon: FacebookIcon, pattern: /^https?:\/\/(www\.)?facebook\.com\/.+/i },
+    facebook: {
+        icon: FacebookIcon,
+        pattern: /^https?:\/\/(www\.)?facebook\.com\/.+/i,
+    },
     X: { icon: XIcon, pattern: /^https?:\/\/(www\.)?x\.com\/.+/i },
-    instagram: { icon: Instagram, pattern: /^https?:\/\/(www\.)?instagram\.com\/.+/i },
-    linkedin: { icon: LinkedinIcon, pattern: /^https?:\/\/(www\.)?linkedin\.com\/.+/i },
-    telegram: { icon: TelegramIcon, pattern: /^https?:\/\/(t\.me|telegram\.me)\/.+/i },
-    whatsapp: { icon: WhatsappIcon, pattern: /^https?:\/\/(api\.)?whatsapp\.com\/.+/i },
+    instagram: {
+        icon: Instagram,
+        pattern: /^https?:\/\/(www\.)?instagram\.com\/.+/i,
+    },
+    linkedin: {
+        icon: LinkedinIcon,
+        pattern: /^https?:\/\/(www\.)?linkedin\.com\/.+/i,
+    },
+    telegram: {
+        icon: TelegramIcon,
+        pattern: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,
+    },
+    whatsapp: {
+        icon: WhatsappIcon,
+        pattern: /^https?:\/\/(api\.)?whatsapp\.com\/.+/i,
+    },
     email: { icon: EmailIcon, pattern: /^mailto:.+@.+\..+/i },
 };
-
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -241,7 +254,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     }
     // };
 
-
     const addSocialMediaLink = () => {
         if (selectedSocialMedia && socialMediaUrl) {
             const pattern = socialMediaConfig[selectedSocialMedia]?.pattern;
@@ -373,7 +385,6 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
     //     </>
     // );
 
-
     const renderSocialMediaSection = () => (
         <>
             <div className="col-md-12">
@@ -400,15 +411,15 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                         value={selectedSocialMedia}
                         onChange={handleSocialMediaChange}
                     >
-                       <option value="">Select a platform</option>
-    {availableSocialMedia.map(({ name, value }) => {
-        const Icon = socialMediaConfig[value]?.icon;
-        return (
-            <option key={value} value={value}>
-                {Icon && <Icon size={16} round />} {name}
-            </option>
-        );
-    })}
+                        <option value="">Select a platform</option>
+                        {availableSocialMedia.map(({ name, value }) => {
+                            const Icon = socialMediaConfig[value]?.icon;
+                            return (
+                                <option key={value} value={value}>
+                                    {Icon && <Icon size={16} round />} {name}
+                                </option>
+                            );
+                        })}
                     </select>
                 </div>
             </div>
@@ -457,19 +468,23 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                 </div>
             </div>
             <div className="col-md-12">
-            {Object.entries(socialMediaLinks).map(([platform, url]) => {
-                const Icon = socialMediaConfig[platform]?.icon;
-                return (
-                    <Chip
-                        key={platform}
-                        icon={Icon && <Icon size={16} round />}
-                        label={`${platform}: ${url}`}
-                        onDelete={() => removeSocialMediaLink(platform)}
-                        style={{ margin: "5px", backgroundColor: "#363545", color: "#fff" }}
-                    />
-                );
-            })}
-        </div>
+                {Object.entries(socialMediaLinks).map(([platform, url]) => {
+                    const Icon = socialMediaConfig[platform]?.icon;
+                    return (
+                        <Chip
+                            key={platform}
+                            icon={Icon && <Icon size={16} round />}
+                            label={`${platform}: ${url}`}
+                            onDelete={() => removeSocialMediaLink(platform)}
+                            style={{
+                                margin: "5px",
+                                backgroundColor: "#363545",
+                                color: "#fff",
+                            }}
+                        />
+                    );
+                })}
+            </div>
         </>
     );
     useEffect(() => {
@@ -1407,55 +1422,59 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                         Launchpad - Expression of Interest{" "}
                                     </h5>
                                     <span style={{ fontSize: "16px" }}>
-                                        Kryptomerch is looking to onboard
-                                        unique, quality projects to drop their
-                                        collections via Kryptomerch Launchpad.
+                                        Ready to Blast Off? Kryptomerch is on
+                                        the lookout for stellar, one-of-a-kind
+                                        projects to launch their collections via
+                                        the Kryptomerch Launchpad. If your
+                                        project’s got the right spark, we might
+                                        just help you take it to the moon!
                                     </span>{" "}
                                     <br />
                                     <br />
                                     <span style={{ fontSize: "16px" }}>
-                                        We will consider applications on a
-                                        rolling basis. Due to the high volume of
-                                        applications, we are not able to respond
-                                        to all applications. You will hear from
-                                        us if we are interested in moving
-                                        forward with your project.
+                                        Applications are reviewed on a rolling
+                                        basis, and with the cosmic number of
+                                        submissions we receive, we can't always
+                                        respond to everyone. But don’t worry –
+                                        if your project is out of this world,
+                                        you’ll hear from us!
                                     </span>{" "}
                                     <br />
                                     <br />
                                     <span style={{ fontSize: "16px" }}>
-                                        Re-applying: Should you wish to
-                                        strengthen your application with
-                                        supplementary materials (project
-                                        updates, more details on your collection
-                                        and community, etc), we welcome you to
-                                        re-apply. For creators who are
-                                        re-applying for Launchpad, please fill
-                                        in the first field “Project Name” as
-                                        [RE-APPLY] and the name of your project
-                                        (for example: “[RE-APPLY] Bananas”].
+                                        Re-applying: Want to give your
+                                        application a boost? Feel free to
+                                        re-apply with any rocket-fuelled
+                                        updates—whether it's new details on your
+                                        collection, community growth, or any
+                                        extra bells and whistles. When
+                                        re-applying, please mark the first field
+                                        “Project Name” as [RE-APPLY], followed
+                                        by your project’s name (e.g.,
+                                        “[RE-APPLY] Galactic Journey”).
                                     </span>{" "}
                                     <br />
                                     <br />
                                     <span style={{ fontSize: "16px" }}>
                                         {" "}
-                                        Please note that the information you
-                                        provide in this form is subject to our
-                                        Privacy Policy.
+                                        Heads up! The info you provide in this
+                                        form is subject to our Privacy Policy,
+                                        so we’ve got your back!
                                     </span>{" "}
                                     <br />
                                     <br />
                                     <span style={{ fontSize: "16px" }}>
                                         By submitting your Expression of
-                                        Interest, you agree to kryptomerch's
-                                        Terms of Service available here:
+                                        Interest, you're agreeing to
                                         <a
                                             href="https://kryptomerch.com/terms-of-service"
                                             target="_blank"
                                         >
                                             {" "}
                                             Kryptomerch Terms of Service
-                                        </a>
+                                        </a>{" "}
+                                        So, buckle up, and let’s see if your
+                                        project has what it takes to launch!
                                     </span>{" "}
                                     <div className="mt--30">
                                         <span

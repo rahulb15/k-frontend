@@ -864,12 +864,14 @@ const LaunchpadHeroArea = ({ data }) => {
 
         const formatTimeLeft = (targetTime) => {
             const duration = moment.duration(targetTime.diff(now));
+            const years = duration.years();
             const months = duration.months();
             const days = duration.days();
             const hours = duration.hours();
             const minutes = duration.minutes();
             const seconds = duration.seconds();
 
+            if (years > 0) return `${years}y ${months}m`;
             if (months > 0) return `${months}m ${days}d`;
             if (days > 0) return `${days}d ${hours}h`;
             if (hours > 0) return `${hours}h ${minutes}m`;

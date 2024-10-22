@@ -1,0 +1,47 @@
+/* Custom Connect Button Styles */
+.custom-connect-wrapper {
+    text-decoration: none;
+    display: inline-flex;
+  }
+  
+  .custom-connect-button {
+    display: inline-flex;
+    padding: 16px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 8px;
+    border: 1px solid #cbd02e;
+    background: transparent;
+    transition: all 200ms ease-in-out;
+    cursor: pointer;
+  }
+  
+  .custom-connect-button:hover {
+    background: #cbd02e;
+    .custom-connect-text {
+        color: #131313;
+        font-weight: 500;
+      }
+  }
+  
+  .custom-connect-button--pressed {
+    background: #E9EE45!important;
+    transform: scale(0.98);
+  }
+  
+  .custom-connect-text {
+    color: #cbd02e;
+    font-weight: 500;
+  }
+
+  .custom-connect-text:hover {
+    color: #131313;
+  }
+
+  
+  /* Optional: Add focus styles */
+  .custom-connect-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(203, 208, 210, 0.3);
+  }

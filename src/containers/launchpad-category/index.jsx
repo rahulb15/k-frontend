@@ -629,7 +629,7 @@ import collectionService from "src/services/collection.service";
 
 const SliderOptions = {
     infinite: true,
-    slidesToShow: 5,
+    slidesToShow: 4,
     slidesToScroll: 2,
     arrows: true,
     dots: true,

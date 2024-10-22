@@ -5,6 +5,10 @@ import TopCollectionList from "@components/product/topcollectionlist";
 import Slider, { SliderItem } from "@ui/slider";
 import { SectionTitleType, ProductType } from "@utils/types";
 
+import React, { useState, useEffect, useCallback } from "react";
+
+import collectionService from "src/services/collection.service";
+
 const SliderOptions = {
     infinite: true,
     slidesToShow: 5,
@@ -45,58 +49,90 @@ const SliderOptions = {
     ],
 };
 
-const TopCollection = ({ data, className, space }) => (
-    <div
-        className={clsx(
-            "en-product-area",
-            space === 1 && "rn-section-gapTop",
-            space === 2 && "rn-section-gap",
-            space === 3 && "rn-section-gapBottom",
-            className
-        )}
-    >
-        <div className="container mt--80 mt_md--60 mt_sm--40 mt-3">
-            {data?.section_title && (
-                <div className="row mb--30">
-                    <div className="col-12">
-                        <SectionTitle {...data.section_title} />
-                    </div>
-                </div>
+const TopCollection = ({ data, className, space }) => {
+    const [collections, setCollections] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    console.log(itemsPerPage, "itemsPerPage");
+    const [totalItems, setTotalItems] = useState(0);
+    const [search, setSearch] = useState("");
+    const [timeRange, setTimeRange] = useState("All time");
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const getCollections = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response =
+                await collectionService.getAllMarketplaceCollections(
+                    currentPage,
+                    itemsPerPage,
+                    search,
+                    timeRange
+                );
+            console.log("API response:", response);
+            setCollections(response.data.data.collections);
+            setTotalItems(response?.data?.pagination?.totalItems);
+            setTotalPages(response.data.pagination.totalPages);
+        } catch (error) {
+            console.error("Error fetching collections:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentPage, itemsPerPage, search, timeRange]);
+
+    useEffect(() => {
+        getCollections();
+    }, [getCollections]);
+
+    console.log("collections", collections);
+
+    return (
+        <div
+            className={clsx(
+                "en-product-area",
+                space === 1 && "rn-section-gapTop",
+                space === 2 && "rn-section-gap",
+                space === 3 && "rn-section-gapBottom",
+                className
             )}
-            {data?.products && (
-                <div className="row">
-                    <div className="col-lg-12">
-                        <Slider
-                            options={SliderOptions}
-                            className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
-                        >
-                            {data.products.map((prod) => (
-                                <SliderItem
-                                    key={prod.id}
-                                    className="single-slide-product"
-                                >
-                                    <TopCollectionList
-                                        overlay
-                                        placeBid={!!data.placeBid}
-                                        title={prod.title}
-                                        slug={prod.slug}
-                                        latestBid={prod.latestBid}
-                                        price={prod.price}
-                                        likeCount={prod.likeCount}
-                                        auction_date={prod.auction_date}
-                                        image={prod.images?.[0]}
-                                        authors={prod.authors}
-                                        bitCount={prod.bitCount}
-                                    />
-                                </SliderItem>
-                            ))}
-                        </Slider>
+        >
+            <div className="container mt--80 mt_md--60 mt_sm--40 mt-3">
+                {data?.section_title && (
+                    <div className="row mb--30">
+                        <div className="col-12">
+                            <SectionTitle {...data.section_title} />
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+                {collections && (
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <Slider
+                                options={SliderOptions}
+                                className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
+                            >
+                                {collections.map((collectionData) => (
+                                    <SliderItem
+                                        key={collectionData._id}
+                                        className="single-slide-product"
+                                    >
+                                        <TopCollectionList
+                                            overlay
+                                            slug={collectionData.collectionName}
+                                            image={collectionData.collectionBannerImage}
+
+                                        />
+                                    </SliderItem>
+                                ))}
+                            </Slider>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 TopCollection.propTypes = {
     className: PropTypes.string,

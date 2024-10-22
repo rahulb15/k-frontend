@@ -12,11 +12,11 @@ const TopCollectionList = ({ overlay, slug, image }) => {
                 className={clsx("product-style-one", !overlay && "no-overlay")}
             >
                 <div className="card-thumbnail">
-                    {image?.src && (
-                        <Anchor path={`/product/${slug}`}>
+                    {image && (
+                        <Anchor path={`/collections/kadena/${slug}`}>
                             <Image
-                                src={image.src}
-                                alt={image?.alt || "NFT_portfolio"}
+                                src={image}
+                                alt={image || "NFT_portfolio"}
                                 width={533}
                                 height={533}
                             />
