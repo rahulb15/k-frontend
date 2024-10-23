@@ -453,6 +453,66 @@ const getPrioritizedCollections = async (limit = 5) => {
 }
 
 
+const applyForStage = async (collectionName, stage) => {
+    try {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+            `${API_URL}stage-application/apply`,
+            {
+                collectionName,
+                stage
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error(`Error applying for ${stage}:`, error);
+        throw error;
+    }
+};
+
+const getApplicationStatus = async (collectionName, stage) => {
+    try {
+        const token = localStorage.getItem("token");
+        // const response = await axios.get(
+        //     `${API_URL}stage-application/status`,
+        //     {
+        //         params: {
+        //             collectionName,
+        //             stage
+        //         },
+        //         headers: {
+        //             Authorization: `Bearer ${token}`,
+        //         },
+        //     }
+        const response = await axios.post(
+            `${API_URL}stage-application/status`,
+            {
+                collectionName,
+                stage
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+
+
+
+        );
+        return response;
+    } catch (error) {
+        console.error(`Error getting application status for ${stage}:`, error);
+        throw error;
+    }
+};
+
+
+
 
 
 export default {
@@ -476,5 +536,7 @@ export default {
     getPrioritizedCollections,
     getLiveCollections,
     getUpcomingCollections,
-    getEndedCollections
+    getEndedCollections,
+    applyForStage,
+    getApplicationStatus,
 };

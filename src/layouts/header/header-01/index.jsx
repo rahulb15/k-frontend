@@ -45,7 +45,7 @@ import { useBalanceMutation } from "src/services/launchpad.service";
 import BalanceDropdown from "@components/BalanceDropdown";
 import CartDropdown from "./CartDropdown";
 import NotificationDropdown from "./NotificationDropdown";
-import useSocketIO from './useWebSocket';
+import useSocketIO from "./useWebSocket";
 import {
     addToCart,
     removeToCart,
@@ -75,7 +75,6 @@ const Header = ({ className }) => {
     const { notifications, isConnected } = useSocketIO(account?.user?._id);
 
     console.log(notifications, "notifications");
-
 
     const [isDropDownEnabled, setIsDropDownEnabled] = useState(false);
     const router = useRouter();
@@ -235,7 +234,8 @@ const Header = ({ className }) => {
 
                             <div className="setting-option header-btn">
                                 <div className="icon-box">
-                                    {account?.walletAddressContect?.length > 0 ? (
+                                    {account?.walletAddressContect?.length >
+                                    0 ? (
                                         <>
                                             <ProfileBar />
                                         </>
@@ -256,7 +256,7 @@ const Header = ({ className }) => {
             <MobileMenu
                 isOpen={offcanvas}
                 onClick={offcanvasHandler}
-                menu={menuData}
+                menu={menuleftData}
                 logo={headerData.logo}
             />
         </>

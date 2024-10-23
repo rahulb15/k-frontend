@@ -426,3 +426,56 @@
     margin-top: 20px;
     line-height: 1.4;
 }
+
+
+.stage-apply-chip {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 8px;
+    cursor: pointer;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    max-width: fit-content;
+}
+
+.stage-apply-chip.applied {
+    background-color: #808080;
+    cursor: not-allowed;
+}
+
+.stage-apply-chip.ended {
+    background-color: #808080;
+    cursor: not-allowed;
+}
+
+
+.stage-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.status-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.apply-button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mint-stage {
+    padding: 16px;
+    background: #2c2c3d;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.stage-header {
+    margin-bottom: 8px;
+}

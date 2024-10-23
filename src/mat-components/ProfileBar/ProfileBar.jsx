@@ -814,6 +814,7 @@ import {
     Divider,
     Slider,
     Paper,
+    CircularProgress,
 } from "@mui/material";
 import Link from "next/link";
 import { ImProfile } from "react-icons/im";
@@ -835,6 +836,8 @@ import userService from "src/services/user.service";
 import { motion } from "framer-motion";
 import MusicWaveEffect from "./MusicWaveEffect";
 import { MdVerified } from "react-icons/md";
+import axios from "axios";
+import musicService from "src/services/music.service";
 
 const sideNavWidth = 280;
 
@@ -933,81 +936,418 @@ const playlist = [
     },
 ];
 
+// const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
+//     // const [isPlaying, setIsPlaying] = useState(false);
+//     const [currentTime, setCurrentTime] = useState(0);
+//     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+//     const [volume, setVolume] = useState(1);
+//     const [isMuted, setIsMuted] = useState(false);
+//     const [isLooping, setIsLooping] = useState(false);
+
+//     const audioRef = useRef(null);
+//     const currentTrack = playlist[currentTrackIndex];
+
+//     const formatTime = (time) => {
+//         const minutes = Math.floor(time / 60);
+//         const seconds = Math.floor(time % 60);
+//         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+//     };
+
+//     const handlePlayPause = () => {
+//         if (isPlaying) {
+//             audioRef.current.pause();
+//         } else {
+//             audioRef.current.play();
+//         }
+//         setIsPlaying(!isPlaying);
+//     };
+
+//     const handlePrevious = () => {
+//         setCurrentTrackIndex((prevIndex) =>
+//             prevIndex > 0 ? prevIndex - 1 : playlist.length - 1
+//         );
+//     };
+
+//     const handleNext = () => {
+//         setCurrentTrackIndex((prevIndex) =>
+//             prevIndex < playlist.length - 1 ? prevIndex + 1 : 0
+//         );
+//     };
+
+//     const handleVolumeChange = (event, newValue) => {
+//         // Ensure that newValue is a valid finite number
+//         if (typeof newValue === "number" && isFinite(newValue)) {
+//             setVolume(newValue);
+//             audioRef.current.volume = newValue;
+//             setIsMuted(newValue === 0);
+//         } else {
+//             console.error("Invalid volume value:", newValue);
+//         }
+//     };
+
+//     const toggleMute = () => {
+//         setIsMuted(!isMuted);
+//         audioRef.current.volume = isMuted ? volume : 0;
+//     };
+
+//     const handleTimeUpdate = () => {
+//         setCurrentTime(audioRef.current.currentTime);
+//     };
+
+//     const handleSeek = (event, newValue) => {
+//         audioRef.current.currentTime = newValue;
+//         setCurrentTime(newValue);
+//     };
+
+//     const toggleLoop = () => {
+//         setIsLooping(!isLooping);
+//         audioRef.current.loop = !isLooping;
+//     };
+
+//     useEffect(() => {
+//         audioRef.current.src = currentTrack.file;
+//         if (isPlaying) {
+//             audioRef.current.play();
+//         }
+//         setIsPlaying(isPlaying);
+//     }, [currentTrackIndex, isPlaying]);
+
+//     const ControlButton = ({ icon: Icon, onClick, isActive = false }) => (
+//         <IconButton
+//             sx={{
+//                 color: "white",
+//                 padding: "4px",
+//                 "&:hover": {
+//                     backgroundColor: "rgba(255, 255, 255, 0.1)",
+//                 },
+//                 transition: "all 0.3s ease",
+//             }}
+//             onClick={onClick}
+//         >
+//             <Icon color={isActive ? "#b2b500" : "white"} size={16} />
+//         </IconButton>
+//     );
+
+//     return (
+//         <Paper
+//             elevation={3}
+//             sx={{
+//                 p: 1,
+//                 borderRadius: "12px",
+//                 background: "linear-gradient(45deg, #1e1e1e, #2a2a2a)",
+//                 color: "white",
+//                 width: "100%",
+//                 maxWidth: "300px",
+//             }}
+//         >
+//             <Box
+//                 sx={{
+//                     width: "100%",
+//                     height: "200px", // Adjusted for better visibility
+//                     position: "relative",
+//                     overflow: "hidden",
+//                     borderRadius: "8px",
+//                     mb: 1,
+//                 }}
+//             >
+//                 <Box
+//                     component="img"
+//                     src={currentTrack.cover}
+//                     alt={`${currentTrack.title} cover`}
+//                     sx={{
+//                         width: "100%",
+//                         height: "100%",
+//                         objectFit: "cover",
+//                     }}
+//                 />
+//             </Box>
+//             <Typography
+//                 variant="subtitle2"
+//                 noWrap
+//                 sx={{ fontWeight: "bold", mb: 0.5 }}
+//             >
+//                 {currentTrack.title}
+//             </Typography>
+//             <Typography
+//                 variant="caption"
+//                 noWrap
+//                 sx={{ mb: 1, opacity: 0.8, display: "block" }}
+//             >
+//                 {currentTrack.artist}
+//             </Typography>
+
+//             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+//                 <Typography variant="caption" sx={{ mr: 1 }}>
+//                     {formatTime(currentTime)}
+//                 </Typography>
+//                 <Slider
+//                     size="small"
+//                     value={currentTime}
+//                     max={currentTrack.duration}
+//                     onChange={handleSeek}
+//                     sx={{
+//                         color: "#b2b500",
+//                         flexGrow: 1,
+//                         mx: 1,
+//                         "& .MuiSlider-thumb": {
+//                             width: 8,
+//                             height: 8,
+//                         },
+//                     }}
+//                 />
+//                 <Typography variant="caption" sx={{ ml: 1 }}>
+//                     {formatTime(currentTrack.duration)}
+//                 </Typography>
+//             </Box>
+
+//             <Box
+//                 sx={{
+//                     display: "flex",
+//                     justifyContent: "space-between",
+//                     alignItems: "center",
+//                 }}
+//             >
+//                 <Box sx={{ display: "flex" }}>
+//                     <ControlButton
+//                         icon={FaStepBackward}
+//                         onClick={handlePrevious}
+//                     />
+//                     <IconButton
+//                         sx={{
+//                             color: "white",
+//                             mx: 1,
+//                             width: 32,
+//                             height: 32,
+//                             backgroundColor: "#b2b500",
+//                             "&:hover": {
+//                                 backgroundColor: "#1ed760",
+//                             },
+//                         }}
+//                         onClick={handlePlayPause}
+//                     >
+//                         {isPlaying ? (
+//                             <FaPause size={16} />
+//                         ) : (
+//                             <FaPlay size={16} />
+//                         )}
+//                     </IconButton>
+//                     <ControlButton icon={FaStepForward} onClick={handleNext} />
+//                 </Box>
+//                 {/* <Box sx={{ display: 'flex' }}>
+//             <ControlButton icon={FaRedoAlt} onClick={toggleLoop} isActive={isLooping} />
+//           </Box> */}
+//             </Box>
+
+//             <Box
+//                 sx={{
+//                     display: "flex",
+//                     alignItems: "center",
+//                     mt: 1,
+//                     overflow: "hidden", // Prevent overflow
+//                     width: "100%", // Ensure it doesn't cause horizontal scrolling
+//                 }}
+//             >
+//                 <ControlButton
+//                     icon={isMuted ? FaVolumeMute : FaVolumeUp}
+//                     onClick={toggleMute}
+//                 />
+//                 {/* <Slider
+//     size="small"
+//     value={isMuted ? 0 : volume}
+//     min={0}
+//     max={1}
+//     step={0.1}
+//     onChange={handleVolumeChange}
+//     sx={{
+//       color: '#1db954',
+//       flexGrow: 1,
+//       ml: 1,
+//       '& .MuiSlider-thumb': {
+//         width: 6, // Reduced thumb size
+//         height: 6, // Reduced thumb size
+//       },
+//       '& .MuiSlider-rail, .MuiSlider-track': {
+//         height: 4, // Reduced slider height
+//       },
+//     }}
+//   /> */}
+//             </Box>
+
+//             <audio
+//                 ref={audioRef}
+//                 onTimeUpdate={handleTimeUpdate}
+//                 onEnded={handleNext}
+//             />
+//         </Paper>
+//     );
+// };
+
 const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
-    // const [isPlaying, setIsPlaying] = useState(false);
+    const [tracks, setTracks] = useState([]);
     const [currentTime, setCurrentTime] = useState(0);
     const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isMuted, setIsMuted] = useState(false);
-    const [isLooping, setIsLooping] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [duration, setDuration] = useState(0);
 
     const audioRef = useRef(null);
-    const currentTrack = playlist[currentTrackIndex];
+    const currentTrack = tracks[currentTrackIndex];
+
+    // Fetch music tracks from API
+    const fetchTracks = async () => {
+        try {
+            const response = await musicService.getMusics();
+
+            if (
+                response.data.status === "success" &&
+                response.data.data.data.length > 0
+            ) {
+                // Transform API data to match player's expected format
+                const formattedTracks = response.data.data.data.map(
+                    (track) => ({
+                        id: track._id,
+                        title: track.title || "Untitled",
+                        artist: track.artist || "Unknown Artist",
+                        duration: duration || 0,
+                        coverUrl:
+                            track.coverImage?.ipfsUrl ||
+                            "/assets-images/default-cover.jpg",
+                        file: track.ipfsUrl,
+                    })
+                );
+                setTracks(formattedTracks);
+            }
+        } catch (error) {
+            console.error("Error fetching music tracks:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    console.log(tracks, "tracks");
+
+    useEffect(() => {
+        fetchTracks();
+    }, []);
 
     const formatTime = (time) => {
+        if (!time || isNaN(time)) return "0:00";
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     };
 
     const handlePlayPause = () => {
+        if (!audioRef.current || !currentTrack) return;
+
         if (isPlaying) {
             audioRef.current.pause();
         } else {
-            audioRef.current.play();
+            audioRef.current.play().catch((error) => {
+                console.error("Error playing audio:", error);
+                setIsPlaying(false);
+            });
         }
         setIsPlaying(!isPlaying);
     };
 
     const handlePrevious = () => {
         setCurrentTrackIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : playlist.length - 1
+            prevIndex > 0 ? prevIndex - 1 : tracks.length - 1
         );
     };
 
     const handleNext = () => {
         setCurrentTrackIndex((prevIndex) =>
-            prevIndex < playlist.length - 1 ? prevIndex + 1 : 0
+            prevIndex < tracks.length - 1 ? prevIndex + 1 : 0
         );
     };
 
-    const handleVolumeChange = (event, newValue) => {
-        // Ensure that newValue is a valid finite number
-        if (typeof newValue === "number" && isFinite(newValue)) {
-            setVolume(newValue);
-            audioRef.current.volume = newValue;
-            setIsMuted(newValue === 0);
-        } else {
-            console.error("Invalid volume value:", newValue);
-        }
-    };
-
-    const toggleMute = () => {
-        setIsMuted(!isMuted);
-        audioRef.current.volume = isMuted ? volume : 0;
-    };
-
     const handleTimeUpdate = () => {
+        if (!audioRef.current) return;
         setCurrentTime(audioRef.current.currentTime);
+        setDuration(audioRef.current.duration);
     };
 
     const handleSeek = (event, newValue) => {
+        if (!audioRef.current) return;
         audioRef.current.currentTime = newValue;
         setCurrentTime(newValue);
     };
 
-    const toggleLoop = () => {
-        setIsLooping(!isLooping);
-        audioRef.current.loop = !isLooping;
+    const toggleMute = () => {
+        if (!audioRef.current) return;
+        setIsMuted(!isMuted);
+        audioRef.current.volume = isMuted ? volume : 0;
     };
 
     useEffect(() => {
-        audioRef.current.src = currentTrack.file;
+        if (!audioRef.current || !currentTrack) return;
+
+        audioRef.current.src = currentTrack.file; // Using the IPFS URL
         if (isPlaying) {
-            audioRef.current.play();
+            audioRef.current.play().catch((error) => {
+                console.error("Error playing audio:", error);
+                setIsPlaying(false);
+            });
         }
         setIsPlaying(isPlaying);
-    }, [currentTrackIndex, isPlaying]);
+    }, [currentTrackIndex, currentTrack]);
+
+    if (isLoading) {
+        return (
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 1,
+                    borderRadius: "12px",
+                    background: "linear-gradient(45deg, #1e1e1e, #2a2a2a)",
+                    color: "white",
+                    width: "100%",
+                    maxWidth: "300px",
+                }}
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "200px",
+                    }}
+                >
+                    <CircularProgress sx={{ color: "#b2b500" }} />
+                </Box>
+            </Paper>
+        );
+    }
+
+    if (!tracks.length) {
+        return (
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 1,
+                    borderRadius: "12px",
+                    background: "linear-gradient(45deg, #1e1e1e, #2a2a2a)",
+                    color: "white",
+                    width: "100%",
+                    maxWidth: "300px",
+                }}
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "200px",
+                    }}
+                >
+                    <Typography>No music tracks available</Typography>
+                </Box>
+            </Paper>
+        );
+    }
 
     const ControlButton = ({ icon: Icon, onClick, isActive = false }) => (
         <IconButton
@@ -1040,7 +1380,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
             <Box
                 sx={{
                     width: "100%",
-                    height: "200px", // Adjusted for better visibility
+                    height: "200px",
                     position: "relative",
                     overflow: "hidden",
                     borderRadius: "8px",
@@ -1049,12 +1389,35 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
             >
                 <Box
                     component="img"
-                    src={currentTrack.cover}
-                    alt={`${currentTrack.title} cover`}
+                    src={
+                        currentTrack?.coverUrl ||
+                        "/assets-images/default-cover.jpg"
+                    }
+                    alt={`${currentTrack?.title} cover`}
                     sx={{
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
+                        transition: "transform 0.3s ease",
+                        "&:hover": {
+                            transform: "scale(1.05)",
+                        },
+                    }}
+                    onError={(e) => {
+                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.src = "/assets-images/default-cover.jpg";
+                    }}
+                />
+                <Box
+                    sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: "50%",
+                        background:
+                            "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+                        pointerEvents: "none",
                     }}
                 />
             </Box>
@@ -1063,14 +1426,14 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                 noWrap
                 sx={{ fontWeight: "bold", mb: 0.5 }}
             >
-                {currentTrack.title}
+                {currentTrack?.title || "No Track Selected"}
             </Typography>
             <Typography
                 variant="caption"
                 noWrap
                 sx={{ mb: 1, opacity: 0.8, display: "block" }}
             >
-                {currentTrack.artist}
+                {currentTrack?.artist || "Unknown Artist"}
             </Typography>
 
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -1080,7 +1443,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                 <Slider
                     size="small"
                     value={currentTime}
-                    max={currentTrack.duration}
+                    max={duration || 100}
                     onChange={handleSeek}
                     sx={{
                         color: "#b2b500",
@@ -1093,7 +1456,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                     }}
                 />
                 <Typography variant="caption" sx={{ ml: 1 }}>
-                    {formatTime(currentTrack.duration)}
+                    {formatTime(duration)}
                 </Typography>
             </Box>
 
@@ -1130,9 +1493,6 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                     </IconButton>
                     <ControlButton icon={FaStepForward} onClick={handleNext} />
                 </Box>
-                {/* <Box sx={{ display: 'flex' }}>
-            <ControlButton icon={FaRedoAlt} onClick={toggleLoop} isActive={isLooping} />
-          </Box> */}
             </Box>
 
             <Box
@@ -1140,40 +1500,21 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                     display: "flex",
                     alignItems: "center",
                     mt: 1,
-                    overflow: "hidden", // Prevent overflow
-                    width: "100%", // Ensure it doesn't cause horizontal scrolling
+                    overflow: "hidden",
+                    width: "100%",
                 }}
             >
                 <ControlButton
                     icon={isMuted ? FaVolumeMute : FaVolumeUp}
                     onClick={toggleMute}
                 />
-                {/* <Slider
-    size="small"
-    value={isMuted ? 0 : volume}
-    min={0}
-    max={1}
-    step={0.1}
-    onChange={handleVolumeChange}
-    sx={{
-      color: '#1db954',
-      flexGrow: 1,
-      ml: 1,
-      '& .MuiSlider-thumb': {
-        width: 6, // Reduced thumb size
-        height: 6, // Reduced thumb size
-      },
-      '& .MuiSlider-rail, .MuiSlider-track': {
-        height: 4, // Reduced slider height
-      },
-    }}
-  /> */}
             </Box>
 
             <audio
                 ref={audioRef}
                 onTimeUpdate={handleTimeUpdate}
                 onEnded={handleNext}
+                onLoadedMetadata={handleTimeUpdate}
             />
         </Paper>
     );
@@ -1219,10 +1560,7 @@ export default function ProfileBar({ container }) {
                 <Box sx={{ position: "relative" }}>
                     <IconButton onClick={handleDrawerToggle}>
                         <Avatar
-                            src={
-                                account?.user?.profileImage ||
-                                ""
-                            }
+                            src={account?.user?.profileImage || ""}
                             alt="user photo"
                             sx={{
                                 cursor: "pointer",
@@ -1319,10 +1657,7 @@ export default function ProfileBar({ container }) {
                     >
                         <Box sx={{ position: "relative" }}>
                             <MotionAvatar
-                                src={
-                                    account?.user?.profileImage ||
-                                    ""
-                                }
+                                src={account?.user?.profileImage || ""}
                                 alt="user photo"
                                 sx={{
                                     width: 100,

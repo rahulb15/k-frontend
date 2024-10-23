@@ -726,6 +726,7 @@ export const launchpadApi = createApi({
                 // const pactCode = `(free.lptest001.check-public ${JSON.stringify(
                 //     colName
                 // )})`;
+                console.log(pactFunctions.checkPublic);
                 const pactCode = `(${
                     pactFunctions.checkPublic
                 } ${JSON.stringify(colName)})`;
