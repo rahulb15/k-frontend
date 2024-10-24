@@ -2701,8 +2701,8 @@ const CollectionDetailsArea = ({ space, className, product, refresh }) => {
 
                                         return (
                                             <div
-                                                className="mint-stage"
-                                                key={index}
+                                            className={`mint-stage ${isLive ? 'live-stage' : ''}`}
+                                            key={index}
                                             >
                                                 <h3>
                                                     {stage}

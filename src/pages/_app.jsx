@@ -17,8 +17,8 @@ import { Providers } from "src/providers";
 import { persistor, store } from "src/store/store";
 import { INSTANCES, DEFAULT_INSTANCE } from "@utils/api/OnChainRefs";
 import useSettings from "src/hooks/setting_hook";
-console.log(INSTANCES)
-console.log(DEFAULT_INSTANCE)
+console.log(INSTANCES);
+console.log(DEFAULT_INSTANCE);
 import "sweetalert2/src/sweetalert2.scss";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/feather.css";
@@ -27,25 +27,34 @@ import "../assets/css/swal.css";
 import "../assets/scss/style.scss";
 import "../components/search/styles.css";
 import "../containers/wallet-button/styles.css";
-import '../styles/sweetalert2-custom.css'
-const AppContent = ({ Component, pageProps }) => {
-    const { data, isLoading, pactError, setInstance, validate, cleanImageCache } = useSettings();
+import "../styles/sweetalert2-custom.css";
+import { AudioPlayerProvider } from "src/contexts/AudioPlayerContext";
+import { PersistentAudioPlayer } from "src/components/PersistentAudioPlayer";
+import { UIProvider } from "src/contexts/UIContext";
 
+const AppContent = ({ Component, pageProps }) => {
+    const {
+        data,
+        isLoading,
+        pactError,
+        setInstance,
+        validate,
+        cleanImageCache,
+    } = useSettings();
 
     useEffect(() => {
         const currentVersion = process.env.NEXT_PUBLIC_VERSION;
-        const storedVersion = localStorage.getItem('appVersion');
-        
-        if (storedVersion !== currentVersion) {
-          localStorage.setItem('appVersion', currentVersion);
-          window.location.reload(true); // Force reload from server
-        }
-      }, []);
+        const storedVersion = localStorage.getItem("appVersion");
 
+        if (storedVersion !== currentVersion) {
+            localStorage.setItem("appVersion", currentVersion);
+            window.location.reload(true); // Force reload from server
+        }
+    }, []);
 
     useEffect(() => {
         console.log(DEFAULT_INSTANCE);
-        if(DEFAULT_INSTANCE.name){
+        if (DEFAULT_INSTANCE.name) {
             validate();
         }
     }, [DEFAULT_INSTANCE]);
@@ -160,7 +169,12 @@ const MyApp = ({ Component, pageProps }) => {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-                <AppContent Component={Component} pageProps={pageProps} />
+            <UIProvider>
+                <AudioPlayerProvider>
+                    {/* <PersistentAudioPlayer /> */}
+                    <AppContent Component={Component} pageProps={pageProps} />
+                </AudioPlayerProvider>
+            </UIProvider>
             </PersistGate>
         </Provider>
     );

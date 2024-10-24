@@ -204,6 +204,8 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         collectionRequestPolicy,
         walletName,
     } = useSelector((state) => state.launchpad);
+    const [showMusicSubCategory, setShowMusicSubCategory] = useState(false);
+    const [selectedSubCategory, setSelectedSubCategory] = useState('');
     const [policy, setPolicy] = useState(defaultPolicies);
     const [mintStartDateTime, setMintStartDateTime] = useState(null);
     const [mintEndDateTime, setMintEndDateTime] = useState(null);
@@ -227,6 +229,28 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         { name: "WhatsApp", value: "whatsapp" },
         { name: "Email", value: "email" },
     ]);
+
+    const musicSubCategories = [
+        { value: "pop", label: "Pop" },
+        { value: "rock", label: "Rock" },
+        { value: "jazz", label: "Jazz" },
+        { value: "classical", label: "Classical" },
+        { value: "electronic", label: "Electronic/Dance" },
+        { value: "hiphop", label: "Hip Hop/Rap" },
+        { value: "rb", label: "R&B/Soul" },
+        { value: "country", label: "Country" },
+        { value: "folk", label: "Folk" },
+        { value: "blues", label: "Blues" },
+        { value: "world", label: "World Music" },
+        { value: "ambient", label: "Ambient" },
+        { value: "experimental", label: "Experimental" },
+        { value: "soundtrack", label: "Soundtrack" },
+        { value: "metal", label: "Metal" },
+        { value: "reggae", label: "Reggae" },
+        { value: "latin", label: "Latin" },
+        { value: "indie", label: "Indie" }
+      ];
+    
     const [selectedSocialMedia, setSelectedSocialMedia] = useState("");
     const [socialMediaUrl, setSocialMediaUrl] = useState("");
     const [socialMediaLinks, setSocialMediaLinks] = useState({});
@@ -623,6 +647,29 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
         console.log("watch", watch("projectDescription"));
         dispatch(setCollectionRequestDescription(watch("projectDescription")));
     }, [projectDescription]);
+    const mainCategory = watch("projectCategory");
+
+    useEffect(() => {
+        if (mainCategory === "music") {
+          setShowMusicSubCategory(true);
+        } else {
+          setShowMusicSubCategory(false);
+          setSelectedSubCategory('');
+        }
+      }, [mainCategory]);
+
+        // Handle sub-category changes
+  const handleSubCategoryChange = (e) => {
+    const subCategory = e.target.value;
+    setSelectedSubCategory(subCategory);
+    // Combine main category and sub-category for storage
+    const combinedCategory = subCategory ? `MUSIC_${subCategory.toUpperCase()}` : 'MUSIC';
+    console.log("combinedCategory", combinedCategory);
+    // dispatch(setCollectionRequestCategory(combinedCategory));
+  };
+
+  console.log("selectedSubCategory", selectedSubCategory);
+
 
     useEffect(() => {
         console.log("watch", watch("projectCategory"));
@@ -1036,6 +1083,7 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
             creatorWallet: creatorWallet,
             projectDescription: collectionRequestDescription,
             projectCategory: collectionRequestCategory,
+            musicSubCategory: selectedSubCategory,
             expectedLaunchDate: expectedLaunchDate,
             // twitter: formData.twitter,
             // discord: formData.discord,
@@ -1739,6 +1787,35 @@ const ApplyLaunchpadWrapper = ({ className, space }) => {
                                                 )}
                                             </div>
                                         </div>
+                                        {showMusicSubCategory && (
+        <div className="col-md-4">
+          <div className="input-box pb--20">
+            <label htmlFor="musicSubCategory" className="form-label">
+              Music Genre
+            </label>
+            <select
+              style={{
+                padding: "10px",
+                borderRadius: "5px",
+                border: "1px solid #363545",
+                marginBottom: "10px",
+                height: "50px",
+                backgroundColor: "#242435",
+              }}
+              id="musicSubCategory"
+              value={selectedSubCategory}
+              onChange={handleSubCategoryChange}
+            >
+              <option value="">Select a genre</option>
+              {musicSubCategories.map((genre) => (
+                <option key={genre.value} value={genre.value}>
+                  {genre.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
 
                                         <div className="col-md-4">
                                             <div className="input-box pb--20">

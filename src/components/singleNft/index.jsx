@@ -20,6 +20,7 @@ import {
 } from "src/services/nft.service";
 import singleNftService from "src/services/singleNft.service";
 import MerchModal from "@components/merchandisingModal/modal-merch";
+import NFTAudioControls from "@components/product/layout-01/NFTAudioControls";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
@@ -216,20 +217,15 @@ const SingleNft = ({
                     </motion.div>
                         </>
                     ) : (
-                        // <Image
-                        //     src={data?.image}
-                        //     alt={data?.title}
-                        //     width={533}
-                        //     height={533}
-                        // />
-
-                        // 'blob:nodedata:9588165b-ce9f-4483-8001-5747671a925c'
+                        <>
+                        {data?.nftData?.audio && <NFTAudioControls nft={data} />}
                         <Image
                             src={image}
                             alt={data?.title}
                             width={533}
                             height={533}
                         />
+                        </>
                     )}
 
                     {auction_date && <CountdownTimer date={auction_date} />}

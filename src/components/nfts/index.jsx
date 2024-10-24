@@ -377,6 +377,8 @@ import { useAccountContext } from "src/contexts";
 import { toast } from "react-toastify";
 import nftServices from "src/services/nftServices";
 import MerchModal from "@components/merchandisingModal/modal-merch";
+import NFTAudioControls from "@components/product/layout-01/NFTAudioControls";
+
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
 });
@@ -518,6 +520,8 @@ const Nft = ({ nft, disableShareDropdown, refetchOwnedNfts }) => {
                     {console.log("nftimage", nft.tokenImage)}
                     {isRevealed ? (
                         <>
+                                        {nft?.nftData?.audio && <NFTAudioControls nft={nft} />}
+
                         <Image
                             src={nft.tokenImage}
                             alt={nft.nftData?.name || "NFT"}

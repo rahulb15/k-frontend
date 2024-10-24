@@ -838,6 +838,8 @@ import MusicWaveEffect from "./MusicWaveEffect";
 import { MdVerified } from "react-icons/md";
 import axios from "axios";
 import musicService from "src/services/music.service";
+import { useAudioPlayer } from "src/contexts/AudioPlayerContext";
+import { useUI } from 'src/contexts/UIContext';
 
 const sideNavWidth = 280;
 
@@ -1182,54 +1184,25 @@ const playlist = [
 //     );
 // };
 
-const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
-    const [tracks, setTracks] = useState([]);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-    const [volume, setVolume] = useState(1);
-    const [isMuted, setIsMuted] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [duration, setDuration] = useState(0);
+const MusicPlayer = ({ setGlobalIsPlaying }) => {
+    const {
+        isPlaying,
+        tracks,
+        currentTrackIndex,
+        currentTime,
+        duration,
+        isMuted,
+        handlePlayPause,
+        handlePrevious,
+        handleNext,
+        handleSeek,
+        toggleMute,
+    } = useAudioPlayer();
 
-    const audioRef = useRef(null);
-    const currentTrack = tracks[currentTrackIndex];
-
-    // Fetch music tracks from API
-    const fetchTracks = async () => {
-        try {
-            const response = await musicService.getMusics();
-
-            if (
-                response.data.status === "success" &&
-                response.data.data.data.length > 0
-            ) {
-                // Transform API data to match player's expected format
-                const formattedTracks = response.data.data.data.map(
-                    (track) => ({
-                        id: track._id,
-                        title: track.title || "Untitled",
-                        artist: track.artist || "Unknown Artist",
-                        duration: duration || 0,
-                        coverUrl:
-                            track.coverImage?.ipfsUrl ||
-                            "/assets-images/default-cover.jpg",
-                        file: track.ipfsUrl,
-                    })
-                );
-                setTracks(formattedTracks);
-            }
-        } catch (error) {
-            console.error("Error fetching music tracks:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    console.log(tracks, "tracks");
-
+    // Sync global playing state with context
     useEffect(() => {
-        fetchTracks();
-    }, []);
+        setGlobalIsPlaying(isPlaying);
+    }, [isPlaying, setGlobalIsPlaying]);
 
     const formatTime = (time) => {
         if (!time || isNaN(time)) return "0:00";
@@ -1238,89 +1211,21 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
         return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
     };
 
-    const handlePlayPause = () => {
-        if (!audioRef.current || !currentTrack) return;
-
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play().catch((error) => {
-                console.error("Error playing audio:", error);
-                setIsPlaying(false);
-            });
-        }
-        setIsPlaying(!isPlaying);
-    };
-
-    const handlePrevious = () => {
-        setCurrentTrackIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : tracks.length - 1
-        );
-    };
-
-    const handleNext = () => {
-        setCurrentTrackIndex((prevIndex) =>
-            prevIndex < tracks.length - 1 ? prevIndex + 1 : 0
-        );
-    };
-
-    const handleTimeUpdate = () => {
-        if (!audioRef.current) return;
-        setCurrentTime(audioRef.current.currentTime);
-        setDuration(audioRef.current.duration);
-    };
-
-    const handleSeek = (event, newValue) => {
-        if (!audioRef.current) return;
-        audioRef.current.currentTime = newValue;
-        setCurrentTime(newValue);
-    };
-
-    const toggleMute = () => {
-        if (!audioRef.current) return;
-        setIsMuted(!isMuted);
-        audioRef.current.volume = isMuted ? volume : 0;
-    };
-
-    useEffect(() => {
-        if (!audioRef.current || !currentTrack) return;
-
-        audioRef.current.src = currentTrack.file; // Using the IPFS URL
-        if (isPlaying) {
-            audioRef.current.play().catch((error) => {
-                console.error("Error playing audio:", error);
-                setIsPlaying(false);
-            });
-        }
-        setIsPlaying(isPlaying);
-    }, [currentTrackIndex, currentTrack]);
-
-    if (isLoading) {
-        return (
-            <Paper
-                elevation={3}
-                sx={{
-                    p: 1,
-                    borderRadius: "12px",
-                    background: "linear-gradient(45deg, #1e1e1e, #2a2a2a)",
-                    color: "white",
-                    width: "100%",
-                    maxWidth: "300px",
-                }}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "200px",
-                    }}
-                >
-                    <CircularProgress sx={{ color: "#b2b500" }} />
-                </Box>
-            </Paper>
-        );
-    }
+    const ControlButton = ({ icon: Icon, onClick, isActive = false }) => (
+        <IconButton
+            sx={{
+                color: "white",
+                padding: "4px",
+                "&:hover": {
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                },
+                transition: "all 0.3s ease",
+            }}
+            onClick={onClick}
+        >
+            <Icon color={isActive ? "#b2b500" : "white"} size={16} />
+        </IconButton>
+    );
 
     if (!tracks.length) {
         return (
@@ -1349,21 +1254,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
         );
     }
 
-    const ControlButton = ({ icon: Icon, onClick, isActive = false }) => (
-        <IconButton
-            sx={{
-                color: "white",
-                padding: "4px",
-                "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-                transition: "all 0.3s ease",
-            }}
-            onClick={onClick}
-        >
-            <Icon color={isActive ? "#b2b500" : "white"} size={16} />
-        </IconButton>
-    );
+    const currentTrack = tracks[currentTrackIndex];
 
     return (
         <Paper
@@ -1389,10 +1280,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
             >
                 <Box
                     component="img"
-                    src={
-                        currentTrack?.coverUrl ||
-                        "/assets-images/default-cover.jpg"
-                    }
+                    src={currentTrack?.coverUrl || "/assets-images/default-cover.jpg"}
                     alt={`${currentTrack?.title} cover`}
                     sx={{
                         width: "100%",
@@ -1404,7 +1292,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                         },
                     }}
                     onError={(e) => {
-                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.onerror = null;
                         e.target.src = "/assets-images/default-cover.jpg";
                     }}
                 />
@@ -1415,24 +1303,16 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                         left: 0,
                         right: 0,
                         height: "50%",
-                        background:
-                            "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+                        background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
                         pointerEvents: "none",
                     }}
                 />
             </Box>
-            <Typography
-                variant="subtitle2"
-                noWrap
-                sx={{ fontWeight: "bold", mb: 0.5 }}
-            >
+
+            <Typography variant="subtitle2" noWrap sx={{ fontWeight: "bold", mb: 0.5 }}>
                 {currentTrack?.title || "No Track Selected"}
             </Typography>
-            <Typography
-                variant="caption"
-                noWrap
-                sx={{ mb: 1, opacity: 0.8, display: "block" }}
-            >
+            <Typography variant="caption" noWrap sx={{ mb: 1, opacity: 0.8, display: "block" }}>
                 {currentTrack?.artist || "Unknown Artist"}
             </Typography>
 
@@ -1444,7 +1324,7 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                     size="small"
                     value={currentTime}
                     max={duration || 100}
-                    onChange={handleSeek}
+                    onChange={(_, newValue) => handleSeek(newValue)}
                     sx={{
                         color: "#b2b500",
                         flexGrow: 1,
@@ -1460,18 +1340,9 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                 </Typography>
             </Box>
 
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                }}
-            >
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Box sx={{ display: "flex" }}>
-                    <ControlButton
-                        icon={FaStepBackward}
-                        onClick={handlePrevious}
-                    />
+                    <ControlButton icon={FaStepBackward} onClick={handlePrevious} />
                     <IconButton
                         sx={{
                             color: "white",
@@ -1485,49 +1356,39 @@ const MusicPlayer = ({ setIsPlaying, isPlaying }) => {
                         }}
                         onClick={handlePlayPause}
                     >
-                        {isPlaying ? (
-                            <FaPause size={16} />
-                        ) : (
-                            <FaPlay size={16} />
-                        )}
+                        {isPlaying ? <FaPause size={16} /> : <FaPlay size={16} />}
                     </IconButton>
                     <ControlButton icon={FaStepForward} onClick={handleNext} />
                 </Box>
             </Box>
 
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mt: 1,
-                    overflow: "hidden",
-                    width: "100%",
-                }}
-            >
+            <Box sx={{
+                display: "flex",
+                alignItems: "center",
+                mt: 1,
+                overflow: "hidden",
+                width: "100%",
+            }}>
                 <ControlButton
                     icon={isMuted ? FaVolumeMute : FaVolumeUp}
                     onClick={toggleMute}
                 />
             </Box>
-
-            <audio
-                ref={audioRef}
-                onTimeUpdate={handleTimeUpdate}
-                onEnded={handleNext}
-                onLoadedMetadata={handleTimeUpdate}
-            />
         </Paper>
     );
 };
-
 export default function ProfileBar({ container }) {
+    const { isPanelOpen, setIsPanelOpen } = useUI();
     const [panelOpen, setPanelOpen] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
     const account = useAccountContext();
     const { disconnect } = useWalletConnectClient();
     const isVerified = account?.user?.verified || false; // You'll need to get this from your user data
 
-    const handleDrawerToggle = () => setPanelOpen(!panelOpen);
+    // const handleDrawerToggle = () => setPanelOpen(!panelOpen);
+    const handleDrawerToggle = () => {
+        setIsPanelOpen(!isPanelOpen);
+    };
 
     const logout = async () => {
         const response = await userService.logout();
@@ -1592,7 +1453,8 @@ export default function ProfileBar({ container }) {
                 container={container}
                 variant="temporary"
                 anchor="right"
-                open={panelOpen}
+                // open={panelOpen}
+                open={isPanelOpen}
                 onClose={handleDrawerToggle}
                 ModalProps={{ keepMounted: true }}
                 sx={{
@@ -1743,8 +1605,8 @@ export default function ProfileBar({ container }) {
 
                     <Box sx={{ p: 2, mt: "auto" }}>
                         <MusicPlayer
-                            setIsPlaying={setIsPlaying}
-                            isPlaying={isPlaying}
+                            setGlobalIsPlaying={setIsPlaying}
+                            globalIsPlaying={isPlaying}
                         />
                     </Box>
                 </MotionBox>

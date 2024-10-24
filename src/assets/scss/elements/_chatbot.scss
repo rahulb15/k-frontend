@@ -297,13 +297,52 @@
     margin-bottom: 20px;
 }
 
+/* Update these CSS rules */
 .mint-stage {
     background-color: #2c2c3d;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 10px;
+    position: relative;
+    z-index: 1; /* Add this */
 }
 
+.mint-stage.live-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* Simplified positioning */
+    padding: 2px; /* Border width */
+    border-radius: 8px; /* Match parent's border-radius */
+    background: linear-gradient(
+        90deg,
+        #a9b729 0%,
+        #4CAF50 33%,
+        #a9b729 66%,
+        #4CAF50 100%
+    );
+    background-size: 300% 100%;
+    -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: gradientBorder 3s linear infinite;
+    z-index: -1;
+}
+
+@keyframes gradientBorder {
+    from {
+        background-position: 0% 50%;
+    }
+    to { 
+        background-position: 150% 50%;
+    }
+}
+
+/* Optional: Add a glow effect */
+.mint-stage.live-stage {
+    box-shadow: 0 0 15px rgba(169, 183, 41, 0.2);
+}
 .mint-stage h3 {
     display: flex;
     justify-content: space-between;

@@ -250,6 +250,7 @@ import NftMarketPlaceDetailModal from "@components/marketplace-nft/NftMarketPlac
 import { addToCart, selectIsInCart } from "src/features/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import MerchModal from "@components/merchandisingModal/modal-merch";
+import NFTAudioControls from "./NFTAudioControls";
 
 const CountdownTimer = dynamic(() => import("@ui/countdown/layout-01"), {
     ssr: false,
@@ -260,6 +261,7 @@ const ShareDropdown = dynamic(() => import("@components/share-dropdown"), {
 });
 
 const Product = ({ nft, disableShareDropdown }) => {
+    console.log(nft);
     const [showBidModal, setShowBidModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -350,6 +352,8 @@ const Product = ({ nft, disableShareDropdown }) => {
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <div className="card-thumbnail" onClick={handleOpenModal}>
+                {nft?.nftData?.audio && <NFTAudioControls nft={nft} />}
+
                     <Image
                         src={nft.tokenImage}
                         alt={nft?.nftData?.name || "NFT"}

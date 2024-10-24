@@ -18,6 +18,8 @@ import Foote from "@layout/footer/footer-01";
 import ChatBot from "@containers/chatbot";
 import { useAccountContext } from "src/contexts";
 import { CHAIN_ID } from "src/constants/contextConstants";
+import FooterMusicStatus from "@components/FooterMusicStatus";
+import { useAudioPlayer } from "src/contexts/AudioPlayerContext";
 
 // Styled component for the button with gradient border
 const GradientBorderButton = styled(motion.div)`
@@ -74,6 +76,7 @@ const Footer = () => {
     const [prices, setPrices] = useState({ solana: 0, kda: 0 });
     const [showShortcuts, setShowShortcuts] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const { isPlaying } = useAudioPlayer();
 
     const [mouseEffects, setMouseEffects] = useState("none");
     const [mouseEffectSparkles, setMouseEffectSparkles] = useState(false);
@@ -249,6 +252,11 @@ const Footer = () => {
                                         v {process.env.NEXT_PUBLIC_VERSION}
                                     </span>
                                 </div>
+
+                                {/* Add Music Status here */}
+                        {isPlaying && (
+                            <FooterMusicStatus />
+                        )}
                     </div>
                     <div className="footer-section middle">
                         {/* <div
